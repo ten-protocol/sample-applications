@@ -1,19 +1,20 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-describe("Greeter", function () {
+describe("Guess", function () {
   it("Should return the new greeting once it's changed", async function () {
-    const Greeter = await ethers.getContractFactory("Greeter");
-    const greeter = await Greeter.deploy("Hello, world!");
-    await greeter.deployed();
+    const Guess = await ethers.getContractFactory("Guess");
+    // Deploy the guessing game with a random hidden target between 0 and 10.
+    const guess = await Guess.deploy(10);
+    await guess.deployed();
 
-    expect(await greeter.greet()).to.equal("Hello, world!");
+    expect(await guess.guesses).to.equal(0);
 
-    const setGreetingTx = await greeter.setGreeting("Hola, mundo!");
+    const guessAttempt = await guess.attempt(5);
 
     // wait until the transaction is mined
-    await setGreetingTx.wait();
+    await guessAttempt.wait();
 
-    expect(await greeter.greet()).to.equal("Hola, mundo!");
+    expect(await guess.guesses).to.equal(1);
   });
 });
