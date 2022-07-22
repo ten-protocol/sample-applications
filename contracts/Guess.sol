@@ -6,16 +6,18 @@ import "hardhat/console.sol";
 contract Guess {
     address payable owner;
     uint8 private target;
-    uint8 public guesses;
+    uint16 public guesses;
+    uint8 public size;
 
     modifier onlyOwner {
         require(msg.sender == owner, "Only owner can call this function."); 
         _;
     }
     
-    constructor(uint size) {
+    constructor(uint8 _size) {
         owner = payable(msg.sender);
-        target = uint8(uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty)))%size);
+        target = uint8(uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty)))%_size);
+        size = _size;
     }
 
     function attempt(uint8 guess) public payable {

@@ -35,9 +35,7 @@ export default {
 		sourcemap: true,
 		format: 'iife',
 		name: 'app',
-		file: 'public/build/bundle.js',
-		globals: {
-		}
+		file: 'public/build/bundle.js'
 	},
 	plugins: [
 		svelte({
@@ -60,6 +58,7 @@ export default {
 			dedupe: ['svelte']
 		}),
 		commonjs(),
+		json(),
 
 		// In dev mode, call `npm run start` once
 		// the bundle has been generated
@@ -71,8 +70,7 @@ export default {
 
 		// If we're building for production (npm run build
 		// instead of npm run dev), minify
-		production && terser(),
-		json()
+		production && terser()
 	],
 	watch: {
 		clearScreen: false
