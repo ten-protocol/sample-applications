@@ -1,5 +1,4 @@
 <script>
-	import { ethers } from 'ethers';
 	import {
 		// main connection helper defaultEvmStore can be use to initiate a connection.
 		defaultEvmStores,
@@ -24,7 +23,7 @@
 		ERC20_ADDRESS,
 		ERC20.abi
 	);
-	const GUESS_ADDRESS = '0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9';
+	const GUESS_ADDRESS = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
 	defaultEvmStores.attachContract(
 		'guessContract',
 		GUESS_ADDRESS,
@@ -132,7 +131,7 @@
 					placeholder="secret number."
 				/>
 			</fieldset>
-			<button type="submit" disabled={!$connected}>Submit Guess</button>
+			<button type="submit" disabled={!$connected}>Submit guess</button>
 		</form>
 	{:else}
 		<p>Please first connect network to be able to use this page</p>

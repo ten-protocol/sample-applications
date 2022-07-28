@@ -27,7 +27,6 @@
     "svelte-ethers-store": "^1.0.0-1"
   },
   "dependencies": {
-    "jsencrypt": "^3.2.1",
     "sirv": "^2.0.2",
     "sirv-cli": "^2.0.2"
   },
