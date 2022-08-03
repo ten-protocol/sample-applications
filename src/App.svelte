@@ -17,13 +17,13 @@
 	import Guess from '../artifacts/contracts/Guess.sol/Guess.json';
 	defaultEvmStores.setProvider();
 	// Contract address is hard-coded for now.
-	const ERC20_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
+	const ERC20_ADDRESS = '0x8464135c8F25Da09e49BC8782676a84730C318bC';
 	defaultEvmStores.attachContract(
 		'erc20Contract',
 		ERC20_ADDRESS,
 		ERC20.abi
 	);
-	const GUESS_ADDRESS = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
+	const GUESS_ADDRESS = '0x71C95911E9a5D330f4D621842EC243EE1343292e';
 	defaultEvmStores.attachContract(
 		'guessContract',
 		GUESS_ADDRESS,
