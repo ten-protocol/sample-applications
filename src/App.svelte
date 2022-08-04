@@ -60,6 +60,31 @@
 			alert('Error while attempting to guess.', JSON.stringify(error));
 		}
 	}
+
+	async function addObscuroNetworkToMetaMask() {
+		console.log("Setting network to Obscuro")
+		const formattedChainId = "0x309"; // 777 in hex
+		try {
+			await window.ethereum.request({
+				method: "wallet_addEthereumChain",
+				params: [
+					{
+						chainId: formattedChainId,
+						chainName: "Obscuro",
+						rpcUrls: ["http://localhost:3000"],
+						nativeCurrency: {
+							name: "OBX",
+							symbol: "OBX",
+							decimals: 18,
+						},
+						blockExplorerUrls: null,
+					},
+				],
+			});
+		} catch (error) {
+			console.error("error adding OBX network: ");
+		}
+	}
 </script>
 
 <header>
@@ -83,18 +108,18 @@
 <main>
 	<p>Welcome to the Obscuro Number Guessing Game!</p>
 	<p>
-		The game contract contains a secret whole number, generated when the
+		The game contract contains a secret number, generated when the
 		contract was deployed, and visible only within the trusted execution
 		environments of the Obscuro network. It can not be seen by the node
 		computer or by any node operator.
 	</p>
 	<p>
-		Submit a guess with your payment, and if you guess correctly, you'll win
-		all of the prize pool!
+		Submit a guess with your 1 token payment, and if you guess correctly, you'll win
+		all of the prize pool! Check the docs <a href="https://docs.obscu.ro/testnet/example-dapps.html" target="_blank">here</a> for more info.
 	</p>
 	{#if guessContract}
 		<p>
-			The secret number is between 0 and
+			The secret number is a whole number between 0 and
 			{#await guessContract.size()}
 				<span>...looking up...</span>
 			{:then value}
@@ -109,8 +134,9 @@
 			and if you guess correctly, you'd receive all of this. It could be your
 			lucky day!
 		</p>
+
 		<p>
-			First up: please approve the Game to take the entry fee of 1 JAM token.<br/>
+			First up: please approve the Game to take the entry fee of 1 token.<br/>
 			<button on:click={approve} disabled={!$connected}>Approve game fee</button>
 		</p>
 		<form on:submit={attempt}>
@@ -133,9 +159,25 @@
 			</fieldset>
 			<button type="submit" disabled={!$connected}>Submit guess</button>
 		</form>
+
 	{:else}
 		<p>Please first connect network to be able to use this page</p>
 	{/if}
 </main>
 
-<footer />
+<footer>
+	<br/>
+	<div><a href="https://docs.obscu.ro/testnet/example-dapps.html" target="_blank">Using this app:</a></div>
+	<ul>
+		<li>To use this app the <a href="https://discord.com/channels/916052669955727371/1004391962733989960/1004780636608942160" target="_blank">Obscuro Wallet Extension</a> needs to be running</li>
+		<li> <a href="https://metamask.io/" target="_blank">MetaMask</a> installed (click <a on:click={addObscuroNetworkToMetaMask}>HERE</a> to configure the obscuro network automatically)</li>
+		<li>Finally, you'll need some OBX tokens to play the game, ping our team a message in discord</li>
+		<li>Hop in the <a href="https://discord.gg/yQfmKeNzNd" target="_blank"> discord</a> and ask the community if you get stuck or you've got any questions!</li>
+	</ul>
+</footer>
+
+<style>
+.btn-link {
+	cursor: pointer
+}
+</style>
