@@ -63,15 +63,14 @@
 
 	async function addObscuroNetworkToMetaMask() {
 		console.log("Setting network to Obscuro")
-		const formattedChainId = "0x309"; // 777 in hex
 		try {
 			await window.ethereum.request({
 				method: "wallet_addEthereumChain",
 				params: [
 					{
-						chainId: formattedChainId,
+						chainId: "0x309", // 777 in hex
 						chainName: "Obscuro",
-						rpcUrls: ["http://localhost:3000"],
+						rpcUrls: ["http://127.0.0.1:3000"],
 						nativeCurrency: {
 							name: "OBX",
 							symbol: "OBX",
@@ -82,7 +81,7 @@
 				],
 			});
 		} catch (error) {
-			console.error("error adding OBX network: ");
+			alert('Error while adding OBX network: ' + error);
 		}
 	}
 </script>
@@ -167,13 +166,14 @@
 
 <footer>
 	<br/>
-	<div><a href="https://docs.obscu.ro/testnet/example-dapps.html" target="_blank">Using this app:</a></div>
+	<div>Using this app:</div>
 	<ul>
-		<li>To use this app the <a href="https://discord.com/channels/916052669955727371/1004391962733989960/1004780636608942160" target="_blank">Obscuro Wallet Extension</a> needs to be running</li>
-		<li> <a href="https://metamask.io/" target="_blank">MetaMask</a> installed (click <a on:click={addObscuroNetworkToMetaMask}>HERE</a> to configure the obscuro network automatically)</li>
-		<li>Finally, you'll need some OBX tokens to play the game, ping our team a message in discord</li>
-		<li>Hop in the <a href="https://discord.gg/yQfmKeNzNd" target="_blank"> discord</a> and ask the community if you get stuck or you've got any questions!</li>
+		<li>Start the <a href="https://docs.obscu.ro/wallet-extension/wallet-extension.html" target="_blank">Obscuro Wallet Extension</a></li>
+		<li>Install <a href="https://metamask.io/" target="_blank">MetaMask</a> (and click <a on:click={addObscuroNetworkToMetaMask}>HERE</a> to configure the Obscuro network automatically if you haven't already)</li>
+		<li>You'll need some OBX tokens to play the game. Join our <a href="https://discord.gg/yQfmKeNzNd" target="_blank"> Discord</a> and ask anyone with the "Obscuro Labs" role for some free tokens</li>
+		<li>Finally, ask the community on Discord if you get stuck or you've got any questions!</li>
 	</ul>
+	<div>Further instructions can be found <a href="https://docs.obscu.ro/testnet/example-dapps.html" target="_blank">here</a>.</div>
 </footer>
 
 <style>
