@@ -63,26 +63,28 @@
 
 	async function addObscuroNetworkToMetaMask() {
 		console.log("Setting network to Obscuro")
-		try {
-			await window.ethereum.request({
-				method: "wallet_addEthereumChain",
-				params: [
-					{
-						chainId: "0x309", // 777 in hex
-						chainName: "Obscuro",
-						rpcUrls: ["http://127.0.0.1:3000"],
-						nativeCurrency: {
-							name: "OBX",
-							symbol: "OBX",
-							decimals: 18,
-						},
-						blockExplorerUrls: null,
+		window.ethereum.request({
+			method: "wallet_addEthereumChain",
+			params: [
+				{
+					chainId: "0x309", // 777 in hex
+					chainName: "Obscuro",
+					rpcUrls: ["http://127.0.0.1:3000"],
+					nativeCurrency: {
+						name: "OBX",
+						symbol: "OBX",
+						decimals: 18,
 					},
-				],
-			});
-		} catch (error) {
-			alert('Error while adding OBX network: ' + error);
-		}
+					blockExplorerUrls: null,
+				},
+			],
+		})
+		.then((result) => {
+			alert('Obscuro network added.')
+		})
+		.catch((error) => {
+			alert('Failed to add Obscuro network: ' + JSON.stringify(error))
+		});
 	}
 </script>
 
