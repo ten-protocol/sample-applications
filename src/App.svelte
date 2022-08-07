@@ -68,7 +68,7 @@
 			params: [
 				{
 					chainId: "0x309", // 777 in hex
-					chainName: "Obscuro",
+					chainName: "Obscuro Testnet",
 					rpcUrls: ["http://127.0.0.1:3000"],
 					nativeCurrency: {
 						name: "OBX",
@@ -80,10 +80,10 @@
 			],
 		})
 		.then((result) => {
-			alert('Obscuro network added.')
+			alert('Obscuro Testnet network added.')
 		})
 		.catch((error) => {
-			alert('Failed to add Obscuro network: ' + JSON.stringify(error))
+			alert('Failed to add Obscuro Testnet network: ' + JSON.stringify(error))
 		});
 	}
 </script>
