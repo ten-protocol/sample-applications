@@ -78,7 +78,9 @@ contract Guess {
         require(msg.sender == owner, "Only owner can call this function."); 
         _;
     }
-    
+
+    event AttemptWon(address _winnerAccount, uint _amount);
+
     constructor(uint8 _size, address _tokenAddress) {
         owner = payable(msg.sender);
         size = _size;
@@ -91,6 +93,7 @@ contract Guess {
         guesses++;
         if (guess == target) {
             erc20.transfer(msg.sender, erc20.balanceOf(address(this)));
+            emit AttemptWon(msg.sender, erc20.balanceOf(address(this)));
             setNewTarget();
         }
     }
