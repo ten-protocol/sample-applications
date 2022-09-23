@@ -75,11 +75,11 @@ contract Guess {
     address public tokenAddress;
 
     modifier onlyOwner {
-        require(msg.sender == owner, "Only owner can call this function."); 
+        require(msg.sender == owner, "Only owner can call this function.");
         _;
     }
 
-    event AttemptWon(address _winnerAccount, uint _amount);
+    event AttemptWon(address indexed _winnerAccount, uint _amount);
 
     constructor(uint8 _size, address _tokenAddress) {
         owner = payable(msg.sender);
