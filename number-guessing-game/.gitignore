@@ -1,0 +1,14 @@
+# NPM files
+node_modules
+.env
+package-lock.json
+
+#Hardhat files
+cache
+artifacts
+
+#OS files
+.DS_Store
+
+# Vite files
+dist
