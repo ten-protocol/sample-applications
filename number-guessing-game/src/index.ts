@@ -58,12 +58,12 @@ guessContract.on(filterIncorrect, (_, guess, prize) => {
 
 guessContract.on(filterWarmer, (_, guess, prize) => {
     updateAllowance();
-    displayMessage(`Warmer :) Your guess of ${guess} was closer that your previous try. The prize pool of ${ethers.utils.formatEther(prize)} ${symbol} is within reach!.`);
+    displayMessage(`Looking good! Your guess of ${guess} was closer that your previous try. The prize pool of ${ethers.utils.formatEther(prize)} ${symbol} is within reach!.`);
 });
 
 guessContract.on(filterColder, (_, guess, prize) => {
     updateAllowance();
-    displayMessage(`Colder :( Your guess of ${guess} was further that your previous try. The prize pool is now  ${ethers.utils.formatEther(prize)} ${symbol}. Take heart!`);
+    displayMessage(`Uh oh. Your guess of ${guess} was worse than your previous try. Take heart! The prize pool is now  ${ethers.utils.formatEther(prize)} ${symbol}.`);
 });
 
 function updateAllowance() {
