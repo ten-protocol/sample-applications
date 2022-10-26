@@ -28,7 +28,7 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-node-
 
-    - run: npm ci
+    - run: npm i
       working-directory: ./number-guessing-game
     - run: npm run build --if-present
       working-directory: ./number-guessing-game
