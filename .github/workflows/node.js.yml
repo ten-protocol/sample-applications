@@ -12,9 +12,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: './number-guessing-game'
     strategy:
       matrix:
         node-version: [16.x]
@@ -28,9 +25,11 @@ jobs:
         cache: 'npm'
         cache-dependency-path: '**/package-lock.json'
     - run: npm ci
+      working-directory: ./number-guessing-game
     - run: npm run build --if-present
+      working-directory: ./number-guessing-game
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: './dist'
+        publish_dir: ./number-guessing-game/dist
