@@ -13,11 +13,11 @@ In developing this game, the following tools were used:
 * NPX (Node Package Execution, used as a runtime for Hardhat tasks)
 * Hardhat (a complete Ethereum compiler and test deployment environment)
 * Remix IDE (a browser-based contract deployment and low-level interaction tool)
-* Svelte (a lightweight Javascript app runtime environment)
 * Ethers.js (a Web3 Javascript library)
-* Svelte Ethers Store (a convenience library which makes interaction with Ethers simpler when using Svelte)
+* Vite (a packaging library, handy for compiling Typescript)
 * Metamask (a popular wallet for crypto tokens and smart contract interaction)
 * Obscuro Testnet (an open, permissionless test network for Obscuro)
+* Obscuro Wallet Extension (a proxy for an Obscuro node, which handles encryption for all data between the wallet and the network)
 
 ## Environment Setup
 The following steps are required:
@@ -71,23 +71,23 @@ This part of the process is standard Ethereum application development.
 
 ![Remix Hardhat](./readme-images/remix-hardhat.png)
 
-4. Deploy the ERC20Basic contract to Hardhat using the `App Developer` account, identified by its address, and take a note of the contract address.
+4. Deploy the ERC20 contract to Hardhat using the `App Developer` account, identified by its address, and take a note of the contract address.
 
-![Deploy erc20basic](./readme-images/deploy-erc20basic.png)
+![Deploy erc20](./readme-images/deploy-erc20.png)
 
-5. Deploy the Guess contract to Hardhat using the `App Developer` account, and take a note of the contract address. The Guess contract constructor takes a `_size` value, which is the range for the random number to be generated within, and a `_tokenAddress` parameter, which is the address of the ERC20Basic contract deployed in the previous step. The Guess contract needs this in order to know where to take the game fee from.
+5. Deploy the Guess contract to Hardhat using the `App Developer` account, and take a note of the contract address. The Guess contract constructor takes a `_size` value, which is the range for the random number to be generated within, and a `_tokenAddress` parameter, which is the address of the ERC20 contract deployed in the previous step. The Guess contract needs this in order to know where to take the game fee from.
 
 ![Remix deploy Guess](./readme-images/remix-deploy-guess.png)
 
-6. Update the contract addresses `ERC20_ADDRESS` and `GUESS_ADDRESS` in [App.svelte](./src/App.svelte).
+6. Confirm and update the contract addresses `ERC20_ADDRESS` and `GUESS_ADDRESS` in [index.ts](./src/index.ts).
 
 7. Switch to the transaction tab on Remix. Set up the account balances for the end-user by transferring some tokens, using the application developer account and the `transfer` function of the ERC20 contract and specifying the end-user as the recipient. Check the token balance of the end-user using the `balanceOf` function.
 
 ![Fund end user](./readme-images/fund-end-user.png)
 
-8. Start the user interface for the game, ignoring warnings if possible.
+8. Start the user interface for the game, ignoring warnings if possible. Note that the user interface has been updated and does not look exactly like these screenshots.
 
-![Svelte start](./readme-images/svelte-start.png)
+![User interface start](./readme-images/user-interface-start.png)
 
 9. The app is not initially connected to Metamask, and when the page first loads, it should prompt Metamask to pop up and seek connection wth the end-user account. Approve this.
 
@@ -131,7 +131,7 @@ Because Obscuro uses the same tools and EVM as Ethereum itself, it should be pos
 
 Take note of the transaction hash `0x7d1decd746590cc9214f9ab1b23837c7be785b438877ca89bc223f45ef8c5a6a`. This can be used to view the transaction on ObscuroScan.
 
-6. Update the contract addresses `ERC20_ADDRESS` and `GUESS_ADDRESS` in [App.svelte](./src/App.svelte).
+6. Confirm and update the contract addresses `ERC20_ADDRESS` and `GUESS_ADDRESS` in [index.ts](./src/index.ts).
 
 7. For this deployment, use a single user and account for deployment and game playing.
 
