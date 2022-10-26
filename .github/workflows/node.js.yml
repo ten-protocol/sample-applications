@@ -26,10 +26,13 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+        cache-dependency-path: ./number-guessing-game/package-lock.json
+    - name: run npm commands
+      working-directory: number-guessing-game
     - run: npm ci
     - run: npm run build --if-present
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./dist
+        publish_dir: ./number-guessing-game/dist
