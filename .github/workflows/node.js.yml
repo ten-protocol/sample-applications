@@ -10,7 +10,7 @@ on:
   pull_request:
       
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -36,7 +36,25 @@ jobs:
       run: npm run build --if-present
       working-directory: ./number-guessing-game
   
-    - name: Deploy
+    - name: Upload production-ready build files
+      uses: actions/upload-artifact@v2
+      with:
+        name: production-files
+        path: ./number-guessing-game/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+    - name: Download artifact
+      uses: actions/download-artifact@v2
+      with:
+        name: production-files
+        path: ./number-guessing-game/dist
+
+    - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
