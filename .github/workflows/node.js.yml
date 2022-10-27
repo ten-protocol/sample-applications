@@ -20,17 +20,16 @@ jobs:
       with:
         node-version: '16'
         
-    - name: Cache dependencies
-      uses: actions/cache@v3
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
-
-    - run: npm i
+    - name: Install dependencies
+      run: npm i
       working-directory: ./number-guessing-game
-    - run: npm run build --if-present
+
+    - name: Compile contract
+      run: npx hardhat clean & npx hardhat compile 
+      working-directory: ./number-guessing-game
+
+    - name: Build application
+      run: npm run build --if-present
       working-directory: ./number-guessing-game
   
     - name: Deploy
