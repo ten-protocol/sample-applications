@@ -24,6 +24,10 @@ jobs:
       run: npm i
       working-directory: ./number-guessing-game
 
+    - name: Install Hardhat with ESM support
+      run: npm i hardhat@esm
+      working-directory: ./number-guessing-game
+
     - name: Compile contract
       run: npx hardhat clean & npx hardhat compile 
       working-directory: ./number-guessing-game
