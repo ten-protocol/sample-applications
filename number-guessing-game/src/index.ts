@@ -8,6 +8,7 @@ import Guess from '../artifacts/contracts/Guess.sol/Guess.json';
 // Contract address is hard-coded for now.
 const ERC20_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
 const GUESS_ADDRESS = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
+const ROLLUP_PATH = "http://testnet.obscuroscan.io/api/rollup/";
 
 const addNetworkLink = document.getElementById('add-network-link') as HTMLLinkElement;
 const guessButton = document.getElementById('guess-button') as HTMLButtonElement;
@@ -17,7 +18,7 @@ const approveInput = document.getElementById('approve-input') as HTMLInputElemen
 const guessRange = document.getElementById('guess-range') as HTMLSpanElement;
 const connectedAddress = document.getElementById('connected-address') as HTMLSpanElement;
 const chainId = document.getElementById('chain-id') as HTMLSpanElement;
-const allowance = document.getElementById('allowance') as HTMLSpanElement;
+const allowanceLabel = document.getElementById('allowance') as HTMLSpanElement;
 
 const provider = new ethers.providers.Web3Provider(window.ethereum)
 await provider.send('eth_requestAccounts', []);
@@ -28,6 +29,7 @@ const signerAddress = await signer.getAddress();
 const filterApproval = erc20Contract.filters.Approval(signerAddress);
 const filterCorrect = guessContract.filters.Correct(signerAddress);
 const filterIncorrect = guessContract.filters.Incorrect(signerAddress);
+const filterSame = guessContract.filters.Same(signerAddress);
 const filterWarmer = guessContract.filters.Warmer(signerAddress);
 const filterColder = guessContract.filters.Colder(signerAddress);
 
@@ -35,42 +37,42 @@ const symbol = await erc20Contract.symbol();
 guessRange.innerText = await guessContract.guessRange();
 connectedAddress.innerText = signerAddress.substring(0, 18) + '..';
 provider.getSigner().getChainId().then(result => {chainId.innerText = result.toString()});
-updateAllowance();
+erc20Contract.allowance(signerAddress, GUESS_ADDRESS).then((result: bigint) => {
+    updateAllowance(result);
+});
 
 addNetworkLink?.addEventListener('click', _ => { addNetwork(); });
 guessButton?.addEventListener('click', _ => { guess() });
 approveButton?.addEventListener('click', _ => { approve() });
 
-erc20Contract.on(filterApproval, (owner, _, value) => {
-    updateAllowance();
-    displayMessage(`Approval of ${ethers.utils.formatEther(value)} ${symbol} by account ${owner} to the game was successful.`);
+erc20Contract.on(filterApproval, (owner, _, value, event) => {
+    updateAllowance(value);
+    displayMessage(`Approval of ${ethers.utils.formatEther(value)} ${symbol} by account ${owner} to the game was successful.`, event.blockNumber);
+});
+guessContract.on(filterCorrect, (_, guess, prize, event, allowance) => {
+    updateAllowance(allowance);
+    displayMessage(`Congratulations! Your guess of ${guess} has won you the prize of ${ethers.utils.formatEther(prize)} ${symbol}.`, event.blockNumber);
+});
+guessContract.on(filterIncorrect, (_, guess, prize, event, allowance) => {
+    updateAllowance(allowance);
+    displayMessage(`Sorry! Your guess of ${guess} was wrong. If you try again, we'll tell you whether you're getting warmer. The prize pool of ${ethers.utils.formatEther(prize)} ${symbol} is stil up for grabs.`, event.blockNumber);
+});
+guessContract.on(filterSame, (_, guess, prize, event, allowance) => {
+    updateAllowance(allowance);
+    displayMessage(`Keep going! Your guess of ${guess} was as far from the correct value as your previous try. The prize pool of ${ethers.utils.formatEther(prize)} ${symbol} is within reach!.`, event.blockNumber);
+});
+guessContract.on(filterWarmer, (_, guess, prize, event, allowance) => {
+    updateAllowance(allowance);
+    displayMessage(`Looking good! Your guess of ${guess} was closer that your previous try. The prize pool of ${ethers.utils.formatEther(prize)} ${symbol} is within reach!.`, event.blockNumber);
+});
+guessContract.on(filterColder, (_, guess, prize, event, allowance) => {
+    updateAllowance(allowance);
+    displayMessage(`Uh oh. Your guess of ${guess} was worse than your previous try. Take heart! The prize pool is now  ${ethers.utils.formatEther(prize)} ${symbol}.`, event.blockNumber);
 });
 
-guessContract.on(filterCorrect, (_, guess, prize) => {
-    updateAllowance();
-    displayMessage(`Congratulations! Your guess of ${guess} has won you the prize of ${ethers.utils.formatEther(prize)} ${symbol}.`);
-});
-
-guessContract.on(filterIncorrect, (_, guess, prize) => {
-    updateAllowance();
-    displayMessage(`Sorry! Your guess of ${guess} was wrong. If you try again, we'll tell you whether you're getting warmer. The prize pool of ${ethers.utils.formatEther(prize)} ${symbol} is stil up for grabs.`);
-});
-
-guessContract.on(filterWarmer, (_, guess, prize) => {
-    updateAllowance();
-    displayMessage(`Looking good! Your guess of ${guess} was closer that your previous try. The prize pool of ${ethers.utils.formatEther(prize)} ${symbol} is within reach!.`);
-});
-
-guessContract.on(filterColder, (_, guess, prize) => {
-    updateAllowance();
-    displayMessage(`Uh oh. Your guess of ${guess} was worse than your previous try. Take heart! The prize pool is now  ${ethers.utils.formatEther(prize)} ${symbol}.`);
-});
-
-function updateAllowance() {
-    erc20Contract.allowance(signerAddress, GUESS_ADDRESS).then((result: bigint) => {
-        guessButton.disabled = (result == BigInt(0));
-        allowance.innerText = formatEther(result).split('.')[0];
-    });
+function updateAllowance(allowance: bigint) {
+    guessButton.disabled = (allowance == BigInt(0));
+    allowanceLabel.innerText = formatEther(allowance).split('.')[0];
 }
 
 async function approve() {
@@ -98,10 +100,23 @@ async function guess() {
     }
 }
 
-function displayMessage(msg: string) {
+function displayMessage(msg: string, rollupID: string) {
     const para = (<HTMLTemplateElement>document.getElementById('message')).content.querySelector('p');
     const message = document.importNode(para as HTMLParagraphElement, true);
     message.append(msg);
+
+    if (rollupID != '') {
+        fetch(ROLLUP_PATH, {
+            body: parseInt(rollupID, 16).toString(),
+            method: 'POST'
+        }).then(result => {
+            result.json().then(json => {
+                message.append('The transaction was in this rollup:' + json);
+            });
+        }).catch(error => {
+            message.append('Failed to retrieve rollup data for the transaction. ' + error);
+        })
+    }
     document.querySelector('main')?.prepend(message);
 }
 
@@ -121,9 +136,9 @@ function addNetwork(): void {
         }],
     })
     .then((_: any) => {
-        displayMessage('Obscuro Testnet network added.');
+        displayMessage('Obscuro Testnet network added.', '');
     })
     .catch((_: any) => {
-        displayMessage('Failed to add Obscuro Testnet network. Please check the wallet extension is running.');
+        displayMessage('Failed to add Obscuro Testnet network. Please check the wallet extension is running.', '');
     });
 }

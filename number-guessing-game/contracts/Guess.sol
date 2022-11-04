@@ -104,10 +104,11 @@ contract Guess {
     uint8 public guessRange;
     IERC20 public erc20;
 
-    event Correct(address indexed player, uint8 guess, uint prize);
-    event Incorrect(address indexed player, uint8 guess, uint prize);
-    event Warmer(address indexed player, uint8 guess, uint prize);
-    event Colder(address indexed player, uint8 guess, uint prize);
+    event Correct(address indexed player, uint8 guess, uint prize, uint allowance);
+    event Incorrect(address indexed player, uint8 guess, uint prize, uint allowance);
+    event Same(address indexed player, uint8 guess, uint prize, uint allowance);
+    event Warmer(address indexed player, uint8 guess, uint prize, uint allowance);
+    event Colder(address indexed player, uint8 guess, uint prize, uint allowance);
 
     constructor(uint8 range, address tokenAddress) {
         owner = payable(msg.sender);
@@ -122,7 +123,7 @@ contract Guess {
         _attemptAddresses.push(msg.sender);
         erc20.transferFrom(msg.sender, address(this), 1 ether);
         if (guess == _target) {
-            emit Correct(msg.sender, guess, prizePool());
+            emit Correct(msg.sender, guess, prizePool(), erc20.allowance(msg.sender, address(this)));
             erc20.transfer(msg.sender, prizePool());
             _setNewTarget();
         } else {
@@ -130,13 +131,13 @@ contract Guess {
             uint8 miss = guess > _target ? guess - _target : _target - guess;
             _prevMisses[msg.sender] = miss;
             if (previous == 0) {
-                emit Incorrect(msg.sender, guess, prizePool());
-                return;
-            }
-            if (miss > previous) {
-                emit Colder(msg.sender, guess, prizePool());
+                emit Incorrect(msg.sender, guess, prizePool(), erc20.allowance(msg.sender, address(this)));
+            } else if (miss < previous) {
+                emit Warmer(msg.sender, guess, prizePool(), erc20.allowance(msg.sender, address(this)));
+            } else if (miss > previous) {
+                emit Colder(msg.sender, guess, prizePool(), erc20.allowance(msg.sender, address(this)));
             } else {
-                emit Warmer(msg.sender, guess, prizePool());
+                emit Same(msg.sender, guess, prizePool(), erc20.allowance(msg.sender, address(this)));
             }
         }
     }

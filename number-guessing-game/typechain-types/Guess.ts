@@ -64,15 +64,17 @@ export interface GuessInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "prizePool", data: BytesLike): Result;
 
   events: {
-    "Colder(address,uint8,uint256)": EventFragment;
-    "Correct(address,uint8,uint256)": EventFragment;
-    "Incorrect(address,uint8,uint256)": EventFragment;
-    "Warmer(address,uint8,uint256)": EventFragment;
+    "Colder(address,uint8,uint256,uint256)": EventFragment;
+    "Correct(address,uint8,uint256,uint256)": EventFragment;
+    "Incorrect(address,uint8,uint256,uint256)": EventFragment;
+    "Same(address,uint8,uint256,uint256)": EventFragment;
+    "Warmer(address,uint8,uint256,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Colder"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Correct"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Incorrect"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "Same"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Warmer"): EventFragment;
 }
 
@@ -80,9 +82,10 @@ export interface ColderEventObject {
   player: string;
   guess: number;
   prize: BigNumber;
+  allowance: BigNumber;
 }
 export type ColderEvent = TypedEvent<
-  [string, number, BigNumber],
+  [string, number, BigNumber, BigNumber],
   ColderEventObject
 >;
 
@@ -92,9 +95,10 @@ export interface CorrectEventObject {
   player: string;
   guess: number;
   prize: BigNumber;
+  allowance: BigNumber;
 }
 export type CorrectEvent = TypedEvent<
-  [string, number, BigNumber],
+  [string, number, BigNumber, BigNumber],
   CorrectEventObject
 >;
 
@@ -104,21 +108,36 @@ export interface IncorrectEventObject {
   player: string;
   guess: number;
   prize: BigNumber;
+  allowance: BigNumber;
 }
 export type IncorrectEvent = TypedEvent<
-  [string, number, BigNumber],
+  [string, number, BigNumber, BigNumber],
   IncorrectEventObject
 >;
 
 export type IncorrectEventFilter = TypedEventFilter<IncorrectEvent>;
 
+export interface SameEventObject {
+  player: string;
+  guess: number;
+  prize: BigNumber;
+  allowance: BigNumber;
+}
+export type SameEvent = TypedEvent<
+  [string, number, BigNumber, BigNumber],
+  SameEventObject
+>;
+
+export type SameEventFilter = TypedEventFilter<SameEvent>;
+
 export interface WarmerEventObject {
   player: string;
   guess: number;
   prize: BigNumber;
+  allowance: BigNumber;
 }
 export type WarmerEvent = TypedEvent<
-  [string, number, BigNumber],
+  [string, number, BigNumber, BigNumber],
   WarmerEventObject
 >;
 
@@ -198,48 +217,69 @@ export interface Guess extends BaseContract {
   };
 
   filters: {
-    "Colder(address,uint8,uint256)"(
+    "Colder(address,uint8,uint256,uint256)"(
       player?: PromiseOrValue<string> | null,
       guess?: null,
-      prize?: null
+      prize?: null,
+      allowance?: null
     ): ColderEventFilter;
     Colder(
       player?: PromiseOrValue<string> | null,
       guess?: null,
-      prize?: null
+      prize?: null,
+      allowance?: null
     ): ColderEventFilter;
 
-    "Correct(address,uint8,uint256)"(
+    "Correct(address,uint8,uint256,uint256)"(
       player?: PromiseOrValue<string> | null,
       guess?: null,
-      prize?: null
+      prize?: null,
+      allowance?: null
     ): CorrectEventFilter;
     Correct(
       player?: PromiseOrValue<string> | null,
       guess?: null,
-      prize?: null
+      prize?: null,
+      allowance?: null
     ): CorrectEventFilter;
 
-    "Incorrect(address,uint8,uint256)"(
+    "Incorrect(address,uint8,uint256,uint256)"(
       player?: PromiseOrValue<string> | null,
       guess?: null,
-      prize?: null
+      prize?: null,
+      allowance?: null
     ): IncorrectEventFilter;
     Incorrect(
       player?: PromiseOrValue<string> | null,
       guess?: null,
-      prize?: null
+      prize?: null,
+      allowance?: null
     ): IncorrectEventFilter;
 
-    "Warmer(address,uint8,uint256)"(
+    "Same(address,uint8,uint256,uint256)"(
       player?: PromiseOrValue<string> | null,
       guess?: null,
-      prize?: null
+      prize?: null,
+      allowance?: null
+    ): SameEventFilter;
+    Same(
+      player?: PromiseOrValue<string> | null,
+      guess?: null,
+      prize?: null,
+      allowance?: null
+    ): SameEventFilter;
+
+    "Warmer(address,uint8,uint256,uint256)"(
+      player?: PromiseOrValue<string> | null,
+      guess?: null,
+      prize?: null,
+      allowance?: null
     ): WarmerEventFilter;
     Warmer(
       player?: PromiseOrValue<string> | null,
       guess?: null,
-      prize?: null
+      prize?: null,
+      allowance?: null
     ): WarmerEventFilter;
   };
 
