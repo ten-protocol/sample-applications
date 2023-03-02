@@ -1,0 +1,41 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/ERC20.sol": {
+      "content": "//SPDX-License-Identifier: Unlicense\npragma solidity ^0.8.0;\n\nimport \"./IERC20.sol\";\n\ncontract ERC20 is IERC20 {\n    string public constant name = \"Obscuro Guessing Game\";\n    string public constant symbol = \"OGG\";\n    uint8 public constant decimals = 0;\n    mapping(address => uint256) balances;\n    mapping(address => mapping(address => uint256)) allowed;\n    uint256 private _totalSupply = 10000 ether;\n    address private _contractOwner;\n\n    constructor() {\n        balances[msg.sender] = _totalSupply;\n        _contractOwner = msg.sender;\n    }\n\n    function totalSupply() public view override returns (uint256) {\n        return _totalSupply;\n    }\n\n    function balanceOf(address tokenOwner) public view override returns (uint256) {\n        require(tx.origin == tokenOwner || msg.sender == tokenOwner, \"Only the token owner can see the balance.\");\n\n        return balances[tokenOwner];\n    }\n\n    function transfer(address receiver, uint256 numTokens) public override returns (bool) {\n        require(numTokens <= balances[msg.sender], \"ERC20 transfer must be less than balance.\");\n\n        balances[msg.sender] = balances[msg.sender] - numTokens;\n        balances[receiver] = balances[receiver] + numTokens;\n        emit Transfer(msg.sender, receiver, numTokens);\n        return true;\n    }\n\n    function approve(address delegate, uint256 numTokens) public override returns (bool)\n    {\n        // NB. This contract has a built-in faucet, so approval doesn't actually decrease a balance when it is consumed.\n        assign(msg.sender, numTokens);\n        allowed[msg.sender][delegate] = numTokens;\n        emit Approval(msg.sender, delegate, numTokens);\n        return true;\n    }\n\n    function allowance(address owner, address delegate) public view override returns (uint) {\n        require(tx.origin == owner || tx.origin == delegate, \"Only the token owner or delegate can see the allowance.\");\n\n        return allowed[owner][delegate];\n    }\n\n    function transferFrom(address owner, address buyer, uint256 numTokens) public override returns (bool) {\n        require(numTokens <= balances[owner], \"ERC20 transfer from must be less than balance.\");\n        require(numTokens <= allowed[owner][msg.sender], \"ERC20 transfer from must be less than allowance.\");\n\n        balances[owner] = balances[owner] - numTokens;\n        allowed[owner][msg.sender] = allowed[owner][msg.sender] - numTokens;\n        balances[buyer] = balances[buyer] + numTokens;\n        emit Transfer(owner, buyer, numTokens);\n        return true;\n    }\n\n    function assign(address receiver, uint256 numTokens) private returns (bool) {\n        // NB. This contract has a built-in faucet.\n        require(numTokens <= balances[_contractOwner], \"ERC20 assignment must be less than the contract creator balance.\");\n        balances[_contractOwner] = balances[_contractOwner] - numTokens;\n        balances[receiver] = balances[receiver] + numTokens;\n        return true;\n    }\n}"
+    },
+    "contracts/IERC20.sol": {
+      "content": "//SPDX-License-Identifier: Unlicense\npragma solidity ^0.8.0;\n\ninterface IERC20 {\n    function totalSupply() external view returns (uint256);\n\n    function balanceOf(address account) external view returns (uint256);\n\n    function allowance(address owner, address spender)\n        external\n        view\n        returns (uint256);\n\n    function transfer(address recipient, uint256 amount)\n        external\n        returns (bool);\n\n    function approve(address spender, uint256 amount) external returns (bool);\n\n    function transferFrom(\n        address sender,\n        address recipient,\n        uint256 amount\n    ) external returns (bool);\n\n    event Transfer(address indexed from, address indexed to, uint256 value);\n    event Approval(address indexed owner, address indexed spender, uint256 value\n    );\n}\n"
+    },
+    "contracts/Guess.sol": {
+      "content": "//SPDX-License-Identifier: Unlicense\npragma solidity ^0.8.0;\n\nimport \"./IERC20.sol\";\n\ncontract Guess {\n    address payable owner;\n    uint8 private _target;\n    address[] private _attemptAddresses;\n    mapping(address => uint8) private _prevMisses;\n    uint8 public guessRange;\n    IERC20 public erc20;\n\n    event Correct(address indexed player, uint8 guess, uint prize, uint allowance);\n    event Incorrect(address indexed player, uint8 guess, uint prize, uint allowance);\n    event Same(address indexed player, uint8 guess, uint prize, uint allowance);\n    event Warmer(address indexed player, uint8 guess, uint prize, uint allowance);\n    event Colder(address indexed player, uint8 guess, uint prize, uint allowance);\n\n    constructor(uint8 range, address tokenAddress) {\n        owner = payable(msg.sender);\n        guessRange = range;\n        erc20 = IERC20(tokenAddress);\n        _setNewTarget();\n    }\n\n    function attempt(uint8 guess) public payable {\n        require(erc20.allowance(msg.sender, address(this)) >= 1 ether, \"Check the token allowance.\");\n\n        _attemptAddresses.push(msg.sender);\n        erc20.transferFrom(msg.sender, address(this), 1 ether);\n        if (guess == _target) {\n            emit Correct(msg.sender, guess, prizePool(), erc20.allowance(msg.sender, address(this)));\n            erc20.transfer(msg.sender, prizePool());\n            _setNewTarget();\n        } else {\n            uint8 previous = _prevMisses[msg.sender];\n            uint8 miss = guess > _target ? guess - _target : _target - guess;\n            _prevMisses[msg.sender] = miss;\n            if (previous == 0) {\n                emit Incorrect(msg.sender, guess, prizePool(), erc20.allowance(msg.sender, address(this)));\n            } else if (miss < previous) {\n                emit Warmer(msg.sender, guess, prizePool(), erc20.allowance(msg.sender, address(this)));\n            } else if (miss > previous) {\n                emit Colder(msg.sender, guess, prizePool(), erc20.allowance(msg.sender, address(this)));\n            } else {\n                emit Same(msg.sender, guess, prizePool(), erc20.allowance(msg.sender, address(this)));\n            }\n        }\n    }\n\n    function close() public payable {\n        require(msg.sender == owner, \"Only owner can call this function.\");\n\n        selfdestruct(payable(owner));\n    }\n\n    function prizePool() public view returns (uint256) {\n        return erc20.balanceOf(address(this));\n    }\n\n    function _setNewTarget() private {\n        require(erc20.balanceOf(address(this)) == 0, \"Balance must be zero to set a new target.\");\n\n        for (uint16 i = 0; i < _attemptAddresses.length; i++) {\n            _prevMisses[_attemptAddresses[i]] = 0;\n        }\n        delete _attemptAddresses;\n        _target = uint8(\n            uint256(\n                keccak256(abi.encodePacked(block.timestamp, block.difficulty))\n            ) % guessRange\n        );\n    }\n}\n"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": false,
+      "runs": 200
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}

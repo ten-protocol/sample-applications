@@ -10,7 +10,15 @@ import fs from "fs";
 
 const config: HardhatUserConfig = {
   solidity: "0.8.17",
-  defaultNetwork: "hardhat"
+  defaultNetwork: "hardhat",
+  namedAccounts: {
+    app_developer: {
+      default: 0,
+    },
+    end_user: {
+      default: 1,
+    },
+  },
 };
 
 try {
