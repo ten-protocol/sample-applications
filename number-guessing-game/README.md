@@ -30,6 +30,7 @@ git clone
 3. Install NPM packages specified in `package.json` by running:
 ```shell
 npm install
+npm install hardhat@esm
 ```
 4. The contract is deployed initially to a Hardhat network. Hardhat and its dependencies will have been  installed in the previous step. More details are available at https://hardhat.org/hardhat-runner/docs/getting-started#overview. Once Hardhat is installed, try running some of the following tasks:
 ```shell
