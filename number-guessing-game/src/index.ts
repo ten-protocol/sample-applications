@@ -6,8 +6,8 @@ import Guess from '../artifacts/contracts/Guess.sol/Guess.json';
 // Developer private key: 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 // User private key: 0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d
 // Contract address is hard-coded for now.
-const ERC20_ADDRESS = '0x5FbDB2315678afecb367f032d93F642f64180aa3';
-const GUESS_ADDRESS = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512';
+const ERC20_ADDRESS = '0xeDa66Cc53bd2f26896f6Ba6b736B1Ca325DE04eF';
+const GUESS_ADDRESS = '0xC0370e0b5C1A41D447BDdA655079A1B977C71aA9';
 const ROLLUP_PATH = "http://testnet.obscuroscan.io/api/rollup/";
 
 const addNetworkLink = document.getElementById('add-network-link') as HTMLLinkElement;
