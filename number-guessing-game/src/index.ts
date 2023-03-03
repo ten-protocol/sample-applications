@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
-import ERC20 from '../artifacts/contracts/Guess.sol/ERC20.json';
+import ERC20 from '../artifacts/contracts/ERC20.json/ERC20.json';
 import Guess from '../artifacts/contracts/Guess.sol/Guess.json';
 // The Hardhat configuration starts with just two accounts. Import these into your wallet.
 // Developer private key: 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
