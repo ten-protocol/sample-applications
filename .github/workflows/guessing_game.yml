@@ -4,11 +4,8 @@
 name: Deployment of Obscuro sample application front ends
 
 on:
-  push:
-    branches: 
-      - main
-  pull_request:
-      
+  workflow_dispatch:     
+ 
 jobs:
   deploy:
     runs-on: ubuntu-latest

@@ -36,8 +36,7 @@ contract ERC20 is IERC20 {
         return true;
     }
 
-    function approve(address delegate, uint256 numTokens) public override returns (bool)
-    {
+    function approve(address delegate, uint256 numTokens) public override returns (bool) {
         // NB. This contract has a built-in faucet, so approval doesn't actually decrease a balance when it is consumed.
         assign(msg.sender, numTokens);
         allowed[msg.sender][delegate] = numTokens;
