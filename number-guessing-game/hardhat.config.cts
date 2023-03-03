@@ -1,9 +1,7 @@
 // File renamed hardhat.config.cts to allow use with hardhat@esm and support ESM / module: esnext in tsconfig.json.
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
-// Hardhat-deploy plugin - https://www.npmjs.com/package/hardhat-deploy
 import 'hardhat-deploy';
-// Hardhat ignore warnings plugin - https://www.npmjs.com/package/hardhat-ignore-warnings
 import 'hardhat-ignore-warnings';
 
 import fs from "fs";

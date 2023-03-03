@@ -1,7 +1,7 @@
-// deploy/00_deploy_my_contract.js
 module.exports = async ({getNamedAccounts, deployments}) => {
     const {deploy} = deployments;
     const {app_developer} = await getNamedAccounts();
+
     const token = await deploy('ERC20', {
         from: app_developer,
         args: [],
@@ -14,4 +14,4 @@ module.exports = async ({getNamedAccounts, deployments}) => {
         log: true,
     });
 };
-module.exports.tags = ['ERC20'];
+module.exports.tags = ['ERC20', 'Guess'];
