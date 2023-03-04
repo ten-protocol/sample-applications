@@ -1,1 +1,6 @@
 **/.DS_Store
+
+# ignores for the number guessing game
+**/number-guessing-game/deployments
+
+

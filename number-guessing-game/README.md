@@ -1,11 +1,18 @@
 # Basic Sample Obscuro Project
 
 ## Introduction
-This project demonstrates a basic Obscuro use case, which is a simple number guessing game. The contract generates a random secret number when it's deployed, which is never revealed to an operator or end-user because of the privacy benefits of Obscuro. The goal of the game is to guess this number, and each time an attempt is made, an entrance fee of 1 token is paid. If a user correctly guesses the number, the contract will pay out all of the accumulated entrance fees to them, and reset itself with a new random number.
+This project demonstrates a basic Obscuro use case, which is a simple number guessing game. The contract generates a 
+random secret number when it's deployed, which is never revealed to an operator or end-user because of the privacy 
+benefits of Obscuro. The goal of the game is to guess this number, and each time an attempt is made, an entrance fee of 
+1 token is paid. If a user correctly guesses the number, the contract will pay out all of the accumulated entrance 
+fees to them, and reset itself with a new random number.
 
 Without Obscuro, it would be possible to look up the internal state of the contract and cheat, and the game wouldn't work. 
 
-The contract functionality comes with two contracts in the `Guess.sol` file; a basic ERC20 contract which allows the user to hold assets and pay the entrance fee to the game, and the game contract itself. This includes a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.
+The contract functionality comes with two contracts in the `Guess.sol` file; a basic ERC20 contract which allows the 
+user to hold assets and pay the entrance fee to the game, and the game contract itself. This includes a test for that 
+contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the 
+available accounts.
 
 In developing this game, the following tools were used:
 * Git (Source code versioning tool)
@@ -21,18 +28,16 @@ In developing this game, the following tools were used:
 
 ## Environment Setup
 The following steps are required:
-0. Install git, outside the scope for this project.
 1. Clone this repository into a suitable folder.
-```shell
-git clone 
-```
 2. Install NPM and NPX, and ensure they are running correctly. This is outside the scope of this project.
 3. Install NPM packages specified in `package.json` by running:
 ```shell
 npm install
 npm install hardhat@esm
 ```
-4. The contract is deployed initially to a Hardhat network. Hardhat and its dependencies will have been  installed in the previous step. More details are available at https://hardhat.org/hardhat-runner/docs/getting-started#overview. Once Hardhat is installed, try running some of the following tasks:
+4. The contract is deployed initially to a Hardhat network. Hardhat and its dependencies will have been installed in 
+the previous step. More details are available at https://hardhat.org/hardhat-runner/docs/getting-started#overview. 
+Once Hardhat is installed, try running some of the following tasks:
 ```shell
 npx hardhat accounts
 npx hardhat compile
@@ -42,7 +47,9 @@ npx hardhat node
 node scripts/sample-script.js
 npx hardhat help
 ```
-5. Starting Hardhat with `npx hardhat node` will create 2 accounts. The first is used for the application developer and the second is used for an end-user. Take a note of the private keys generated for these (note that these private keys are well-known!).
+5. Starting Hardhat with `npx hardhat node` will create 2 accounts. The first is used for the application developer and
+the second is used for an end-user. The private keys used are in the [network config](./config/networks.json) file 
+(note that these private keys are well-known!).
 
 ![Start Hardhat](./readme-images/hardhat-start.png)
 
