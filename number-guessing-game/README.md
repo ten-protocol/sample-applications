@@ -39,7 +39,6 @@ npm install hardhat@esm
 the previous step. More details are available at https://hardhat.org/hardhat-runner/docs/getting-started#overview. 
 Once Hardhat is installed, try running some of the following tasks:
 ```shell
-npx hardhat accounts
 npx hardhat compile
 npx hardhat clean
 npx hardhat test

@@ -37,7 +37,6 @@ contract ERC20 is IERC20 {
     }
 
     function approve(address delegate, uint256 numTokens) public override returns (bool) {
-        // NB. This contract has a built-in faucet, so approval doesn't actually decrease a balance when it is consumed.
         assign(msg.sender, numTokens);
         allowed[msg.sender][delegate] = numTokens;
         emit Approval(msg.sender, delegate, numTokens);
@@ -62,8 +61,8 @@ contract ERC20 is IERC20 {
     }
 
     function assign(address receiver, uint256 numTokens) private returns (bool) {
-        // NB. This contract has a built-in faucet.
         require(numTokens <= balances[_contractOwner], "ERC20 assignment must be less than the contract creator balance.");
+
         balances[_contractOwner] = balances[_contractOwner] - numTokens;
         balances[receiver] = balances[receiver] + numTokens;
         return true;
