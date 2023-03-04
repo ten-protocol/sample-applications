@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
-import ERC20 from '../artifacts/contracts/ERC20.json/ERC20.json';
+import ERC20 from '../artifacts/contracts/ERC20.sol/ERC20.json';
 import Guess from '../artifacts/contracts/Guess.sol/Guess.json';
 // The Hardhat configuration starts with just two accounts. Import these into your wallet.
 // Developer private key: 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
@@ -47,7 +47,7 @@ approveButton?.addEventListener('click', _ => { approve() });
 
 erc20Contract.on(filterApproval, (owner, _, value, event) => {
     updateAllowance(value);
-    displayMessage(`Approval of ${ethers.utils.formatEther(value)} ${symbol} by account ${owner} to the game was successful.`, event.blockNumber);
+    displayMessage(`Approval of ${ethers.utils.formatEther(value)} ${symbol} by account ${owner} to the game was successful. `, event.blockNumber);
 });
 guessContract.on(filterCorrect, (_, guess, prize, event, allowance) => {
     updateAllowance(allowance);

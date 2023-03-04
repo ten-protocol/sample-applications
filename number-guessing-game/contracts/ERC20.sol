@@ -67,4 +67,8 @@ contract ERC20 is IERC20 {
         balances[receiver] = balances[receiver] + numTokens;
         return true;
     }
+
+    // for conformance with hardhat and metamask
+    receive() external payable {}
+    fallback() external payable {}
 }

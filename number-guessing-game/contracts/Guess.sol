@@ -72,4 +72,8 @@ contract Guess {
             ) % guessRange
         );
     }
+
+    // for conformance with hardhat and metamask
+    receive() external payable {}
+    fallback() external payable {}
 }
