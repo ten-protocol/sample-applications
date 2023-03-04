@@ -2,5 +2,5 @@
 
 # ignores for the number guessing game
 **/number-guessing-game/deployments
-
+**/number-guessing-game/typechain-types
 
