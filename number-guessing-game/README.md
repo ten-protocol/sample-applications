@@ -43,12 +43,10 @@ npx hardhat compile
 npx hardhat clean
 npx hardhat test
 npx hardhat node
-node scripts/sample-script.js
 npx hardhat help
 ```
-5. Starting Hardhat with `npx hardhat node` will create 2 accounts. The first is used for the application developer and
-the second is used for an end-user. The private keys used are in the [network config](./config/networks.json) file 
-(note that these private keys are well-known!).
+5. Starting Hardhat with `npx hardhat node` will start a local hardhat network with the two accounts as specified in 
+the [network config](./config/networks.json) file (note that these private keys are well-known!)
 
 ![Start Hardhat](./readme-images/hardhat-start.png)
 
