@@ -25,10 +25,10 @@ contract Guess {
     }
 
     function attempt(uint8 guess) public payable {
-        require(erc20.allowance(msg.sender, address(this)) >= 1, "Check the token allowance.");
+        require(erc20.allowance(msg.sender, address(this)) >= 1 ether, "Check the token allowance.");
 
         _attemptAddresses.push(msg.sender);
-        erc20.transferFrom(msg.sender, address(this), 1);
+        erc20.transferFrom(msg.sender, address(this), 1 ether);
         if (guess == _target) {
             emit Correct(msg.sender, guess, prizePool(), erc20.allowance(msg.sender, address(this)));
             erc20.transfer(msg.sender, prizePool());
