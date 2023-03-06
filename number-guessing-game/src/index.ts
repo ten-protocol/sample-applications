@@ -54,15 +54,15 @@ guessContract.on(filterIncorrect, (_, guess, prize, allowance) => {
 });
 guessContract.on(filterSame, (_, guess, prize, allowance) => {
     updateAllowance(allowance);
-    displayMessage(`Keep going! Your guess of ${guess} was as far from the correct value as your previous try. Your allowance is ${allowance} and the prize pool of ${ethers.utils.formatEther(prize)} ${symbol} is still up for grabs!`);
+    displayMessage(`Keep going! Your guess of ${guess} was as far from the correct value as your previous try. Your allowance is ${ethers.utils.formatEther(allowance)} and the prize pool of ${ethers.utils.formatEther(prize)} ${symbol} is still up for grabs!`);
 });
 guessContract.on(filterWarmer, (_, guess, prize, allowance) => {
     updateAllowance(allowance);
-    displayMessage(`Looking good! Your guess of ${guess} was closer that your previous try. Your allowance is ${allowance} and the prize pool of ${ethers.utils.formatEther(prize)} ${symbol} is still up for grabs!`);
+    displayMessage(`Looking good! Your guess of ${guess} was closer that your previous try. Your allowance is ${ethers.utils.formatEther(allowance)} and the prize pool of ${ethers.utils.formatEther(prize)} ${symbol} is still up for grabs!`);
 });
 guessContract.on(filterColder, (_, guess, prize, allowance) => {
     updateAllowance(allowance);
-    displayMessage(`Uh oh. Your guess of ${guess} was worse than your previous try. Take heart! Your allowance is ${allowance} and the prize pool is now ${ethers.utils.formatEther(prize)} ${symbol}.`);
+    displayMessage(`Uh oh. Your guess of ${guess} was worse than your previous try. Take heart! Your allowance is ${ethers.utils.formatEther(allowance)} and the prize pool is ${ethers.utils.formatEther(prize)} ${symbol}.`);
 });
 
 function updateAllowance(allowance: bigint) {
