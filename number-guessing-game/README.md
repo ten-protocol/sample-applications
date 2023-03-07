@@ -10,8 +10,8 @@ fees to them, and reset itself with a new random number.
 Without Obscuro, it would be possible to look up the internal state of the contract and cheat, and the game wouldn't work. 
 
 The contract functionality comes with two contracts; a basic ERC20 contract which allows the user to hold assets and 
-pay the entrance fee to the game, and the game contract itself. This includes a test for that contract, a sample script 
-hat deploys that contract, and an example of a task implementation, which simply lists the available accounts.
+pay the entrance fee to the game, and the game contract itself. This includes a test for that contract, and a sample 
+script that deploys that contract.
 
 In developing this game, the following tools were used:
 * Git (Source code versioning tool)
@@ -33,9 +33,9 @@ The following steps are required:
 npm install
 npm install hardhat@esm
 ```
-4. The contract is deployed initially to a Hardhat network. Hardhat and its dependencies will have been installed in 
-the previous step. More details are available at https://hardhat.org/hardhat-runner/docs/getting-started#overview. 
-Once Hardhat is installed, try running some of the following tasks:
+4. Hardhat and its dependencies will have been installed in the previous step. More details are available at 
+https://hardhat.org/hardhat-runner/docs/getting-started#overview. Once Hardhat is installed, try running some of the 
+following tasks:
 ```shell
 npx hardhat compile
 npx hardhat clean
@@ -48,11 +48,11 @@ ERC20 token and game contracts. You should take notice of the accounts and contr
 
 ![Start Hardhat](./readme-images/hardhat-start.png)
 
-6. Set up Metamask with the Hardhat network on `http://127.0.0.1:8545/` which chainId 1337. 
+6. Set up Metamask with the Hardhat network on `http://127.0.0.1:8545/` with chain ID 1337. 
 
 ![Metamask network](./readme-images/metamask-network-0.png)
 
-7. Import the accounts into Metamask using the private keys. 
+7. Import the accounts into Metamask using the private keys from the [network config](./config/networks.json).
 
 ![Metamask import](./readme-images/metamask-import.png)
 
@@ -86,7 +86,7 @@ number of guesses so far.
 Because Obscuro uses the same tools and EVM as Ethereum itself, it should be possible to replay the previous steps with 
 Obscuro's Testnet.
 
-1. Set up Metamask with the Obscuro network as described [here](https://docs.obscu.ro/wallet-extension/configure-metamask)
+1. Set up Metamask with the Obscuro network as described [here](https://docs.obscu.ro/wallet-extension/configure-metamask).
 
 2. Start up the wallet extension as described [here](https://docs.obscu.ro/wallet-extension/wallet-extension/) and
 generate a viewing key for both the application developer and end user accounts.
@@ -98,7 +98,7 @@ then request the user to sign a "generate viewing key" transaction.
 
 ![Wallet start](./readme-images/wallet-ephemeral.png)
 
-4. Request OBX funds for the two accounts using the [token faucet](https://docs.obscu.ro/testnet/faucet/)
+4. Request OBX funds for the two accounts using the [token faucet](https://docs.obscu.ro/testnet/faucet/).
 
 5. Deploy the contracts to the Obscuro Testnet using `npx hardhat deploy --network obscuro`. Take a note of the contract
 addresses from the console. 
