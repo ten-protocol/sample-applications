@@ -44,15 +44,15 @@ npx hardhat help
 ```
 5. Starting Hardhat with `npx hardhat node` will start a local hardhat network with the two accounts as specified in 
 the [network config](./config/networks.json) file (note that these private keys are well-known!) and will deploy the 
-ERC20 token and game contracts. You should take notice of the account and contract addresses for later. 
+ERC20 token and game contracts. You should take notice of the accounts and contract addresses for later. 
 
 ![Start Hardhat](./readme-images/hardhat-start.png)
 
-6. Set up Metamask with the Hardhat network on `http://127.0.0.1:8545/`. 
+6. Set up Metamask with the Hardhat network on `http://127.0.0.1:8545/` which chainId 1337. 
 
 ![Metamask network](./readme-images/metamask-network-0.png)
 
-7. Import the accounts into Metamask using the private keys (only the end user account is required to be imported). 
+7. Import the accounts into Metamask using the private keys. 
 
 ![Metamask import](./readme-images/metamask-import.png)
 
@@ -61,10 +61,10 @@ ERC20 token and game contracts. You should take notice of the account and contra
 ![Metamask accounts](./readme-images/metamask-accounts.png)
 
 ## Application Development
-After starting the Hardhat network and deployment of the contracts, the game can be played be following the below steps;
+After starting the Hardhat network and deployment of the contracts, the game can be played by following the below steps;
 
 1. Edit the [index.ts](./src/index.ts) file to ensure the correct contract addresses are being used. Once done, start 
-the user interface for the game, ignoring warnings if possible.
+the user interface for the game.
 
 ![User interface start](./readme-images/user-interface-start.png)
 
@@ -86,30 +86,32 @@ number of guesses so far.
 Because Obscuro uses the same tools and EVM as Ethereum itself, it should be possible to replay the previous steps with 
 Obscuro's Testnet.
 
-1. Start up the wallet extension. Follow instructions at (docs.obscu.ro/testnet/wallet-extension)[https://docs.obscu.ro/testnet/wallet-extension.html]. 
-The wallet extension is started with configuration to connect to Testnet, and to Metamask, it acts like the network itself. 
+1. Set up Metamask with the Obscuro network as described [here](https://docs.obscu.ro/wallet-extension/configure-metamask)
+
+2. Start up the wallet extension as described [here](https://docs.obscu.ro/wallet-extension/wallet-extension/) and
+generate a viewing key for both the application developer and end user accounts.
 
 ![Wallet start](./readme-images/wallet-start.png)
 
-2. When a viewing key is requested, Metamask will ask for permission to connect to the wallet extension "network", and 
+3. When a viewing key is requested, Metamask will ask for permission to connect to the wallet extension "network", and 
 then request the user to sign a "generate viewing key" transaction.
 
 ![Wallet start](./readme-images/wallet-ephemeral.png)
 
-3. Deploy the contracts to the Obscuro Testnet using `npx hardhat deploy --network obscuro`. Take a note of the contract
+4. Request OBX funds for the two accounts using the [token faucet](https://docs.obscu.ro/testnet/faucet/)
+
+5. Deploy the contracts to the Obscuro Testnet using `npx hardhat deploy --network obscuro`. Take a note of the contract
 addresses from the console. 
 
-4. Confirm and update the contract addresses `ERC20_ADDRESS` and `GUESS_ADDRESS` in [index.ts](./src/index.ts).
+6. Confirm and update the contract addresses `ERC20_ADDRESS` and `GUESS_ADDRESS` in [index.ts](./src/index.ts).
 
-5. For this deployment, use a single user and account for deployment and game playing.
-
-6. Start the user interface for the game, and click on the "Approve game fee" button to allow the Guess contract to take
-the game entrance fee from the end-user's account. Metamask will ask for end-user account to sign a transaction to call 
+7. Start the user interface for the game, and click on the "Approve game fee" button to allow the Guess contract to take
+the game entrance fee from the end-user's account. Metamask will ask for the end user account to sign a transaction to call 
 the `approve` function, specifying the Guess contract address as the delegate.
 
 ![Metamask approve](./readme-images/wallet-approve-testnet.png)
 
-12. Finally, have a go at guessing the number! Note how the data presented by Metamask to the user is not yet encypted: 
+8. Finally, have a go at guessing the number! Note how the data presented by Metamask to the user is not yet encypted: 
 that happens when Metamask signs the transaction and sends it to the wallet extension "network", allowing the wallet 
 extension to encrypt it.
 
