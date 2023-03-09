@@ -73,23 +73,35 @@ and seek connection wth the end-user account. You should approve this.
 
 ![Metamask connect](./readme-images/metamask-connect.png)
 
-3. After connection, the user interface should now show the contract address, the range of the random number, and the 
-number of guesses so far.
+3. After connection, the user interface should now show the address of the game contract and be ready to play. Before 
+playing you must approve the ERC20 contract to allow the game to spend your tokens, using the approve facility on the 
+user interface. 
 
 ![App UI initial](./readme-images/app-ui-initial.png)
 
-4. Approve the game for the number of guesses you want to perform, and have a go at guessing the number!
+4. Approve the game for the number of guesses you want to perform.
 
-![Metamask guess](./readme-images/metamask-guess.png)
+![Metamask approve](./readme-images/metamask-approve-ogg.png)
+![App UI approve response](./readme-images/app-ui-approve-ogg.png)
+
+5. Submit a guess and see if you're correct!
+
+![Metamask submit guess](./readme-images/metamask-approve-play.png)
+![App UI approve response](./readme-images/app-ui-play.png)
 
 ## Transitioning to Obscuro Testnet
 Because Obscuro uses the same tools and EVM as Ethereum itself, it should be possible to replay the previous steps with 
-Obscuro's Testnet.
+Obscuro's Testnet. As Testnet is not ephemeral for running development like HardHat, you should update the keys to use 
+in the [network config](./config/networks.json) file to values unique to you. 
 
 1. Set up Metamask with the Obscuro network as described [here](https://docs.obscu.ro/wallet-extension/configure-metamask).
 
 2. Start up the wallet extension as described [here](https://docs.obscu.ro/wallet-extension/wallet-extension/) and
-generate a viewing key for both the application developer and end user accounts.
+generate a viewing key for both the end user accounts and application developer accounts. Note that it is important 
+at the moment that the end user is registered before the application developer due to the way event relevancy checks
+are performed when multiple accounts are registered through a single wallet extension. Because the wallet extension 
+persists viewing keys locally you may want to delete the persistence file at `~/.obscuro/wallet_extension_persistence`
+before starting the wallet extension, and re-register the keys in the correct order. 
 
 ![Wallet start](./readme-images/wallet-start.png)
 
@@ -100,20 +112,12 @@ then request the user to sign a "generate viewing key" transaction.
 
 4. Request OBX funds for the two accounts using the [token faucet](https://docs.obscu.ro/testnet/faucet/).
 
+![Faucet](./readme-images/faucet-allocate.png)
+
 5. Deploy the contracts to the Obscuro Testnet using `npx hardhat deploy --network obscuro`. Take a note of the contract
 addresses from the console. 
 
 6. Confirm and update the contract addresses `ERC20_ADDRESS` and `GUESS_ADDRESS` in [index.ts](./src/index.ts).
 
-7. Start the user interface for the game, and click on the "Approve game fee" button to allow the Guess contract to take
-the game entrance fee from the end-user's account. Metamask will ask for the end user account to sign a transaction to call 
-the `approve` function, specifying the Guess contract address as the delegate.
-
-![Metamask approve](./readme-images/wallet-approve-testnet.png)
-
-8. Finally, have a go at guessing the number! Note how the data presented by Metamask to the user is not yet encypted: 
-that happens when Metamask signs the transaction and sends it to the wallet extension "network", allowing the wallet 
-extension to encrypt it.
-
-![Metamask guess](./readme-images/wallet-guess-testnet.png)
+7. Follow the steps as described previously to approve tokens to the game, and to make a guess!
 
