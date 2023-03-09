@@ -81,13 +81,11 @@ user interface.
 
 4. Approve the game for the number of guesses you want to perform.
 
-![Metamask approve](./readme-images/metamask-approve-ogg.png)
-![App UI approve response](./readme-images/app-ui-approve-ogg.png)
+![Metamask approve](./readme-images/metamask-approve-ogg.png) ![App UI approve response](./readme-images/app-ui-approve-ogg.png)
 
 5. Submit a guess and see if you're correct!
 
-![Metamask submit guess](./readme-images/metamask-approve-play.png)
-![App UI approve response](./readme-images/app-ui-play.png)
+![Metamask submit guess](./readme-images/metamask-approve-play.png) ![App UI approve response](./readme-images/app-ui-play.png)
 
 ## Transitioning to Obscuro Testnet
 Because Obscuro uses the same tools and EVM as Ethereum itself, it should be possible to replay the previous steps with 
