@@ -8,8 +8,8 @@
       "obscuroEncRpcUrl": "ws://127.0.0.1:13001",
       "gasPrice": 2000000000,
       "accounts": [
-        "f52e5418e349dccdda29b6ac8b0abe6576bb7713886aa85abea6181ba731f9bb",
-        "8ead642ca80dadb0f346a66cd6aa13e08a8ac7b5c6f7578d4bac96f5db01ac99"
+        "bbae139d8481de1bcd3ebe74360fb723219fde8d4102df29131a3b8259d5dee8",
+        "8482305a6fe7786c4bb700d2a7f73a097bccc390288246cb30f1a5c3e4e432f9"
       ]
     },
     "hardhat": {
