@@ -11,3 +11,6 @@ artifacts
 
 # Vite files
 dist
+
+# IDE project files
+.idea/
