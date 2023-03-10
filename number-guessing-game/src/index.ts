@@ -2,8 +2,8 @@ import { ethers } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
 import ERC20 from '../artifacts/contracts/ERC20.sol/ERC20.json';
 import Guess from '../artifacts/contracts/Guess.sol/Guess.json';
-const ERC20_ADDRESS = '0xeDa66Cc53bd2f26896f6Ba6b736B1Ca325DE04eF';
-const GUESS_ADDRESS = '0xC0370e0b5C1A41D447BDdA655079A1B977C71aA9';
+const ERC20_ADDRESS = '0x8BdfE0Fbcb64eBcFdF5AD717c3335D389BBeF8FA';
+const GUESS_ADDRESS = '0xd5b6F5335A340614D425719324CcFE21b6d04E83';
 
 const addNetworkLink = document.getElementById('add-network-link') as HTMLLinkElement;
 const guessButton = document.getElementById('guess-button') as HTMLButtonElement;
@@ -120,9 +120,9 @@ function addNetwork(): void {
         }],
     })
     .then((_: any) => {
-        displayMessage('Obscuro Testnet network added.', '');
+        displayMessage('Obscuro Testnet network added.');
     })
     .catch((_: any) => {
-        displayMessage('Failed to add Obscuro Testnet network. Please check the wallet extension is running.', '');
+        displayMessage('Failed to add Obscuro Testnet network. Please check the wallet extension is running.');
     });
 }
