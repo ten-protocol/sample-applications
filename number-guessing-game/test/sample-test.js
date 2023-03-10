@@ -16,10 +16,11 @@ describe("Guess", function () {
     await guess.deployed();
 
     // approve the guessing game to spend the end users tokens
-    approval = await token.connect(end_user).approve(guess.address, 2)
+    amount = ethers.utils.parseEther("2.0")
+    approval = await token.connect(end_user).approve(guess.address, amount)
     await approval.wait();
-    expect(await token.connect(end_user).balanceOf(end_user.address)).to.equal(2);
-    expect(await token.connect(end_user).allowance(end_user.address, guess.address)).to.equal(2);
+    expect(await token.connect(end_user).balanceOf(end_user.address)).to.equal(amount);
+    expect(await token.connect(end_user).allowance(end_user.address, guess.address)).to.equal(amount);
 
     // make an attempt
     const guessAttempt = await guess.connect(end_user).attempt(5);
