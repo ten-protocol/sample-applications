@@ -64,7 +64,7 @@ ERC20 token and game contracts. You should take notice of the accounts and contr
 After starting the Hardhat network and deployment of the contracts, the game can be played by following the below steps;
 
 1. Edit the [index.ts](./src/index.ts) file to ensure the correct contract addresses are being used. Once done, start 
-the user interface for the game.
+the user interface for the game using `npm run dev`.
 
 ![User interface start](./readme-images/user-interface-start.png)
 
