@@ -120,9 +120,9 @@ function addNetwork(): void {
         }],
     })
     .then((_: any) => {
-        displayMessage('Obscuro Testnet network added.', '');
+        displayMessage('Obscuro Testnet network added.');
     })
     .catch((_: any) => {
-        displayMessage('Failed to add Obscuro Testnet network. Please check the wallet extension is running.', '');
+        displayMessage('Failed to add Obscuro Testnet network. Please check the wallet extension is running.');
     });
 }
