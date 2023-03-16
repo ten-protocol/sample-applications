@@ -2,8 +2,8 @@ import { ethers } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
 import ERC20 from '../artifacts/contracts/ERC20.sol/ERC20.json';
 import Guess from '../artifacts/contracts/Guess.sol/Guess.json';
-const ERC20_ADDRESS = '0x8BdfE0Fbcb64eBcFdF5AD717c3335D389BBeF8FA';
-const GUESS_ADDRESS = '0xd5b6F5335A340614D425719324CcFE21b6d04E83';
+const ERC20_ADDRESS = '0x42ba544c15DDc8BE51be3cc663Aa3081A328B1Cb';
+const GUESS_ADDRESS = '0xd2f06C424E88a5FE7E93586342cDF97c7382C56f';
 
 const addNetworkLink = document.getElementById('add-network-link') as HTMLLinkElement;
 const guessButton = document.getElementById('guess-button') as HTMLButtonElement;
