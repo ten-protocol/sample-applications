@@ -21,17 +21,12 @@ def get_target(web3, ):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Try to cheat and get the target from storage')
-    parser.add_argument('--network', help='Either hardhat or obscuro')
+    parser.add_argument('--network', help='Set network to hardhat or obscuro (defaults hardhat)')
     args = parser.parse_args()
 
-    web3 = None
-    if args.network == 'hardhat':
-        web3 = Web3(Web3.HTTPProvider('http://127.0.0.1:8545/'))
-    elif args.network == 'obscuro':
-        web3 = Web3(Web3.HTTPProvider('http://127.0.0.1:3000/'))
-
-    if web3 is not None:
-        try:
-            get_target(web3)
-        except ValueError as error:
-            print('Error calling eth end point: %s' % ast.literal_eval(str(error))['message'])
+    web3 = Web3(Web3.HTTPProvider('http://127.0.0.1:8545/'))
+    if args.network == 'obscuro': web3 = Web3(Web3.HTTPProvider('http://127.0.0.1:3000/'))
+    try:
+        get_target(web3)
+    except ValueError as error:
+        print('Error calling eth end point: %s' % ast.literal_eval(str(error))['message'])
