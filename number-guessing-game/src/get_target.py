@@ -1,4 +1,4 @@
-import argparse
+import argparse, ast
 from web3 import Web3
 
 # the end usr and contract address for getting the slot
@@ -24,9 +24,14 @@ if __name__ == '__main__':
     parser.add_argument('--network', help='Either hardhat or obscuro')
     args = parser.parse_args()
 
+    web3 = None
     if args.network == 'hardhat':
         web3 = Web3(Web3.HTTPProvider('http://127.0.0.1:8545/'))
-        get_target(web3)
     elif args.network == 'obscuro':
         web3 = Web3(Web3.HTTPProvider('http://127.0.0.1:3000/'))
-        get_target(web3)
+
+    if web3 is not None:
+        try:
+            get_target(web3)
+        except ValueError as error:
+            print('Error calling eth end point: %s' % ast.literal_eval(str(error))['message'])
