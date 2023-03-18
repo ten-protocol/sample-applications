@@ -22,11 +22,7 @@ const erc20Contract = new ethers.Contract(ERC20_ADDRESS, ERC20.abi, signer);
 const guessContract = new ethers.Contract(GUESS_ADDRESS, Guess.abi, signer);
 const signerAddress = await signer.getAddress();
 const filterApproval = erc20Contract.filters.Approval(signerAddress);
-const filterCorrect = guessContract.filters.Correct(signerAddress);
-const filterIncorrect = guessContract.filters.Incorrect(signerAddress);
-const filterSame = guessContract.filters.Same(signerAddress);
-const filterWarmer = guessContract.filters.Warmer(signerAddress);
-const filterColder = guessContract.filters.Colder(signerAddress);
+const filterGuess = guessContract.filters.GuessResult(signerAddress);
 
 const symbol = await erc20Contract.symbol();
 guessRange.innerText = await guessContract.guessRange();
@@ -44,25 +40,9 @@ erc20Contract.on(filterApproval, (owner, _, value) => {
     updateAllowance(value);
     displayMessage(`Approval of ${ethers.utils.formatEther(value)} ${symbol} by account ${owner} to the game was successful. `);
 });
-guessContract.on(filterCorrect, (_, guess, prize, allowance) => {
+guessContract.on(filterGuess, (_, allowance, prize, guess, msg) => {
     updateAllowance(allowance);
-    displayMessage(`Congratulations! Your guess of ${guess} has won you the prize of ${ethers.utils.formatEther(prize)} ${symbol}.`);
-});
-guessContract.on(filterIncorrect, (_, guess, prize, allowance) => {
-    updateAllowance(allowance);
-    displayMessage(`Sorry! Your guess of ${guess} was wrong. If you try again, we'll tell you whether you're getting warmer. The prize pool of ${ethers.utils.formatEther(prize)} ${symbol} is still up for grabs!`);
-});
-guessContract.on(filterSame, (_, guess, prize, allowance) => {
-    updateAllowance(allowance);
-    displayMessage(`Keep going! Your guess of ${guess} was as far from the correct value as your previous try. Your allowance is ${ethers.utils.formatEther(allowance)} and the prize pool of ${ethers.utils.formatEther(prize)} ${symbol} is still up for grabs!`);
-});
-guessContract.on(filterWarmer, (_, guess, prize, allowance) => {
-    updateAllowance(allowance);
-    displayMessage(`Looking good! Your guess of ${guess} was closer that your previous try. Your allowance is ${ethers.utils.formatEther(allowance)} and the prize pool of ${ethers.utils.formatEther(prize)} ${symbol} is still up for grabs!`);
-});
-guessContract.on(filterColder, (_, guess, prize, allowance) => {
-    updateAllowance(allowance);
-    displayMessage(`Uh oh. Your guess of ${guess} was worse than your previous try. Take heart! Your allowance is ${ethers.utils.formatEther(allowance)} and the prize pool is ${ethers.utils.formatEther(prize)} ${symbol}.`);
+    displayMessage(`Your guess of ${guess} was ${msg} ${ethers.utils.formatEther(prize)} OGG.`);
 });
 
 function updateAllowance(allowance: bigint) {
