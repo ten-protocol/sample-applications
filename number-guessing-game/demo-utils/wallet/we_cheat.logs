@@ -1,0 +1,49 @@
+INFO [04-19|09:41:18.203] Received eth_chainId request from wallet: {"method":"eth_chainId","params":[],"id":1,"jsonrpc":"2.0"} component=wallet_extension
+DEBUG[04-19|09:41:18.206] REQUEST                                  component=wallet_extension method=eth_chainId body="{\"method\":\"eth_chainId\",\"params\":[],\"id\":1,\"jsonrpc\":\"2.0\"}"
+INFO [04-19|09:41:18.214] Forwarding eth_chainId response from Obscuro node: {"id":1,"jsonrpc":"2.0","result":"0x309"} component=wallet_extension
+INFO [04-19|09:41:18.216] Received eth_getLogs request from wallet: {"method":"eth_getLogs","params":[{"fromBlock":"0x0","toBlock":"latest","address":"0xc0370e0b5c1a41d447bdda655079a1b977c71aa9","topics":["0xb436f43c9325bbfddaa50de2c4442c4fb0d2337445c798cd11a4c1717290f57d"]}],"id":2,"jsonrpc":"2.0"} component=wallet_extension
+DEBUG[04-19|09:41:18.216] REQUEST                                  component=wallet_extension method=eth_getLogs body="{\"method\":\"eth_getLogs\",\"params\":[{\"fromBlock\":\"0x0\",\"toBlock\":\"latest\",\"address\":\"0xc0370e0b5c1a41d447bdda655079a1b977c71aa9\",\"topics\":[\"0xb436f43c9325bbfddaa50de2c4442c4fb0d2337445c798cd11a4c1717290f57d\"]}],\"id\":2,\"jsonrpc\":\"2.0\"}"
+INFO [04-19|09:41:18.216] Forwarding eth_getLogs response from Obscuro node: {"error":{"message":"method eth_getLogs cannot be called with an unauthorised client - no signed viewing keys found"},"id":2,"jsonrpc":"2.0"} component=wallet_extension
+ERROR[04-19|09:41:18.221] could not read request: websocket: close 1006 (abnormal closure): unexpected EOF component=wallet_extension
+ERROR[04-19|09:41:18.221] could not read request: websocket: close 1006 (abnormal closure): unexpected EOF component=wallet_extension
+ERROR[04-19|09:41:18.221] could not read request: websocket: close 1006 (abnormal closure): unexpected EOF component=wallet_extension
+ERROR[04-19|09:41:18.221] could not read request: websocket: close 1006 (abnormal closure): unexpected EOF component=wallet_extension
+ERROR[04-19|09:41:18.221] could not read request: websocket: close 1006 (abnormal closure): unexpected EOF component=wallet_extension
+ERROR[04-19|09:41:18.221] could not read request: websocket: close 1006 (abnormal closure): unexpected EOF component=wallet_extension
+ERROR[04-19|09:41:18.221] could not read request: websocket: close 1006 (abnormal closure): unexpected EOF component=wallet_extension
+ERROR[04-19|09:41:18.221] could not write error message to websocket component=wallet_extension err="write tcp 127.0.0.1:4001->127.0.0.1:54496: write: broken pipe"
+INFO [04-19|09:50:28.199] Received eth_chainId request from wallet: {"method":"eth_chainId","params":[],"id":1,"jsonrpc":"2.0"} component=wallet_extension
+DEBUG[04-19|09:50:28.199] REQUEST                                  component=wallet_extension method=eth_chainId body="{\"method\":\"eth_chainId\",\"params\":[],\"id\":1,\"jsonrpc\":\"2.0\"}"
+INFO [04-19|09:50:28.202] Forwarding eth_chainId response from Obscuro node: {"id":1,"jsonrpc":"2.0","result":"0x309"} component=wallet_extension
+INFO [04-19|09:50:28.251] Received eth_getLogs request from wallet: {"method":"eth_getLogs","params":[{"fromBlock":"0x0","toBlock":"latest","address":"0xc0370e0b5c1a41d447bdda655079a1b977c71aa9","topics":["0xb436f43c9325bbfddaa50de2c4442c4fb0d2337445c798cd11a4c1717290f57d"]}],"id":2,"jsonrpc":"2.0"} component=wallet_extension
+DEBUG[04-19|09:50:28.251] REQUEST                                  component=wallet_extension method=eth_getLogs body="{\"method\":\"eth_getLogs\",\"params\":[{\"fromBlock\":\"0x0\",\"toBlock\":\"latest\",\"address\":\"0xc0370e0b5c1a41d447bdda655079a1b977c71aa9\",\"topics\":[\"0xb436f43c9325bbfddaa50de2c4442c4fb0d2337445c798cd11a4c1717290f57d\"]}],\"id\":2,\"jsonrpc\":\"2.0\"}"
+INFO [04-19|09:50:28.263] Forwarding eth_getLogs response from Obscuro node: {"id":2,"jsonrpc":"2.0","result":[]} component=wallet_extension
+ERROR[04-19|09:51:07.118] could not read request: websocket: close 1006 (abnormal closure): unexpected EOF component=wallet_extension
+ERROR[04-19|09:51:07.118] could not read request: websocket: close 1006 (abnormal closure): unexpected EOF component=wallet_extension
+ERROR[04-19|09:51:07.118] could not read request: websocket: close 1006 (abnormal closure): unexpected EOF component=wallet_extension
+ERROR[04-19|09:51:07.118] could not read request: websocket: close 1006 (abnormal closure): unexpected EOF component=wallet_extension
+ERROR[04-19|09:51:07.118] could not read request: websocket: close 1006 (abnormal closure): unexpected EOF component=wallet_extension
+ERROR[04-19|09:51:07.118] could not read request: websocket: close 1006 (abnormal closure): unexpected EOF component=wallet_extension
+ERROR[04-19|09:51:07.118] could not read request: websocket: close 1006 (abnormal closure): unexpected EOF component=wallet_extension
+ERROR[04-19|09:51:07.118] could not read request: websocket: close 1006 (abnormal closure): unexpected EOF component=wallet_extension
+ERROR[04-19|09:51:07.118] could not read request: websocket: close 1006 (abnormal closure): unexpected EOF component=wallet_extension
+ERROR[04-19|09:51:07.118] could not read request: websocket: close 1006 (abnormal closure): unexpected EOF component=wallet_extension
+ERROR[04-19|09:51:07.118] could not read request: websocket: close 1006 (abnormal closure): unexpected EOF component=wallet_extension
+ERROR[04-19|09:51:07.118] could not read request: websocket: close 1006 (abnormal closure): unexpected EOF component=wallet_extension
+ERROR[04-19|09:51:07.118] could not read request: websocket: close 1006 (abnormal closure): unexpected EOF component=wallet_extension
+ERROR[04-19|09:51:07.118] could not read request: websocket: close 1006 (abnormal closure): unexpected EOF component=wallet_extension
+ERROR[04-19|09:51:07.118] could not read request: websocket: close 1006 (abnormal closure): unexpected EOF component=wallet_extension
+ERROR[04-19|09:51:07.118] could not read request: websocket: close 1006 (abnormal closure): unexpected EOF component=wallet_extension
+ERROR[04-19|09:51:07.118] could not write error message to websocket component=wallet_extension err="write tcp 127.0.0.1:4001->127.0.0.1:54580: write: broken pipe"
+INFO [04-19|09:51:08.469] Received eth_chainId request from wallet: {"method":"eth_chainId","params":[],"id":1,"jsonrpc":"2.0"} component=wallet_extension
+DEBUG[04-19|09:51:08.469] REQUEST                                  component=wallet_extension method=eth_chainId body="{\"method\":\"eth_chainId\",\"params\":[],\"id\":1,\"jsonrpc\":\"2.0\"}"
+INFO [04-19|09:51:08.485] Forwarding eth_chainId response from Obscuro node: {"id":1,"jsonrpc":"2.0","result":"0x309"} component=wallet_extension
+INFO [04-19|09:51:08.521] Received eth_getLogs request from wallet: {"method":"eth_getLogs","params":[{"fromBlock":"0x0","toBlock":"latest","address":"0xc0370e0b5c1a41d447bdda655079a1b977c71aa9","topics":["0xb436f43c9325bbfddaa50de2c4442c4fb0d2337445c798cd11a4c1717290f57d"]}],"id":2,"jsonrpc":"2.0"} component=wallet_extension
+DEBUG[04-19|09:51:08.521] REQUEST                                  component=wallet_extension method=eth_getLogs body="{\"method\":\"eth_getLogs\",\"params\":[{\"fromBlock\":\"0x0\",\"toBlock\":\"latest\",\"address\":\"0xc0370e0b5c1a41d447bdda655079a1b977c71aa9\",\"topics\":[\"0xb436f43c9325bbfddaa50de2c4442c4fb0d2337445c798cd11a4c1717290f57d\"]}],\"id\":2,\"jsonrpc\":\"2.0\"}"
+INFO [04-19|09:51:08.533] Forwarding eth_getLogs response from Obscuro node: {"id":2,"jsonrpc":"2.0","result":[]} component=wallet_extension
+ERROR[04-19|09:51:15.001] could not read request: websocket: close 1006 (abnormal closure): unexpected EOF component=wallet_extension
+ERROR[04-19|09:51:15.001] could not read request: websocket: close 1006 (abnormal closure): unexpected EOF component=wallet_extension
+ERROR[04-19|09:51:15.001] could not read request: websocket: close 1006 (abnormal closure): unexpected EOF component=wallet_extension
+ERROR[04-19|09:51:15.001] could not read request: websocket: close 1006 (abnormal closure): unexpected EOF component=wallet_extension
+ERROR[04-19|09:51:15.001] could not read request: websocket: close 1006 (abnormal closure): unexpected EOF component=wallet_extension
+ERROR[04-19|09:51:15.001] could not write error message to websocket component=wallet_extension err="write tcp 127.0.0.1:4001->127.0.0.1:54586: write: broken pipe"

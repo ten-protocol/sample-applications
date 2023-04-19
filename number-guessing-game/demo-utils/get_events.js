@@ -1,0 +1,77 @@
+const Web3 = require('web3')
+const fs = require('fs')
+const ethers = require('ethers')
+const commander = require('commander')
+
+require('console-stamp')(console, 'HH:MM:ss')
+
+function generate_viewing_key(sign, network_url, address, callback) {
+  fetch(network_url +'/generateviewingkey/', {
+    method: 'POST',
+    headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
+    body: JSON.stringify({address: address})
+  })
+      .then(response => response.text())
+      .then((response) => {
+        sign_viewing_key(sign, network_url, address, callback, response)
+      })
+}
+
+function sign_viewing_key(sign, network_url, address, callback, response) {
+  signed_msg = sign('vk' + response)
+
+  fetch(network_url + '/submitviewingkey/', {
+    method: 'POST',
+    headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
+    body: JSON.stringify( {signature: signed_msg.signature, address: address})
+  })
+      .then(response => response.text())
+      .then((response) => {
+        callback()
+      })
+}
+
+
+async function task(from) {
+  const events = await contract.queryFilter('GuessResult', from, 'latest')
+  if (events.length) {
+    for (var i = 0, len = events.length; i < len; i+=1) {
+      log = iface.decodeEventLog('GuessResult', events[i].data, events[i].topics)
+      console.log(log.player, 'Guess of',log.guess.toNumber(),'was',log.msg,ethers.utils.formatEther(log.prize),'OGG.')
+    }
+  }
+}
+
+commander
+    .version('1.0.0', '-v, --version')
+    .usage('[OPTIONS]...')
+    .option('--network <value>', 'Set network to hardhat or obscuro (defaults hardhat)')
+    .parse(process.argv)
+
+const options = commander.opts()
+var network_ws = 'ws://127.0.0.1:8545'
+var network_http = 'http://127.0.0.1:8545'
+
+if (options.network == 'obscuro') {
+  network_http = 'http://127.0.0.1:4000'
+  network_ws = 'ws://127.0.0.1:4001'
+}
+
+const provider = new ethers.providers.WebSocketProvider(network_ws)
+var pk = '0xc0cfd792ad77e40528b58c19a8f5fb3246daabaaaf85b08635b2b5e09ffa5a27'
+var address = '0xC0370e0b5C1A41D447BDdA655079A1B977C71aA9'
+var json = fs.readFileSync('game.abi')
+var abi = JSON.parse(json)
+const contract = new ethers.Contract(address, abi, provider)
+const iface = new ethers.utils.Interface(abi)
+
+if (options.network == 'obscuro') {
+  let sign = (message) => { return web3.eth.accounts.sign(message, pk) }
+  let web3 = new Web3()
+  generate_viewing_key(sign, network_http, web3.eth.accounts.privateKeyToAccount(pk).address, task)
+}
+else{
+  task()
+}
+
+
