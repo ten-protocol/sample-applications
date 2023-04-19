@@ -58,7 +58,10 @@ if (options.network == 'obscuro') {
 }
 
 const provider = new ethers.providers.WebSocketProvider(network_ws)
-var pk = '0xc0cfd792ad77e40528b58c19a8f5fb3246daabaaaf85b08635b2b5e09ffa5a27'
+var pk_end_usr = '0x8ead642ca80dadb0f346a66cd6aa13e08a8ac7b5c6f7578d4bac96f5db01ac99'
+var pk_cheat = '0xc0cfd792ad77e40528b58c19a8f5fb3246daabaaaf85b08635b2b5e09ffa5a27'
+var pk = pk_cheat
+
 var address = '0xC0370e0b5C1A41D447BDdA655079A1B977C71aA9'
 var json = fs.readFileSync('game.abi')
 var abi = JSON.parse(json)
