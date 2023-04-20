@@ -32,13 +32,16 @@ function sign_viewing_key(sign, network_url, address, callback, response) {
 }
 
 
-async function task(from) {
-  const events = await contract.queryFilter('GuessResult', from, 'latest')
+async function task() {
+  const events = await contract.queryFilter('GuessResult', 0, 'latest')
   if (events.length) {
     for (var i = 0, len = events.length; i < len; i+=1) {
       log = iface.decodeEventLog('GuessResult', events[i].data, events[i].topics)
-      console.log(log.player, 'Guess of',log.guess.toNumber(),'was',log.msg,ethers.utils.formatEther(log.prize),'OGG.')
+      console.log(log.player, 'Guess of', log.guess.toNumber(), 'was', log.msg, ethers.utils.formatEther(log.prize), 'OGG.')
     }
+  }
+  else {
+    console.log('No events in return set')
   }
 }
 
