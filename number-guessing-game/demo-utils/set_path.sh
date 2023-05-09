@@ -1,3 +1,3 @@
-export NODE_PATH=/opt/homebrew/lib/node_modules
+export NODE_PATH=.:/opt/homebrew/lib/node_modules
 
 
