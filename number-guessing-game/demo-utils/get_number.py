@@ -1,11 +1,10 @@
-import argparse, ast
+import argparse, ast, sys, os
 from web3 import Web3
+from dotenv import load_dotenv
+load_dotenv()
 
-# the end usr and contract address for getting the slot
-endUsr='c0cfd792ad77e40528b58c19a8f5fb3246daabaaaf85b08635b2b5e09ffa5a27'
-contractAddress='0xC0370e0b5C1A41D447BDdA655079A1B977C71aA9'
 
-def get_target(web3, ):
+def get_target():
     # get the storage of the first slot
     slot0=web3.eth.getStorageAt(contractAddress, 0)
     print('Slot bytes:    %s' % slot0.hex())
@@ -21,15 +20,21 @@ def get_target(web3, ):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Try to cheat and get the target from storage')
-    parser.add_argument('--network', help='Set network to hardhat or obscuro (defaults hardhat)')
+    parser.add_argument('--network', help='Set network to hardhat or obscuro (defaults hardhat)', required=True)
     args = parser.parse_args()
 
-    web3 = Web3(Web3.HTTPProvider('http://127.0.0.1:8545/'))
-    if args.network == 'obscuro': web3 = Web3(Web3.HTTPProvider('http://127.0.0.1:3000/'))
-    if args.network == 'arbitrum':
-        web3 = Web3(Web3.HTTPProvider('https://arb-goerli.g.alchemy.com/v2/jHwvOwJIBbcpcv95SGolTONziapOitU6'))
-        contractAddress = '0x73EA03b0B2e1bD4aF6Df17f59ffeE925166C036d'
+    web3 = None
+    if args.network == 'obscuro':
+        web3 = Web3(Web3.HTTPProvider('http://127.0.0.1:3000/'))
+        contractAddress = '0x2f1C77134D5E6dc76e90708A5D0d8B6918b1b7d3'
+    elif args.network == 'arbitrum':
+        web3 = Web3(Web3.HTTPProvider('https://arb-goerli.g.alchemy.com/v2/%s'%os.getenv("ARB_API_KEY")))
+        contractAddress = '0xC0370e0b5C1A41D447BDdA655079A1B977C71aA9'
+    else:
+        print('--network should be either obscuro or arbitrum')
+        sys.exit(-1)
+
     try:
-        get_target(web3)
+        get_target()
     except ValueError as error:
         print('Error calling eth end point: %s' % ast.literal_eval(str(error))['message'])

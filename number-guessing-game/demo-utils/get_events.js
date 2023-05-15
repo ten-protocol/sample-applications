@@ -1,9 +1,12 @@
-const Web3 = require('web3')
+require('dotenv').config({ path: `../.env` })
 const fs = require('fs')
+const Web3 = require('web3')
 const ethers = require('ethers')
 const commander = require('commander')
 
 require('console-stamp')(console, 'HH:MM:ss')
+
+const { CHEAT_PK, ARB_API_KEY } = process.env;
 
 function generate_viewing_key(sign, network_url, address, callback) {
   fetch(network_url +'/generateviewingkey/', {
@@ -31,7 +34,6 @@ function sign_viewing_key(sign, network_url, address, callback, response) {
       })
 }
 
-
 async function task() {
   const events = await contract.queryFilter('GuessResult', 0, 'latest')
   if (events.length) {
@@ -52,33 +54,27 @@ commander
     .parse(process.argv)
 
 const options = commander.opts()
-
-var network_ws = 'ws://127.0.0.1:8545'
-var network_http = 'http://127.0.0.1:8545'
-var pk_end_usr = '0x8ead642ca80dadb0f346a66cd6aa13e08a8ac7b5c6f7578d4bac96f5db01ac99'
-var pk_cheat = '0xc0cfd792ad77e40528b58c19a8f5fb3246daabaaaf85b08635b2b5e09ffa5a27'
-var address = '0xC0370e0b5C1A41D447BDdA655079A1B977C71aA9'
 var json = fs.readFileSync('game.abi')
 var abi = JSON.parse(json)
 
-if (options.network == 'obscuro') {
+if (options.network === 'obscuro') {
   network_http = 'http://127.0.0.1:4000'
   network_ws = 'ws://127.0.0.1:4001'
-} else if (options.network == 'arbitrum') {
-  network_http = 'https://arb-goerli.g.alchemy.com/v2/jHwvOwJIBbcpcv95SGolTONziapOitU6'
-  network_ws = 'wss://arb-goerli.g.alchemy.com/v2/jHwvOwJIBbcpcv95SGolTONziapOitU6'
-  address = '0x73EA03b0B2e1bD4aF6Df17f59ffeE925166C036d'
+  address = '0x2f1C77134D5E6dc76e90708A5D0d8B6918b1b7d3'
+} else if (options.network === 'arbitrum') {
+  network_http = 'https://arb-goerli.g.alchemy.com/v2/'+ARB_API_KEY
+  network_ws = 'wss://arb-goerli.g.alchemy.com/v2/'+ARB_API_KEY
+  address = '0xC0370e0b5C1A41D447BDdA655079A1B977C71aA9'
 }
 
 const provider = new ethers.providers.WebSocketProvider(network_ws)
-var pk = pk_cheat
 const contract = new ethers.Contract(address, abi, provider)
 const iface = new ethers.utils.Interface(abi)
 
-if (options.network == 'obscuro') {
-  let sign = (message) => { return web3.eth.accounts.sign(message, pk) }
+if (options.network === 'obscuro') {
+  let sign = (message) => { return web3.eth.accounts.sign(message, CHEAT_PK) }
   let web3 = new Web3()
-  generate_viewing_key(sign, network_http, web3.eth.accounts.privateKeyToAccount(pk).address, task)
+  generate_viewing_key(sign, network_http, web3.eth.accounts.privateKeyToAccount(CHEAT_PK).address, task)
 }
 else{
   task()
