@@ -5,7 +5,7 @@ import "@nomicfoundation/hardhat-toolbox";
 import 'hardhat-deploy';
 import 'hardhat-ignore-warnings';
 
-const { APP_DEV_PK, END_USR_PK } = process.env;
+const { APP_DEV_PK, END_USR_PK, ARB_API_KEY } = process.env;
 
 const config: HardhatUserConfig = {
   solidity: "0.8.17",
@@ -30,9 +30,9 @@ const config: HardhatUserConfig = {
     arbitrum: {
       deploy: [ "scripts/" ],
       chainId: 421613,
-      url: "https://arb-goerli.g.alchemy.com/v2/jHwvOwJIBbcpcv95SGolTONziapOitU6",
+      url: `https://arb-goerli.g.alchemy.com/v2/${ARB_API_KEY}`,
       gasPrice: 100000000,
-      accounts: [`0x${APP_DEV_PK}`, `0x${END_USR_PK}` ]
+      accounts: [ `0x${APP_DEV_PK}`, `0x${END_USR_PK}` ]
     },
     hardhat: {
       deploy: [ "scripts/" ],
