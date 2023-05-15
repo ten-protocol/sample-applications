@@ -30,7 +30,7 @@ const config: HardhatUserConfig = {
     arbitrum: {
       deploy: [ "scripts/" ],
       chainId: 421613,
-      url: "https://arb-goerli.g.alchemy.com/v2",
+      url: "https://arb-goerli.g.alchemy.com/v2/jHwvOwJIBbcpcv95SGolTONziapOitU6",
       gasPrice: 100000000,
       accounts: [`0x${APP_DEV_PK}`, `0x${END_USR_PK}` ]
     },
