@@ -26,6 +26,9 @@ if __name__ == '__main__':
 
     web3 = Web3(Web3.HTTPProvider('http://127.0.0.1:8545/'))
     if args.network == 'obscuro': web3 = Web3(Web3.HTTPProvider('http://127.0.0.1:3000/'))
+    if args.network == 'arbitrum':
+        web3 = Web3(Web3.HTTPProvider('https://arb-goerli.g.alchemy.com/v2/jHwvOwJIBbcpcv95SGolTONziapOitU6'))
+        contractAddress = '0x73EA03b0B2e1bD4aF6Df17f59ffeE925166C036d'
     try:
         get_target(web3)
     except ValueError as error:

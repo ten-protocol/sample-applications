@@ -52,22 +52,26 @@ commander
     .parse(process.argv)
 
 const options = commander.opts()
+
 var network_ws = 'ws://127.0.0.1:8545'
 var network_http = 'http://127.0.0.1:8545'
+var pk_end_usr = '0x8ead642ca80dadb0f346a66cd6aa13e08a8ac7b5c6f7578d4bac96f5db01ac99'
+var pk_cheat = '0xc0cfd792ad77e40528b58c19a8f5fb3246daabaaaf85b08635b2b5e09ffa5a27'
+var address = '0xC0370e0b5C1A41D447BDdA655079A1B977C71aA9'
+var json = fs.readFileSync('game.abi')
+var abi = JSON.parse(json)
 
 if (options.network == 'obscuro') {
   network_http = 'http://127.0.0.1:4000'
   network_ws = 'ws://127.0.0.1:4001'
+} else if (options.network == 'arbitrum') {
+  network_http = 'https://arb-goerli.g.alchemy.com/v2/jHwvOwJIBbcpcv95SGolTONziapOitU6'
+  network_ws = 'wss://arb-goerli.g.alchemy.com/v2/jHwvOwJIBbcpcv95SGolTONziapOitU6'
+  address = '0x73EA03b0B2e1bD4aF6Df17f59ffeE925166C036d'
 }
 
 const provider = new ethers.providers.WebSocketProvider(network_ws)
-var pk_end_usr = '0x8ead642ca80dadb0f346a66cd6aa13e08a8ac7b5c6f7578d4bac96f5db01ac99'
-var pk_cheat = '0xc0cfd792ad77e40528b58c19a8f5fb3246daabaaaf85b08635b2b5e09ffa5a27'
 var pk = pk_cheat
-
-var address = '0xC0370e0b5C1A41D447BDdA655079A1B977C71aA9'
-var json = fs.readFileSync('game.abi')
-var abi = JSON.parse(json)
 const contract = new ethers.Contract(address, abi, provider)
 const iface = new ethers.utils.Interface(abi)
 
