@@ -4,6 +4,8 @@ import ERC20 from '../artifacts/contracts/ERC20.sol/ERC20.json';
 import Guess from '../artifacts/contracts/Guess.sol/Guess.json';
 const ERC20_ADDRESS = '0xeDa66Cc53bd2f26896f6Ba6b736B1Ca325DE04eF';
 const GUESS_ADDRESS = '0xC0370e0b5C1A41D447BDdA655079A1B977C71aA9';
+// const ERC20_ADDRESS = '0x0D1137AACe49e035Ded94B57a3ed5362fdc636d7'; //arbitrum
+// const GUESS_ADDRESS = '0x73EA03b0B2e1bD4aF6Df17f59ffeE925166C036d'; //arbitrum
 
 const addNetworkLink = document.getElementById('add-network-link') as HTMLLinkElement;
 const guessButton = document.getElementById('guess-button') as HTMLButtonElement;
