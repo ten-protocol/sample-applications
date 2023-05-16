@@ -9,7 +9,6 @@ const GUESS_ADDRESS = '0xC0370e0b5C1A41D447BDdA655079A1B977C71aA9';
 //const ERC20_ADDRESS = '0xeDa66Cc53bd2f26896f6Ba6b736B1Ca325DE04eF'; //arbitrum
 //const GUESS_ADDRESS = '0xC0370e0b5C1A41D447BDdA655079A1B977C71aA9';
 
-const addNetworkLink = document.getElementById('add-network-link') as HTMLLinkElement;
 const guessButton = document.getElementById('guess-button') as HTMLButtonElement;
 const approveButton = document.getElementById('approve-button') as HTMLButtonElement;
 const guessInput = document.getElementById('guess-input') as HTMLInputElement;
@@ -36,7 +35,6 @@ erc20Contract.allowance(signerAddress, GUESS_ADDRESS).then((result: bigint) => {
     updateAllowance(result);
 });
 
-addNetworkLink?.addEventListener('click', _ => { addNetwork(); });
 guessButton?.addEventListener('click', _ => { guess() });
 approveButton?.addEventListener('click', _ => { approve() });
 
@@ -86,27 +84,4 @@ function displayMessage(msg: string) {
     message.append(msg);
 
     document.querySelector('main')?.prepend(message);
-}
-
-function addNetwork(): void {
-    (window as any).ethereum.request({
-        method: 'wallet_addEthereumChain',
-        params: [{
-            chainId: '0x309', // 777 in hex
-            chainName: 'Obscuro Testnet',
-            rpcUrls: ['http://127.0.0.1:3000'],
-            nativeCurrency: {
-                name: 'OBX',
-                symbol: 'OBX',
-                decimals: 18,
-            },
-            blockExplorerUrls: null,
-        }],
-    })
-    .then((_: any) => {
-        displayMessage('Obscuro Testnet network added.');
-    })
-    .catch((_: any) => {
-        displayMessage('Failed to add Obscuro Testnet network. Please check the wallet extension is running.');
-    });
 }
