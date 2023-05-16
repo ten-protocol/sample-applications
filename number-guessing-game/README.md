@@ -75,7 +75,7 @@ or any other network.
 ![Metamask accounts](./readme-images/metamask-accounts.png)
 
 5. Edit the [index.ts](./src/index.ts) file to ensure the correct contract addresses are being used. Once done, start 
-the user interface for the game.
+the user interface for the game using `npm run dev`.
 
 ![User interface start](./readme-images/user-interface-start.png)
 
@@ -99,10 +99,26 @@ user interface.
 
 ![Metamask submit guess](./readme-images/metamask-approve-play.png) ![App UI approve response](./readme-images/app-ui-play.png)
 
+## Running the game against an Arbitrum Network
+Running the game against Arbitrum follows the same steps as for running against a local Hardhat network, with the
+exception that you have to deploy the game and token contracts first. You should first update the keys to use
+in the [dotenv](./.env) file to values unique to your accounts on Arbitrum and add in the API key to use. Funds should 
+be available on both accounts and can be obtained using the [Arbitrum faucet server](https://faucet.triangleplatform.com/arbitrum/goerli). 
+
+1. Set up Metamask with the Arbitrum network as described [here](https://docs.alchemy.com/docs/how-to-add-arbitrum-to-metamask).
+
+2. Deploy the contracts using `npx hardhat deploy --network arbitrum` and take a note of the contract addresses from the 
+console.
+
+3. Update the contract addresses `ERC20_ADDRESS` and `GUESS_ADDRESS` in [index.ts](./src/index.ts).
+
+4. Follow the steps as described previously to approve tokens to the game, and to make a guess!
+
+
 ## Running the game against an Obscuro Network
 Because Obscuro uses the same tools and EVM as Ethereum itself, it should be possible to replay the previous steps with 
 Obscuro's Testnet. As Testnet is not ephemeral for running development like HardHat, you should update the keys to use 
-in the [network config](./config/networks.json) file to values unique to you. 
+in the [dotenv](./.env) file to values unique to you. 
 
 1. Set up Metamask with the Obscuro network as described [here](https://docs.obscu.ro/wallet-extension/configure-metamask).
 
