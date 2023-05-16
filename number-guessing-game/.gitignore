@@ -2,11 +2,11 @@
 node_modules
 .env
 
-#Hardhat files
+# Hardhat files
 cache
 artifacts
 
-#OS files
+# OS files
 .DS_Store
 
 # Vite files
@@ -14,3 +14,8 @@ dist
 
 # IDE project files
 .idea/
+
+# Output from the demo utils
+demo-utils/wallet/wallet_extension
+demo-utils/wallet/we_*.bin
+demo-utils/wallet/we_*.logs

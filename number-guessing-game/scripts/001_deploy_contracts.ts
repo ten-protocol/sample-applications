@@ -1,3 +1,4 @@
+// @ts-ignore
 module.exports = async ({getNamedAccounts, deployments}) => {
     const {deploy} = deployments;
     const {app_developer} = await getNamedAccounts();
@@ -8,7 +9,7 @@ module.exports = async ({getNamedAccounts, deployments}) => {
         log: true,
     });
 
-    const game = await deploy('Guess', {
+    await deploy('Guess', {
         from: app_developer,
         args: [100, token.address],
         log: true,

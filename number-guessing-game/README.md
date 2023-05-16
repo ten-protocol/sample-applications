@@ -42,55 +42,83 @@ npx hardhat clean
 npx hardhat test
 npx hardhat help
 ```
-5. Starting Hardhat with `npx hardhat node` will start a local hardhat network with the two accounts as specified in 
-the [network config](./config/networks.json) file (note that these private keys are well-known!) and will deploy the 
-ERC20 token and game contracts. You should take notice of the accounts and contract addresses for later. 
+5. A `.env` file should be created in the project root containing the private keys of the two accounts used by the 
+sample, `APP_DEV_PK` and `END_USR_PK`. A third key `CHEAT_PK` can optionally be included to include the PK of an 
+account that tries to cheat the game using the scripts in `demo-utils`, though this is optional for running of the game
+and primarily used for demo purposes. Should you wish to deploy the game against Arbitrum the API key should also be 
+included, e.g. 
+```shell
+APP_DEV_PK=<pk>
+END_USR_PK=<pk>
+CHEAT_PK=<pk>
+ARB_API_KEY=<key>
+```
+
+## Running the game against a Hardhat Network
+1. Starting Hardhat with `npx hardhat node` will start a local hardhat network and will deploy the ERC20 token and game 
+contracts. You should take notice of the contract addresses for later. 
 
 ![Start Hardhat](./readme-images/hardhat-start.png)
 
-6. Set up Metamask with the Hardhat network on `http://127.0.0.1:8545/` with chain ID 1337. 
+2. Set up Metamask with the Hardhat network on `http://127.0.0.1:8545/` with chain ID 1337. 
 
 ![Metamask network](./readme-images/metamask-network-0.png)
 
-7. Import the accounts into Metamask using the private keys from the [network config](./config/networks.json).
+3. If not already done, import the accounts into Metamask using the private keys from the `.env` file. Note that you 
+may have to clear activity and nonce data in metamask if you have previously used these accounts against hardhat 
+or any other network. 
 
 ![Metamask import](./readme-images/metamask-import.png)
 
-8. Rename the accounts to be more user-friendly.
+4. Rename the accounts to be more user-friendly.
 
 ![Metamask accounts](./readme-images/metamask-accounts.png)
 
-## Application Development
-After starting the Hardhat network and deployment of the contracts, the game can be played by following the below steps;
-
-1. Edit the [index.ts](./src/index.ts) file to ensure the correct contract addresses are being used. Once done, start 
+5. Edit the [index.ts](./src/index.ts) file to ensure the correct contract addresses are being used. Once done, start
 the user interface for the game using `npm run dev`.
 
 ![User interface start](./readme-images/user-interface-start.png)
 
-2. The app is not initially connected to Metamask, and when the page first loads, it should prompt Metamask to pop up 
-and seek connection wth the end-user account. You should approve this.
+6. The app is not initially connected to Metamask, and when the page first loads, it should prompt Metamask to pop up 
+and seek connection wth the end-user account (you might want to first completely close your browser before performing). 
+You should approve this.
 
 ![Metamask connect](./readme-images/metamask-connect.png)
 
-3. After connection, the user interface should now show the address of the game contract and be ready to play. Before 
+7. After connection, the user interface should now show the address of the game contract and be ready to play. Before 
 playing you must approve the ERC20 contract to allow the game to spend your tokens, using the approve facility on the 
 user interface. 
 
 ![App UI initial](./readme-images/app-ui-initial.png)
 
-4. Approve the game for the number of guesses you want to perform.
+8. Approve the game for the number of guesses you want to perform.
 
 ![Metamask approve](./readme-images/metamask-approve-ogg.png) ![App UI approve response](./readme-images/app-ui-approve-ogg.png)
 
-5. Submit a guess and see if you're correct!
+9. Submit a guess and see if you're correct!
 
 ![Metamask submit guess](./readme-images/metamask-approve-play.png) ![App UI approve response](./readme-images/app-ui-play.png)
 
-## Transitioning to Obscuro Testnet
+## Running the game against an Arbitrum Network
+Running the game against Arbitrum follows the same steps as for running against a local Hardhat network, with the
+exception that you have to deploy the game and token contracts first. You should first update the keys to use
+in the [dotenv](./.env) file to values unique to your accounts on Arbitrum and add in the API key to use. Funds should 
+be available on both accounts and can be obtained using the [Arbitrum faucet server](https://faucet.triangleplatform.com/arbitrum/goerli). 
+
+1. Set up Metamask with the Arbitrum network as described [here](https://docs.alchemy.com/docs/how-to-add-arbitrum-to-metamask).
+
+2. Deploy the contracts using `npx hardhat deploy --network arbitrum` and take a note of the contract addresses from the 
+console.
+
+3. Update the contract addresses `ERC20_ADDRESS` and `GUESS_ADDRESS` in [index.ts](./src/index.ts).
+
+4. Follow the steps as described previously to approve tokens to the game, and to make a guess!
+
+
+## Running the game against an Obscuro Network
 Because Obscuro uses the same tools and EVM as Ethereum itself, it should be possible to replay the previous steps with 
 Obscuro's Testnet. As Testnet is not ephemeral for running development like HardHat, you should update the keys to use 
-in the [network config](./config/networks.json) file to values unique to you. 
+in the [dotenv](./.env) file to values unique to you. 
 
 1. Set up Metamask with the Obscuro network as described [here](https://docs.obscu.ro/wallet-extension/configure-metamask).
 

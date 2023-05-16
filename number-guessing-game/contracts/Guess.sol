@@ -11,11 +11,7 @@ contract Guess {
     uint8 public guessRange;
     IERC20 public erc20;
 
-    event Correct(address indexed player, uint8 guess, uint prize, uint allowance);
-    event Incorrect(address indexed player, uint8 guess, uint prize, uint allowance);
-    event Same(address indexed player, uint8 guess, uint prize, uint allowance);
-    event Warmer(address indexed player, uint8 guess, uint prize, uint allowance);
-    event Colder(address indexed player, uint8 guess, uint prize, uint allowance);
+    event GuessResult(address indexed player, uint allowance, uint prize, uint guess, string msg);
 
     constructor(uint8 range, address tokenAddress) {
         owner = payable(msg.sender);
@@ -30,7 +26,7 @@ contract Guess {
         _attemptAddresses.push(msg.sender);
         erc20.transferFrom(msg.sender, address(this), 1 ether);
         if (guess == _target) {
-            emit Correct(msg.sender, guess, prizePool(), erc20.allowance(msg.sender, address(this)));
+            emit GuessResult(msg.sender, erc20.allowance(msg.sender, address(this)), prizePool(), guess, "correct! You won the prize of");
             erc20.transfer(msg.sender, prizePool());
             _setNewTarget();
         } else {
@@ -38,13 +34,13 @@ contract Guess {
             uint8 miss = guess > _target ? guess - _target : _target - guess;
             _prevMisses[msg.sender] = miss;
             if (previous == 0) {
-                emit Incorrect(msg.sender, guess, prizePool(), erc20.allowance(msg.sender, address(this)));
+                emit GuessResult(msg.sender, erc20.allowance(msg.sender, address(this)), prizePool(), guess, "wrong, try again! The prize is now");
             } else if (miss < previous) {
-                emit Warmer(msg.sender, guess, prizePool(), erc20.allowance(msg.sender, address(this)));
+                emit GuessResult(msg.sender, erc20.allowance(msg.sender, address(this)), prizePool(), guess, "wrong, but warmer! The prize is now");
             } else if (miss > previous) {
-                emit Colder(msg.sender, guess, prizePool(), erc20.allowance(msg.sender, address(this)));
+                emit GuessResult(msg.sender, erc20.allowance(msg.sender, address(this)), prizePool(), guess, "wrong, and colder! The prize is now");
             } else {
-                emit Same(msg.sender, guess, prizePool(), erc20.allowance(msg.sender, address(this)));
+                emit GuessResult(msg.sender, erc20.allowance(msg.sender, address(this)), prizePool(), guess, "wrong, neither warmer or colder! The prize is now");
             }
         }
     }
