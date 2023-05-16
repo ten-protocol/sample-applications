@@ -30,8 +30,11 @@ if __name__ == '__main__':
     elif args.network == 'arbitrum':
         web3 = Web3(Web3.HTTPProvider('https://arb-goerli.g.alchemy.com/v2/%s'%os.getenv("ARB_API_KEY")))
         contractAddress = '0xC0370e0b5C1A41D447BDdA655079A1B977C71aA9'
+    elif args.network == 'hardhat':
+        web3 = Web3(Web3.HTTPProvider('http://127.0.0.1:8545/'))
+        contractAddress = '0xC0370e0b5C1A41D447BDdA655079A1B977C71aA9'
     else:
-        print('--network should be either obscuro or arbitrum')
+        print('--network should be either obscuro, arbitrum or hardhat')
         sys.exit(-1)
 
     try:

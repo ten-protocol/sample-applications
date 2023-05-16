@@ -4,10 +4,10 @@ import ERC20 from '../artifacts/contracts/ERC20.sol/ERC20.json';
 import Guess from '../artifacts/contracts/Guess.sol/Guess.json';
 const ERC20_ADDRESS = '0xeDa66Cc53bd2f26896f6Ba6b736B1Ca325DE04eF'; //hardhat
 const GUESS_ADDRESS = '0xC0370e0b5C1A41D447BDdA655079A1B977C71aA9';
-// const ERC20_ADDRESS = '0x76EC4027C52BA234A098E75061A4f81C871cA5e6'; //obscuro
-// const GUESS_ADDRESS = '0x2f1C77134D5E6dc76e90708A5D0d8B6918b1b7d3';
-// const ERC20_ADDRESS = '0xeDa66Cc53bd2f26896f6Ba6b736B1Ca325DE04eF'; //arbitrum
-// const GUESS_ADDRESS = '0xC0370e0b5C1A41D447BDdA655079A1B977C71aA9';
+//const ERC20_ADDRESS = '0x76EC4027C52BA234A098E75061A4f81C871cA5e6'; //obscuro
+//const GUESS_ADDRESS = '0x2f1C77134D5E6dc76e90708A5D0d8B6918b1b7d3';
+//const ERC20_ADDRESS = '0xeDa66Cc53bd2f26896f6Ba6b736B1Ca325DE04eF'; //arbitrum
+//const GUESS_ADDRESS = '0xC0370e0b5C1A41D447BDdA655079A1B977C71aA9';
 
 const addNetworkLink = document.getElementById('add-network-link') as HTMLLinkElement;
 const guessButton = document.getElementById('guess-button') as HTMLButtonElement;
