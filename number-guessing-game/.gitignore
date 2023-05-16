@@ -17,5 +17,5 @@ dist
 
 # Output from the demo utils
 demo-utils/wallet/wallet_extension
-demo-utils/wallet/we_main.bin
-demo-utils/wallet/we_main.logs
+demo-utils/wallet/we_*.bin
+demo-utils/wallet/we_*.logs
