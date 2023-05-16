@@ -74,7 +74,7 @@ or any other network.
 
 ![Metamask accounts](./readme-images/metamask-accounts.png)
 
-5. Edit the [index.ts](./src/index.ts) file to ensure the correct contract addresses are being used. Once done, start 
+5. Edit the [index.ts](./src/index.ts) file to ensure the correct contract addresses are being used. Once done, start
 the user interface for the game using `npm run dev`.
 
 ![User interface start](./readme-images/user-interface-start.png)
