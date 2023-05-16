@@ -25,7 +25,7 @@ if __name__ == '__main__':
 
     web3 = None
     if args.network == 'obscuro':
-        web3 = Web3(Web3.HTTPProvider('http://127.0.0.1:3000/'))
+        web3 = Web3(Web3.HTTPProvider('http://127.0.0.1:4000/'))
         contractAddress = '0x2f1C77134D5E6dc76e90708A5D0d8B6918b1b7d3'
     elif args.network == 'arbitrum':
         web3 = Web3(Web3.HTTPProvider('https://arb-goerli.g.alchemy.com/v2/%s'%os.getenv("ARB_API_KEY")))

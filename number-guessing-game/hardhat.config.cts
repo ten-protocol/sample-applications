@@ -23,7 +23,6 @@ const config: HardhatUserConfig = {
       deploy: [ "scripts/" ],
       chainId: 777,
       url: "http://127.0.0.1:3000",
-      obscuroEncRpcUrl: "ws://127.0.0.1:13001",
       gasPrice: 2000000000,
       accounts: [ `0x${APP_DEV_PK}`, `0x${END_USR_PK}` ]
     },

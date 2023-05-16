@@ -60,15 +60,15 @@ var abi = JSON.parse(json)
 if (options.network === 'obscuro') {
   network_http = 'http://127.0.0.1:4000'
   network_ws = 'ws://127.0.0.1:4001'
-  address = '0x2f1C77134D5E6dc76e90708A5D0d8B6918b1b7d3'
+  contractAddress = '0x2f1C77134D5E6dc76e90708A5D0d8B6918b1b7d3'
 } else if (options.network === 'arbitrum') {
   network_http = 'https://arb-goerli.g.alchemy.com/v2/'+ARB_API_KEY
   network_ws = 'wss://arb-goerli.g.alchemy.com/v2/'+ARB_API_KEY
-  address = '0xC0370e0b5C1A41D447BDdA655079A1B977C71aA9'
+  contractAddress = '0xC0370e0b5C1A41D447BDdA655079A1B977C71aA9'
 }
 
 const provider = new ethers.providers.WebSocketProvider(network_ws)
-const contract = new ethers.Contract(address, abi, provider)
+const contract = new ethers.Contract(contractAddress, abi, provider)
 const iface = new ethers.utils.Interface(abi)
 
 if (options.network === 'obscuro') {
