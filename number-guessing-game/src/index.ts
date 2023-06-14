@@ -2,7 +2,7 @@ import { ethers } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
 import ERC20 from '../artifacts/contracts/ERC20.sol/ERC20.json';
 import Guess from '../artifacts/contracts/Guess.sol/Guess.json';
-const ERC20_ADDRESS = '0xeDa66Cc53bd2f26896f6Ba6b736B1Ca325DE04eF'; 
+const ERC20_ADDRESS = '0xeDa66Cc53bd2f26896f6Ba6b736B1Ca325DE04eF';
 const GUESS_ADDRESS = '0xC0370e0b5C1A41D447BDdA655079A1B977C71aA9';
 
 const guessButton = document.getElementById('guess-button') as HTMLButtonElement;
