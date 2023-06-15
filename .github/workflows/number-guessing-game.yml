@@ -24,11 +24,15 @@ jobs:
       run: npm i hardhat@esm
       working-directory: ./number-guessing-game
 
-    - name: Create properties
+    - name: Create dummy properties
       run: | 
        echo "APP_DEV_PK=73315877021c8545736bc16beafd9b42307f2b7009a80cb0d1e412f1a46754d4" > .env
        echo "END_USR_PK=6dd788b1f967133d89f5815e7aff70c97be3f13f6e6ae51fa12af7c5df0fe09e" >> .env
        echo "ARB_API_KEY=djdjbfsdbksdjfksdbfksdbfsk" >> .env 
+      working-directory: ./number-guessing-game
+
+    - name: Compile contract
+      run: npx hardhat clean & npx hardhat compile 
       working-directory: ./number-guessing-game
 
     - name: Build application
