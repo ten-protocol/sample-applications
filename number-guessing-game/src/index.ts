@@ -31,8 +31,8 @@ erc20Contract.allowance(signerAddress, GUESS_ADDRESS).then((result: bigint) => {
     updateAllowance(result);
 });
 
-guessButton?.addEventListener('click', _ => { guess() });
-approveButton?.addEventListener('click', _ => { approve() });
+guessButton?.addEventListener('click', e => { e.preventDefault(); guess() });
+approveButton?.addEventListener('click', e => { e.preventDefault(); approve() });
 
 erc20Contract.on(filterApproval, (owner, _, value) => {
     updateAllowance(value);
