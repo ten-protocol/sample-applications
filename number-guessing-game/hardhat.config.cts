@@ -21,8 +21,8 @@ const config: HardhatUserConfig = {
   networks: {
     obscuro: {
       deploy: [ "scripts/" ],
-      chainId: 777,
-      url: "http://127.0.0.1:3000",
+      chainId: 443,
+      url: "http://127.0.0.1:3000/v1/",
       gasPrice: 2000000000,
       accounts: [ `0x${APP_DEV_PK}`, `0x${END_USR_PK}` ]
     },
