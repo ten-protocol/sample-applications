@@ -5,7 +5,7 @@ import "@nomicfoundation/hardhat-toolbox";
 import 'hardhat-deploy';
 import 'hardhat-ignore-warnings';
 
-const { APP_DEV_PK, END_USR_PK, ARB_API_KEY } = process.env;
+const { APP_DEV_PK, END_USR_PK, OBS_USER_ID, ARB_API_KEY } = process.env;
 
 const config: HardhatUserConfig = {
   solidity: "0.8.17",
@@ -21,8 +21,8 @@ const config: HardhatUserConfig = {
   networks: {
     obscuro: {
       deploy: [ "scripts/" ],
-      chainId: 777,
-      url: "http://127.0.0.1:3000",
+      chainId: 443,
+      url: `https://sepolia-testnet.obscu.ro/v1/${OBS_USER_ID}`,
       gasPrice: 2000000000,
       accounts: [ `0x${APP_DEV_PK}`, `0x${END_USR_PK}` ]
     },
