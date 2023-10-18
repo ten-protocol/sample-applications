@@ -33,7 +33,19 @@ The following steps are required:
 npm install
 npm install hardhat@esm
 ```
-4. Hardhat and its dependencies will have been installed in the previous step. More details are available at 
+4. A `.env` file should be created in the project root containing the private keys of the two accounts used by the 
+sample, `APP_DEV_PK` and `END_USR_PK`. A third key `CHEAT_PK` should also be included to include the PK of an 
+account that tries to cheat the game using the scripts in `demo-utils`, though this is optional for running of the game
+and primarily used for demo purposes. Finally, an Arbitrum API key should also be 
+included, e.g. 
+```shell
+APP_DEV_PK=<pk>
+END_USR_PK=<pk>
+CHEAT_PK=<pk>
+ARB_API_KEY=<key>
+```
+Note: You can use a dummy value for`ARB_API_KEY` if you don't plan on deploying to Arbitrum for comparison.
+5. Hardhat and its dependencies will have been installed in the previous step. More details are available at 
 https://hardhat.org/hardhat-runner/docs/getting-started#overview. Once Hardhat is installed, try running some of the 
 following tasks:
 ```shell
@@ -42,18 +54,6 @@ npx hardhat clean
 npx hardhat test
 npx hardhat help
 ```
-5. A `.env` file should be created in the project root containing the private keys of the two accounts used by the 
-sample, `APP_DEV_PK` and `END_USR_PK`. A third key `CHEAT_PK` can optionally be included to include the PK of an 
-account that tries to cheat the game using the scripts in `demo-utils`, though this is optional for running of the game
-and primarily used for demo purposes. Should you wish to deploy the game against Arbitrum the API key should also be 
-included, e.g. 
-```shell
-APP_DEV_PK=<pk>
-END_USR_PK=<pk>
-CHEAT_PK=<pk>
-ARB_API_KEY=<key>
-```
-
 ## Running the game against a Hardhat Network
 1. Starting Hardhat with `npx hardhat node` will start a local hardhat network and will deploy the ERC20 token and game 
 contracts. You should take notice of the contract addresses for later. 
