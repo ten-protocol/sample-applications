@@ -20,9 +20,9 @@ jobs:
       run: npm i
       working-directory: ./number-guessing-game
 
-#    - name: Install Hardhat with ESM support
-#      run: npm i hardhat@esm
-#      working-directory: ./number-guessing-game
+    - name: Install Hardhat with ESM support
+      run: npm i hardhat@esm
+      working-directory: ./number-guessing-game
 
     - name: Create dummy properties
       run: | 
