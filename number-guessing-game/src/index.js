@@ -24,7 +24,9 @@ const connectButton = document.getElementById('connect-button');
 connectButton?.addEventListener('click', async () => {
     try {
         await provider.send('eth_requestAccounts', []);
-        // After successful connection, you can initialize other functionalities or update the UI
+        // After successful connection, hide the connect button
+        connectButton.style.display = 'none';
+        // Initialize other functionalities or update the UI
         initializeApp();
     }
     catch (error) {

@@ -24,12 +24,15 @@ const connectButton = document.getElementById('connect-button') as HTMLButtonEle
 connectButton?.addEventListener('click', async () => {
     try {
         await provider.send('eth_requestAccounts', []);
-        // After successful connection, you can initialize other functionalities or update the UI
+        // After successful connection, hide the connect button
+        connectButton.style.display = 'none';
+        // Initialize other functionalities or update the UI
         initializeApp();
     } catch (error) {
         alert('Error connecting to MetaMask: ' + JSON.stringify(error));
     }
 });
+
 
 async function initializeApp() {
     const signer = provider.getSigner();
