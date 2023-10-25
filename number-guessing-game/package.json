@@ -17,7 +17,8 @@
   },
   "dependencies": {
     "dotenv": "^16.0.3",
-    "esm": "^3.2.25"
+    "esm": "^3.2.25",
+    "hardhat-ignore-warnings": "^0.2.6"
   },
   "description": "This project demonstrates a basic Obscuro use case. It comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts.",
   "author": "James Carlyle",
