@@ -1,4 +1,4 @@
-name: Deploy Number Guessing Game-Temporary Fix
+name: Deploy Number Guessing Game
 
 on:
   workflow_dispatch:     
