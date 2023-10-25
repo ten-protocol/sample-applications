@@ -19,14 +19,13 @@ const guessRange = document.getElementById('guess-range');
 const connectedAddress = document.getElementById('connected-address');
 const chainId = document.getElementById('chain-id');
 const allowanceLabel = document.getElementById('allowance');
+const SUPPORTED_CHAIN_IDS = [421613, 443, 11155111];
 const provider = new ethers_1.ethers.providers.Web3Provider(window.ethereum);
 const connectButton = document.getElementById('connect-button');
 connectButton?.addEventListener('click', async () => {
     try {
         await provider.send('eth_requestAccounts', []);
-        // After successful connection, hide the connect button
         connectButton.style.display = 'none';
-        // Initialize other functionalities or update the UI
         initializeApp();
     }
     catch (error) {
@@ -34,6 +33,11 @@ connectButton?.addEventListener('click', async () => {
     }
 });
 async function initializeApp() {
+    const network = await provider.getNetwork();
+    if (!SUPPORTED_CHAIN_IDS.includes(network.chainId)) {
+        alert('You are connected to an unsupported network. Please switch to a supported network.');
+        return;
+    }
     const signer = provider.getSigner();
     erc20Contract = new ethers_1.ethers.Contract(ERC20_ADDRESS, ERC20_json_1.default.abi, signer);
     guessContract = new ethers_1.ethers.Contract(GUESS_ADDRESS, Guess_json_1.default.abi, signer);
