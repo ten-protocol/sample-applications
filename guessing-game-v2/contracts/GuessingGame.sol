@@ -22,6 +22,7 @@ contract GuessingGame {
     }
 
     function guess(uint256 _number) external payable {
+        require(_number > 0 && _number <= 1000, "Secret number should be between 1 and 1000");
         require(msg.value == GUESS_FEE, "You need to send 0.443 ETH to make a guess");
         totalGuesses += 1;
 

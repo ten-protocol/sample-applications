@@ -13,6 +13,8 @@ import MessageLog from "@/components/MessageLog.vue";
 </template>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap'); /* Add Orbitron font */
+
 .center-content {
   display: flex;
   flex-direction: column;
