@@ -1,11 +1,11 @@
 {
   "name": "guessing-game-v2",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
+    "dev": "npx hardhat compile && vite",
+    "build": "npx hardhat compile && vite build",
+    "preview": "npx hardhat compile && vite preview",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
     "format": "prettier --write src/"
   },
