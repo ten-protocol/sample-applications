@@ -35,4 +35,3 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./guessing-game-v2/dist
-          destination_dir: ./guessing-game-v2
