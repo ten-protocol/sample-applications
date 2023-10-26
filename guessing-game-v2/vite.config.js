@@ -13,5 +13,5 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  base: '/guessing-game-v2/',
+  base: '/sample-applications/guessing-game-v2/',
 })
