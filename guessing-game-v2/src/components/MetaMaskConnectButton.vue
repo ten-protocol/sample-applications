@@ -24,6 +24,12 @@ export default {
       const provider = await detectEthereumProvider();
 
       if (provider) {
+        const chainId = await provider.request({ method: 'eth_chainId' })
+        if(chainId !== "0x1bb"){
+          messageStore.addMessage('Not connected to obscuro chain ! Connect at https://testnet.obscu.ro/ ')
+          return
+        }
+
         // Request account access if needed
         const accounts = await provider.request({ method: 'eth_requestAccounts' });
 
@@ -49,6 +55,12 @@ export default {
     const provider = await detectEthereumProvider();
     const messageStore = useMessageStore();
     const walletStore = useWalletStore();
+
+    const chainId = await provider.request({ method: 'eth_chainId' })
+    if(chainId !== "0x1bb"){
+      messageStore.addMessage('Not connected to obscuro chain ! Connect at https://testnet.obscu.ro/ ')
+      return
+    }
 
     await provider.request({method: 'eth_accounts'})
         .then(accounts => {

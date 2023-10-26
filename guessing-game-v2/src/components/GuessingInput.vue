@@ -11,6 +11,7 @@
 <script>
 import Web3Service from '@/lib/web3service.js';
 import {useWalletStore} from "@/stores/walletStore";
+import {useMessageStore} from "@/stores/messageStore";
 
 
 
@@ -28,6 +29,13 @@ export default {
       this.submitDisabled = true;
       try {
         const walletStore = useWalletStore();
+        const messageStore = useMessageStore()
+
+        if (!walletStore.signer) {
+          messageStore.addMessage('Not connected with Metamask...');
+          this.submitDisabled = false;
+          return;
+        }
         const web3Service = new Web3Service(walletStore.signer)
         await web3Service.submitGuess(this.guess)
 
