@@ -2,12 +2,13 @@
   <div class="message-log">
     <div v-for="(message, index) in reversedMessages"
          :key="message.id"
-         :class="['message', getMessageClass(index)]">{{ message.text }}</div>
+         :class="['message', getMessageClass(index)]"><div v-html="message.text"></div>
+    </div>
   </div>
 </template>
 
 <script>
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import { useMessageStore } from '@/stores/messageStore'
 
 export default {
@@ -57,9 +58,11 @@ export default {
 
 .second-message {
   color: #49cc49; /* Duller green, but you can adjust to your preference */
+  text-decoration: underline;
 }
 
 .other-messages {
   color: #3dab3d; /* Dullest green, adjust to your preference */
+  text-decoration: line-through ;
 }
 </style>
