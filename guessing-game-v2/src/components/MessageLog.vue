@@ -75,6 +75,5 @@ export default {
 
 .other-messages {
   color: #3dab3d;
-  text-decoration: line-through;
 }
 </style>
