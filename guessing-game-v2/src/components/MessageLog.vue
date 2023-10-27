@@ -52,17 +52,29 @@ export default {
   margin-bottom: 10px;
 }
 
+@keyframes typing {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
 .first-message {
-  color: #00FF00; /* Brightest color */
+  color: #00FF00;
+  animation: typing 2s steps(25, end) 0s 1 normal both;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .second-message {
-  color: #49cc49; /* Duller green, but you can adjust to your preference */
+  color: #49cc49;
   text-decoration: underline;
 }
 
 .other-messages {
-  color: #3dab3d; /* Dullest green, adjust to your preference */
-  text-decoration: line-through ;
+  color: #3dab3d;
+  text-decoration: line-through;
 }
 </style>
