@@ -3,7 +3,7 @@
     <h1>Guessing Game</h1>
     <p>Guess the secret number</p>
     <p>Take the pool money</p>
-    <el-input v-model="guess" placeholder="Enter your guess"></el-input>
+    <el-input :disabled="submitDisabled" v-model="guess" placeholder="Enter your guess 1-1000" :input-style="{ color: '#00FF00', borderColor: '#00FF00', backgroundColor: '#2E2E2E'}"> ></el-input>
     <el-button :disabled="submitDisabled" type="primary" @click="submitGuess">Submit</el-button>
   </div>
 </template>
@@ -19,7 +19,7 @@ export default {
   name: "MainPage",
   data() {
     return {
-      guess: 0,
+      guess: "",
       submitDisabled: false,
     };
   },
@@ -81,6 +81,10 @@ h1, p {
 .el-input__inner:focus {
   box-shadow: 0 0 15px #00FF00; /* Glow effect when input is focused */
   animation: pulse 1.5s infinite;
+}
+
+:deep(.el-input__wrapper) {
+  padding: 0 !important;
 }
 
 @keyframes pulse {

@@ -26,7 +26,7 @@ export default {
       if (provider) {
         const chainId = await provider.request({ method: 'eth_chainId' })
         if(chainId !== "0x1bb"){
-          messageStore.addMessage('Not connected to obscuro chain ! Connect at https://testnet.obscu.ro/ ')
+          messageStore.addMessage('Not connected to obscuro chain ! Connect at <a href="https://testnet.obscu.ro/" target="_blank" rel="noopener noreferrer">https://testnet.obscu.ro/</a> ')
           return
         }
 
@@ -37,7 +37,7 @@ export default {
         walletStore.setProvider(provider);
         walletStore.setAddress(accounts[0]);
 
-        messageStore.addMessage('Connected to wallet ! Account: ' + accounts[0])
+        messageStore.addMessage('Connected to wallet ! Account: ' + accounts[0]);
         buttonText.value = "Connected!"
 
         new Web3listener(walletStore.signer, "0xe03D05a56d35D7c87Ea0578A27C5d4fdF1C81c63" );
@@ -58,7 +58,7 @@ export default {
 
     const chainId = await provider.request({ method: 'eth_chainId' })
     if(chainId !== "0x1bb"){
-      messageStore.addMessage('Not connected to obscuro chain ! Connect at https://testnet.obscu.ro/ ')
+      messageStore.addMessage('Not connected to obscuro chain ! Connect at <a href="https://testnet.obscu.ro/" target="_blank" rel="noopener noreferrer">https://testnet.obscu.ro/</a> ')
       return
     }
 
@@ -67,7 +67,7 @@ export default {
           if (accounts.length !== 0) {
             walletStore.setProvider(provider);
             walletStore.setAddress(accounts[0]);
-            messageStore.addMessage('Connected to wallet ! Account: ' + accounts[0])
+            messageStore.addMessage('Connected to wallet ! Account: ' + accounts[0]);
             this.buttonText = "Connected!"
             new Web3listener(walletStore.signer, "0xe03D05a56d35D7c87Ea0578A27C5d4fdF1C81c63" );
           } else {
