@@ -2,8 +2,8 @@ import { ethers } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
 import ERC20 from '../artifacts/contracts/ERC20.sol/ERC20.json';
 import Guess from '../artifacts/contracts/Guess.sol/Guess.json';
-const ERC20_ADDRESS = '0x41Ee73959C375E9d5Bf31629C529BB4e76d264C7';
-const GUESS_ADDRESS = '0x2a0eFe9D636Af27f364A85a1459dd970c1cF4caE';
+const ERC20_ADDRESS = '0xEA898366AcfEc269680D6f101C2222DF16dA57d4';
+const GUESS_ADDRESS = '0x025a353A99865bc395D203a38535A651150C1E49';
 
 let erc20Contract: ethers.Contract;
 let guessContract: ethers.Contract;
