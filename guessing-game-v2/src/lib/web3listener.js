@@ -5,8 +5,11 @@ import ContractAddress from "@/assets/contract/address.json";
 
 export default class Web3listener {
     constructor(signer) {
+        const messageStore = useMessageStore();
+
         this.contract = new ethers.Contract(ContractAddress.address, GuessingGameJson.abi, signer);
         this.lastGuessCount = ethers.BigNumber.from(0);
+        messageStore.addMessage(`[GuessingGame Contract] Contract Address: ${ContractAddress.address}`)
         this.startCheckingGuesses();
     }
 
