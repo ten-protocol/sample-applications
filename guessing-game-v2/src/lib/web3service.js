@@ -14,10 +14,10 @@ export default class Web3Service {
         messageStore.addMessage("Issuing Guess...");
 
         try {
-           const derp = await this.contract.guess(guessValue, { value: guessFee });
-           console.log(derp)
+           const submitTx = await this.contract.guess(guessValue, { value: guessFee });
+           const receipt = await submitTx.wait();
+           messageStore.addMessage("Guess tx: "+receipt.transactionHash);
         } catch (e) {
-
             if (e.reason) {
                 messageStore.addMessage("Failed to issue Guess - " + e.reason + " ...");
                 return
