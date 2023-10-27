@@ -17,6 +17,11 @@ export default class Web3Service {
            const submitTx = await this.contract.guess(guessValue, { value: guessFee });
            const receipt = await submitTx.wait();
            messageStore.addMessage("Guess tx: "+receipt.transactionHash);
+           if (receipt.events[0].args.success) {
+               messageStore.addMessage(`[GuessingGame Contract] ${guessValue} was the right answer ! You won!`);
+           } else {
+               messageStore.addMessage(`[GuessingGame Contract] ${guessValue} was not the right answer. Try again...`);
+           }
         } catch (e) {
             if (e.reason) {
                 messageStore.addMessage("Failed to issue Guess - " + e.reason + " ...");
