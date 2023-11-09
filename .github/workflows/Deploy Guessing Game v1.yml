@@ -1,0 +1,34 @@
+name: Deploy Number Guessing Game
+
+on:
+  workflow_dispatch:     
+ 
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        
+    - name: Install dependencies
+      run: npm i
+      working-directory: ./number-guessing-game
+
+    - name: Compile contract
+      run: npx hardhat clean & npx hardhat compile 
+      working-directory: ./number-guessing-game
+
+    - name: Build application
+      run: npm run build --if-present
+      working-directory: ./number-guessing-game
+  
+    - name: Deploy
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./number-guessing-game/dist
+        destination_dir: ./number-guessing-game
