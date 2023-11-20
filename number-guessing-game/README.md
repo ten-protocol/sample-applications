@@ -33,19 +33,7 @@ The following steps are required:
 npm install
 npm install hardhat@esm
 ```
-4. A `.env` file should be created in the project root containing the private keys of the two accounts used by the 
-sample, `APP_DEV_PK` and `END_USR_PK`. A third key `CHEAT_PK` should also be included to include the PK of an 
-account that tries to cheat the game using the scripts in `demo-utils`, though this is optional for running of the game
-and primarily used for demo purposes. Finally, an Arbitrum API key should also be 
-included, e.g. 
-```shell
-APP_DEV_PK=<pk>
-END_USR_PK=<pk>
-CHEAT_PK=<pk>
-ARB_API_KEY=<key>
-```
-Note: You can use a dummy value for`ARB_API_KEY` if you don't plan on deploying to Arbitrum for comparison.
-5. Hardhat and its dependencies will have been installed in the previous step. More details are available at 
+4. Hardhat and its dependencies will have been installed in the previous step. More details are available at 
 https://hardhat.org/hardhat-runner/docs/getting-started#overview. Once Hardhat is installed, try running some of the 
 following tasks:
 ```shell
@@ -54,6 +42,17 @@ npx hardhat clean
 npx hardhat test
 npx hardhat help
 ```
+5. A `.env` file should be created in the project root containing the private keys of the two accounts used by the 
+sample, `APP_DEV_PK` and `END_USR_PK`. Should you wish to deploy the game against Obscuro or Arbitrum, the User ID 
+returned from joining the network using the gateway and the Arbitrum API key should should be supplied respectively, 
+e.g. 
+```shell
+APP_DEV_PK=<pk>
+END_USR_PK=<pk>
+OBS_USER_ID=<key>
+ARB_API_KEY=<key>
+```
+
 ## Running the game against a Hardhat Network
 1. Starting Hardhat with `npx hardhat node` will start a local hardhat network and will deploy the ERC20 token and game 
 contracts. You should take notice of the contract addresses for later. 
@@ -118,32 +117,17 @@ console.
 ## Running the game against an Obscuro Network
 Because Obscuro uses the same tools and EVM as Ethereum itself, it should be possible to replay the previous steps with 
 Obscuro's Testnet. As Testnet is not ephemeral for running development like HardHat, you should update the keys to use 
-in the [dotenv](./.env) file to values unique to you. 
+in the [dotenv](./.env) file to values unique to you. Also once you have joined the Obscuro network through the gateway, 
+you should update the `.env` file for the User ID for the connection.
 
 1. Set up Metamask with the Obscuro network as described [here](https://docs.obscu.ro/wallet-extension/configure-metamask).
 
-2. Start up the wallet extension as described [here](https://docs.obscu.ro/wallet-extension/wallet-extension/) and
-generate a viewing key for both the end user accounts and application developer accounts. Note that it is important 
-at the moment that the end user is registered before the application developer due to the way event relevancy checks
-are performed when multiple accounts are registered through a single wallet extension. Because the wallet extension 
-persists viewing keys locally you may want to delete the persistence file at `~/.obscuro/wallet_extension_persistence`
-before starting the wallet extension, and re-register the keys in the correct order. 
+2. Request OBX funds for the two accounts using the [token faucet](https://docs.obscu.ro/testnet/faucet/).
 
-![Wallet start](./readme-images/wallet-start.png)
-
-3. When a viewing key is requested, Metamask will ask for permission to connect to the wallet extension "network", and 
-then request the user to sign a "generate viewing key" transaction.
-
-![Wallet start](./readme-images/wallet-ephemeral.png)
-
-4. Request OBX funds for the two accounts using the [token faucet](https://docs.obscu.ro/testnet/faucet/).
-
-![Faucet](./readme-images/faucet-allocate.png)
-
-5. Deploy the contracts to the Obscuro Testnet using `npx hardhat deploy --network obscuro`. Take a note of the contract
+3. Deploy the contracts to the Obscuro Testnet using `npx hardhat deploy --network obscuro`. Take a note of the contract
 addresses from the console. 
 
-6. Confirm and update the contract addresses `ERC20_ADDRESS` and `GUESS_ADDRESS` in [index.ts](./src/index.ts).
+4. Confirm and update the contract addresses `ERC20_ADDRESS` and `GUESS_ADDRESS` in [index.ts](./src/index.ts).
 
-7. Follow the steps as described previously to approve tokens to the game, and to make a guess!
+5. Follow the steps as described previously to approve tokens to the game, and to make a guess!
 
