@@ -1,9 +1,12 @@
 /** @type import('hardhat/config').HardhatUserConfig */
 
-const { PRIVATE_KEY, ARB_API_KEY } = process.env;
 
+require('dotenv').config();
 require("@nomicfoundation/hardhat-toolbox");
 require("@nomiclabs/hardhat-ethers");
+
+const { PRIVATE_KEY, ARB_API_KEY, USER_KEY } = process.env;
+
 task("deploy", "Deploys the GuessingGame contract")
     .addParam("secret", "The secret number for the guessing game")
     .setAction(async (taskArgs, hre) => {
@@ -26,7 +29,7 @@ module.exports = {
     ten: {
       deploy: ["scripts/"],
       chainId: 443,
-      url: "http://testnet.obscu.ro/v1/",
+      url: `http://testnet.obscu.ro/v1/${USER_KEY}`,
       gasPrice: 2000000000,
       accounts: [`0x${PRIVATE_KEY}`],
     },
