@@ -32,10 +32,10 @@ npm run build
 
 *Assumes a registered viewing key with Ten.*
 
-Make sure to fill in the `userKey` a `privateKey` fields in `hardhat.config.js`
+Make sure to fill in the `PRIVATE_KEY` as an env var.
 
 ```sh
-npx hardhat run --network ten_testnet deploy-guessinggame --secret <SECRET_NUMBER>
+PRIVATE_KEY=ebccc515b1ade8224deb71806d66ca326e5e564b61a0f6bd3f0f3350ad6662c9 npx hardhat --network ten deploy-guessinggame --secret <SECRET_NUMBER>
 ```
 
 ### Lint with [ESLint](https://eslint.org/)
