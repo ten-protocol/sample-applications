@@ -2,6 +2,7 @@ import { ethers } from 'ethers';
 import { useMessageStore } from '@/stores/messageStore'
 import GuessingGameJson from "@/assets/contract/artifacts/contracts/GuessingGame.sol/GuessingGame.json";
 import ContractAddress from "@/assets/contract/address.json";
+import Common from "./common";
 
 export default class Web3Service {
     constructor(signer) {
@@ -10,8 +11,8 @@ export default class Web3Service {
     }
 
     async submitGuess(guessValue) {
-        const guessFee = ethers.utils.parseEther('0.443');
-        const minimumBalance = ethers.utils.parseEther('0.443');
+        const guessFee = ethers.utils.parseEther(Common.GUESS_COST);
+        const minimumBalance = ethers.utils.parseEther(Common.GUESS_COST);
         const messageStore = useMessageStore();
         messageStore.addMessage("Issuing Guess...");
 
@@ -20,7 +21,7 @@ export default class Web3Service {
             // Check balance
             const balance = await this.signer.getBalance();
             if (balance.lt(minimumBalance)) {
-                messageStore.addMessage("Insufficient balance. You need at least 0.443 ETH to submit a guess.");
+                messageStore.addMessage(`Insufficient balance. You need at least ${Common.GUESS_COST} ETH to submit a guess.`);
                 return;
             }
            const submitTx = await this.contract.guess(guessValue, { value: guessFee });

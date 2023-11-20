@@ -6,7 +6,7 @@ contract GuessingGame {
     uint256 private secretNumber;
     address private owner;
     uint256 public totalGuesses;
-    uint256 public constant GUESS_FEE = 443e15;  // 0.443 ETH
+    uint256 public constant GUESS_FEE = 443e14;  // 0.0443 ETH
 
     event Guessed(address indexed user, uint256 guessedNumber, bool success);
 
