@@ -28,6 +28,16 @@ npm run dev
 npm run build
 ```
 
+### Deploy contract
+
+*Assumes a registered viewing key with Ten.*
+
+Make sure to fill in the `userKey` a `privateKey` fields in `hardhat.config.js`
+
+```sh
+npx hardhat run --network ten_testnet deploy-guessinggame --secret <SECRET_NUMBER>
+```
+
 ### Lint with [ESLint](https://eslint.org/)
 
 ```sh
