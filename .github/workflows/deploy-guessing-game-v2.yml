@@ -29,6 +29,8 @@ jobs:
       - name: Build application
         run: npm run build
         working-directory: ./guessing-game-v2
+        env: # Or as an environment variable
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
