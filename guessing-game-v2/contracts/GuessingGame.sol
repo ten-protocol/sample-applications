@@ -20,7 +20,7 @@ contract GuessingGame {
 
     constructor() {
         owner = msg.sender;
-        resetSecretNumber();
+        _resetSecretNumber();
     }
 
     function guess(uint256 _number) external payable {
@@ -32,14 +32,14 @@ contract GuessingGame {
             // If the guess is correct, transfer all the contract balance to the user
             payable(msg.sender).transfer(address(this).balance);
             emit Guessed(msg.sender, _number, true);
-            resetSecretNumber();
+            _resetSecretNumber();
             totalGuesses = 0;
         } else {
             emit Guessed(msg.sender, _number, false);
         }
     }
 
-    function resetSecretNumber() external onlyOwner {
+    function _resetSecretNumber() private {
         uint256 randomNumber = block.prevrandao; 
         secretNumber = (randomNumber % guessRange) + 1;
     }
