@@ -41,7 +41,7 @@ contract GuessingGame {
 
     function _resetSecretNumber() private {
         uint256 randomNumber = block.prevrandao; 
-        secretNumber = (randomNumber % guessRange) + 1;
+        secretNumber = (randomNumber % MAX_GUESS) + 1;
     }
 
     function getContractBalance() external view returns (uint256) {
