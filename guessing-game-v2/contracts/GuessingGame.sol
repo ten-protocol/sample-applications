@@ -6,7 +6,10 @@ contract GuessingGame {
     uint256 private secretNumber;
     address private owner;
     uint256 public totalGuesses;
+
+    // constants
     uint256 public constant GUESS_FEE = 443e14;  // 0.0443 ETH
+    uint256 public constant MAX_GUESS = 1000;
 
     event Guessed(address indexed user, uint256 guessedNumber, bool success);
 
@@ -15,14 +18,13 @@ contract GuessingGame {
         _;
     }
 
-    constructor(uint256 _secretNumber) {
-        require(_secretNumber > 0 && _secretNumber <= 1000, "Secret number should be between 1 and 1000");
-        secretNumber = _secretNumber;
+    constructor() {
         owner = msg.sender;
+        resetSecretNumber();
     }
 
     function guess(uint256 _number) external payable {
-        require(_number > 0 && _number <= 1000, "Secret number should be between 1 and 1000");
+        require(_number > 0 && _number <= MAX_GUESS, "Secret number should be between 1 and 1000");
         require(msg.value == GUESS_FEE, "You need to send 0.443 ETH to make a guess");
         totalGuesses += 1;
 
@@ -30,14 +32,16 @@ contract GuessingGame {
             // If the guess is correct, transfer all the contract balance to the user
             payable(msg.sender).transfer(address(this).balance);
             emit Guessed(msg.sender, _number, true);
+            resetSecretNumber();
+            totalGuesses = 0;
         } else {
             emit Guessed(msg.sender, _number, false);
         }
     }
 
-    function setSecretNumber(uint256 _newSecret) external onlyOwner {
-        require(_newSecret > 0 && _newSecret <= 1000, "Secret number should be between 1 and 1000");
-        secretNumber = _newSecret;
+    function resetSecretNumber() external onlyOwner {
+        uint256 randomNumber = block.prevrandao; 
+        secretNumber = (randomNumber % guessRange) + 1;
     }
 
     function getContractBalance() external view returns (uint256) {
