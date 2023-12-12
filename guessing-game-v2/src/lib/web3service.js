@@ -19,11 +19,8 @@ export default class Web3Service {
     messageStore.addMessage('Issuing Guess...')
 
     try {
-      // Check guess value is within range
-      if (guessValue > maxGuess) {
-        messageStore.addMessage(
-          `Guess value is too high. You can only guess up to ${maxGuess.toString()}.`
-        )
+      if (+guessValue > +(await maxGuess.toString())) {
+        messageStore.addMessage(`Guess value is too high. You can only guess up to ${maxGuess}.`)
         return
       }
       // Check balance
