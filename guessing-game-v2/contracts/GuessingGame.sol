@@ -8,7 +8,7 @@ contract GuessingGame {
 
   // constants
   uint256 public constant GUESS_FEE = 443e14; // 0.0443 ETH
-  uint256 public constant MAX_GUESS = 10;
+  uint256 public constant MAX_GUESS = 1000;
 
   event Guessed(address indexed user, uint256 guessedNumber, bool success);
 
@@ -23,7 +23,7 @@ contract GuessingGame {
   }
 
   function guess(uint256 _number) external payable {
-    require(_number > 0 && _number <= MAX_GUESS, 'Secret number should be between 1 and 10');
+    require(_number > 0 && _number <= MAX_GUESS, 'Secret number should be between 1 and 1000');
     require(msg.value == GUESS_FEE, 'You need to send 0.443 ETH to make a guess');
     totalGuesses += 1;
 
