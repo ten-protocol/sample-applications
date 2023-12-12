@@ -39,7 +39,7 @@ contract GuessingGame {
   }
 
   function _resetSecretNumber() private {
-    uint256 randomNumber = block.prevrandao;
+    uint256 randomNumber = block.difficulty;
     secretNumber = (randomNumber % MAX_GUESS) + 1;
   }
 
