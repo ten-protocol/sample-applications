@@ -1,6 +1,6 @@
 # Sample applications library
 
-This project contains example contracts for the [TEN](https://obscu.ro/) platform. 
+This project contains example contracts and interfaces for the [TEN](https://obscu.ro/) platform. 
 
 ## Current samples
 ### 1. Guessing game (version 1) 
