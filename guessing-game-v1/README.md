@@ -1,4 +1,4 @@
-# Example Number Guessing Game (v1)
+# Example Number Guessing Game (v1) - Deprecated
 
 ## Introduction
 This project demonstrates a basic TEN use case, which is a simple number guessing game. The contract generates a 
