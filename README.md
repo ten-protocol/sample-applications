@@ -1,4 +1,4 @@
-# Sample applications librarys
+# Sample applications library
 
 This project contains example contracts for the [TEN](https://obscu.ro/) platform. 
 
