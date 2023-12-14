@@ -16,19 +16,19 @@ See [Vite Configuration Reference](https://vitejs.dev/config/).
 npm install
 ```
 
-### Create the Env File 
+### Create Environment 
 *Assumes a registered viewing key with Ten.*
 
-Create a file `.env` in the project root with the below contents, where your `USER_KEY` is supplied when registering 
-your VK's and your `PRIVATE_KEY` should be the private key for the account that is registered with Ten.
-Please find all the registration steps in https://docs.obscu.ro/ .
+Create a file `.env` in the project root with the below contents, where `USER_KEY` is supplied when registering 
+your VK's and `PRIVATE_KEY` should be the private key for the account that is registered with Ten. Do not share your
+private key with anybody! For more details please find all the registration steps in https://docs.obscu.ro/.
 
 ```
 USER_KEY = <token> 
 PRIVATE_KEY = <private key>
 ```
 
-### Compile and Hot-Reload for Development
+### Compile for Development
 
 ```sh
 npm run dev
