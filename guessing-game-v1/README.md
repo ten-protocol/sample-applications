@@ -1,13 +1,13 @@
-# Basic Sample Obscuro Project
+# Example Number Guessing Game (v1) - Deprecated
 
 ## Introduction
-This project demonstrates a basic Obscuro use case, which is a simple number guessing game. The contract generates a 
+This project demonstrates a basic TEN use case, which is a simple number guessing game. The contract generates a 
 random secret number when it's deployed, which is never revealed to an operator or end-user because of the privacy 
-benefits of Obscuro. The goal of the game is to guess this number, and each time an attempt is made, an entrance fee of 
+benefits of TEN. The goal of the game is to guess this number, and each time an attempt is made, an entrance fee of 
 1 token is paid. If a user correctly guesses the number, the contract will pay out all of the accumulated entrance 
 fees to them, and reset itself with a new random number.
 
-Without Obscuro, it would be possible to look up the internal state of the contract and cheat, and the game wouldn't work. 
+Without TEN, it would be possible to look up the internal state of the contract and cheat, and the game wouldn't work. 
 
 The contract functionality comes with two contracts; a basic ERC20 contract which allows the user to hold assets and 
 pay the entrance fee to the game, and the game contract itself. This includes a test for that contract, and a sample 
@@ -21,8 +21,8 @@ In developing this game, the following tools were used:
 * Ethers.js (a Web3 Javascript library)
 * Vite (a packaging library, handy for compiling Typescript)
 * Metamask (a popular wallet for crypto tokens and smart contract interaction)
-* Obscuro Testnet (an open, permissionless test network for Obscuro)
-* Obscuro Wallet Extension (a proxy for an Obscuro node, which handles encryption for all data between the wallet and the network)
+* TEN Testnet (an open, permissionless test network for TEN)
+* TEN Wallet Extension (a proxy for an TEN node, which handles encryption for all data between the wallet and the network)
 
 ## Environment Setup
 The following steps are required:
@@ -43,7 +43,7 @@ npx hardhat test
 npx hardhat help
 ```
 5. A `.env` file should be created in the project root containing the private keys of the two accounts used by the 
-sample, `APP_DEV_PK` and `END_USR_PK`. Should you wish to deploy the game against Obscuro or Arbitrum, the User ID 
+sample, `APP_DEV_PK` and `END_USR_PK`. Should you wish to deploy the game against TEN or Arbitrum, the User ID 
 returned from joining the network using the gateway and the Arbitrum API key should should be supplied respectively, 
 e.g. 
 ```shell
@@ -114,17 +114,17 @@ console.
 4. Follow the steps as described previously to approve tokens to the game, and to make a guess!
 
 
-## Running the game against an Obscuro Network
-Because Obscuro uses the same tools and EVM as Ethereum itself, it should be possible to replay the previous steps with 
-Obscuro's Testnet. As Testnet is not ephemeral for running development like HardHat, you should update the keys to use 
-in the [dotenv](./.env) file to values unique to you. Also once you have joined the Obscuro network through the gateway, 
+## Running the game against a TEN Network
+Because TEN uses the same tools and EVM as Ethereum itself, it should be possible to replay the previous steps with 
+TEN's Testnet. As Testnet is not ephemeral for running development like HardHat, you should update the keys to use 
+in the [dotenv](./.env) file to values unique to you. Also once you have joined the TEN network through the gateway, 
 you should update the `.env` file for the User ID for the connection.
 
-1. Set up Metamask with the Obscuro network as described [here](https://docs.obscu.ro/wallet-extension/configure-metamask).
+1. Set up Metamask with the TEN network as described [here](https://docs.obscu.ro/docs/getting-started/for-users/setup-you-wallet).
 
-2. Request OBX funds for the two accounts using the [token faucet](https://docs.obscu.ro/testnet/faucet/).
+2. Request OBX funds for the two accounts using the [token faucet](https://docs.obscu.ro/docs/tools-infrastructure/obscuro-faucet).
 
-3. Deploy the contracts to the Obscuro Testnet using `npx hardhat deploy --network obscuro`. Take a note of the contract
+3. Deploy the contracts to the TEN Testnet using `npx hardhat deploy --network obscuro`. Take a note of the contract
 addresses from the console. 
 
 4. Confirm and update the contract addresses `ERC20_ADDRESS` and `GUESS_ADDRESS` in [index.ts](./src/index.ts).
