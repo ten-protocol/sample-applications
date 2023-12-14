@@ -1,6 +1,5 @@
 /** @type import('hardhat/config').HardhatUserConfig */
 
-
 require('dotenv').config();
 require("@nomicfoundation/hardhat-toolbox");
 require("@nomiclabs/hardhat-ethers");
@@ -26,7 +25,7 @@ module.exports = {
   networks: {
     ten: {
       chainId: 443,
-      url: `https://sepolia-testnet.obscu.ro/v1/${USER_KEY}`,
+      url: `https://testnet.obscu.ro/v1/${USER_KEY}`,
       gasPrice: 2000000000,
       accounts: [`0x${PRIVATE_KEY}`],
     },
