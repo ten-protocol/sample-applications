@@ -18,9 +18,9 @@ npm install
 
 ### Create the Env File 
 *Assumes a registered viewing key with Ten.*
-Create a file `.env` in the project root with the below contents, where 
-  Your `USER_KEY` is supplied when registering your VK's.
-  Your `PRIVATE_KEY` should be the private key for the account that is registered with Ten.
+
+Create a file `.env` in the project root with the below contents, where your `USER_KEY` is supplied when registering 
+your VK's and your `PRIVATE_KEY` should be the private key for the account that is registered with Ten.
 Please find all the registration steps in https://docs.obscu.ro/ .
 
 ```
