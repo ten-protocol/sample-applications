@@ -40,8 +40,7 @@ export default {
         walletStore.setAddress(accounts[0])
 
         trackEvent('connect_wallet', {
-          event_category: 'wallet',
-          event_label: accounts[0]
+          value: accounts[0]
         })
 
         messageStore.addMessage('Connected to wallet ! Account: ' + accounts[0])
