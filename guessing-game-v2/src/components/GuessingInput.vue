@@ -1,5 +1,18 @@
 <template>
   <div class="guessing-game">
+    <div>
+      <el-alert
+        title="Error"
+        type="error"
+        :closable="false"
+        :show-icon="true"
+        :center="true"
+        v-if="errorMessage"
+        @click="clearErrorMessage"
+      >
+        <span v-html="errorMessage"></span>
+      </el-alert>
+    </div>
     <h1>Guessing Game</h1>
     <p>Guess the secret number</p>
     <p>Take the pool money</p>
@@ -10,8 +23,7 @@
       placeholder="Enter your guess 1-1000"
       :input-style="{ color: '#00FF00', borderColor: '#00FF00', backgroundColor: '#2E2E2E' }"
     >
-      ></el-input
-    >
+    </el-input>
     <el-button :disabled="submitDisabled" type="primary" @click="submitGuess">Submit</el-button>
   </div>
 </template>
@@ -27,6 +39,13 @@ export default {
     return {
       guess: '',
       submitDisabled: false
+    }
+  },
+
+  computed: {
+    errorMessage() {
+      const messageStore = useMessageStore()
+      return messageStore.errorMessage
     }
   },
 
@@ -48,6 +67,11 @@ export default {
         console.error('Error:', err.message)
       }
       this.submitDisabled = false
+    },
+
+    clearErrorMessage() {
+      const messageStore = useMessageStore()
+      messageStore.clearErrorMessage()
     }
   }
 }
