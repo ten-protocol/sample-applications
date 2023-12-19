@@ -8,8 +8,12 @@ export function trackEvent(eventName, eventData) {
 }
 
 export function handleMetaMaskError(error) {
+  if (!error) {
+    return 'Unknown error'
+  }
+
   if (!error.code) {
-    return error.message
+    return error.message ?? error
   }
 
   const serializedError = serializeError(error)
