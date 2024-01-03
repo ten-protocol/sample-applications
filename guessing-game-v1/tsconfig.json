@@ -1,11 +1,23 @@
 {
-  "compilerOptions": {
-    "target": "es2020",
-    "module": "commonjs",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "skipLibCheck": true,
-    "resolveJsonModule": true
+    "compilerOptions": {
+      "target": "ESNext",
+      "useDefineForClassFields": true,
+      // "module": "commonjs",
+      // Hardhat deploy needs commonsjs. Otherwise 
+      "module": "ESNext",
+      "lib": ["ESNext", "DOM"],
+      "moduleResolution": "Node",
+      "strict": true,
+      "resolveJsonModule": true,
+      "isolatedModules": true,
+      "esModuleInterop": true,
+      "noEmit": true,
+      "noUnusedLocals": true,
+      "noUnusedParameters": true,
+      "noImplicitReturns": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      },
+    "include": ["src"]
   }
-}
+  
