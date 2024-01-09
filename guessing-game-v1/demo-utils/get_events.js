@@ -65,12 +65,12 @@ if (options.network === 'obscuro') {
 else if (options.network === 'arbitrum') {
   network_http = 'https://arb-goerli.g.alchemy.com/v2/'+ARB_API_KEY
   network_ws = 'wss://arb-goerli.g.alchemy.com/v2/'+ARB_API_KEY
-  contractAddress = '0xC0370e0b5C1A41D447BDdA655079A1B977C71aA9'
+  contractAddress = '0x555b8eA821486338D8Bd8637dD379314B09CF26A'
 }
 else if (options.network === 'hardhat') {
   network_http = 'http://127.0.0.1:8545/'
   network_ws = 'ws://127.0.0.1:8545'
-  contractAddress = '0xC0370e0b5C1A41D447BDdA655079A1B977C71aA9'
+  contractAddress = '0x555b8eA821486338D8Bd8637dD379314B09CF26A'
 }
 
 const provider = new ethers.providers.WebSocketProvider(network_ws)

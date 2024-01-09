@@ -1,12 +1,10 @@
 import argparse, ast, sys, os
 from web3 import Web3
-from dotenv import load_dotenv
-load_dotenv()
 
 
 def get_target():
     # get the storage of the first slot
-    slot0=web3.eth.getStorageAt(contractAddress, 0)
+    slot0=web3.eth.get_storage_at(contractAddress, 0)
     print('Slot bytes:    %s' % slot0.hex())
 
     # slot 0 last 20 bytes owner address [12:32]
@@ -29,10 +27,10 @@ if __name__ == '__main__':
         contractAddress = '0x2f1C77134D5E6dc76e90708A5D0d8B6918b1b7d3'
     elif args.network == 'arbitrum':
         web3 = Web3(Web3.HTTPProvider('https://arb-goerli.g.alchemy.com/v2/%s'%os.getenv("ARB_API_KEY")))
-        contractAddress = '0xC0370e0b5C1A41D447BDdA655079A1B977C71aA9'
+        contractAddress = '0x555b8eA821486338D8Bd8637dD379314B09CF26A'
     elif args.network == 'hardhat':
         web3 = Web3(Web3.HTTPProvider('http://127.0.0.1:8545/'))
-        contractAddress = '0xC0370e0b5C1A41D447BDdA655079A1B977C71aA9'
+        contractAddress = '0x555b8eA821486338D8Bd8637dD379314B09CF26A'
     else:
         print('--network should be either obscuro, arbitrum or hardhat')
         sys.exit(-1)
