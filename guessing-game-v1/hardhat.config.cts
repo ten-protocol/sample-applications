@@ -22,7 +22,7 @@ const config: HardhatUserConfig = {
     obscuro: {
       deploy: [ "scripts/" ],
       chainId: 443,
-      url: `https://sepolia-testnet.obscu.ro/v1/${OBS_USER_ID}`,
+      url: `https://127.0.0.1:3000/v1/${OBS_USER_ID}`,
       gasPrice: 2000000000,
       accounts: [ `0x${APP_DEV_PK}`, `0x${END_USR_PK}` ]
     },
