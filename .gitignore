@@ -1,8 +1,11 @@
 **/.DS_Store
 
-# ignores for the number guessing game
-**/number-guessing-game/deployments
-**/number-guessing-game/typechain-types
+**/.env
+**/node_modules
+**/cache
+**/artifacts
+**/deployments
+**/typechain-types
 
 .idea
 
