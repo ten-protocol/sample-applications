@@ -1,19 +1,16 @@
 <template>
-  <button
-    class="bg-neutral-200 py-[5px] px-4 text-[14px] font-semibold rounded-md border-2 border-neutral-300"
-    @click="connectMetamask"
-  >
+  <button @click="connectMetamask" class="metamask-button">
     <img src="@/assets/icons/icon_metamask.png" alt="Connect with wallet" class="metamask-icon" />
-    Connect Wallet
+    Connect with MetaMask
   </button>
 </template>
 
 <script>
 import detectEthereumProvider from '@metamask/detect-provider'
-import { useWalletStore } from '@/stores/walletStore'
-import { useMessageStore } from '@/stores/messageStore'
+import { useWalletStore } from '@/store/walletStore'
+import { useMessageStore } from '@/store/messageStore'
 import { ref } from 'vue'
-import Web3listener from '@/lib/web3listener'
+import Web3listener from '@/lib/web3Listener'
 
 export default {
   name: 'MetaMaskConnectButton',
