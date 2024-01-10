@@ -41,7 +41,8 @@ function guess(uint256 _number) external payable {
         payable(msg.sender).transfer(address(this).balance);
         feedback = "correct! You won the prize";
         emit Guessed(msg.sender, _number, true, feedback);
-        _resetSecretNumber();
+        _setSecretNumber();
+        lastResetTime = block.timestamp;
         totalGuesses = 0;
     } else {
         if (lastGuess[msg.sender] != 0 && lastResetTime <= lastGuess[msg.sender]) {
@@ -65,12 +66,6 @@ function guess(uint256 _number) external payable {
     function _setSecretNumber() private {
         uint256 randomNumber = block.difficulty;
         secretNumber = (randomNumber % MAX_GUESS) + 1;
-    }
-
-    function _resetSecretNumber() private {
-        uint256 randomNumber = block.difficulty;
-        secretNumber = (randomNumber % MAX_GUESS) + 1;
-        lastResetTime = block.timestamp;
     }
 
     function getContractBalance() external view returns (uint256) {
