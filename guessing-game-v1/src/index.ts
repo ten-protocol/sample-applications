@@ -2,8 +2,14 @@ import { ethers } from 'ethers';
 import { formatEther } from 'ethers/lib/utils';
 import ERC20 from '../artifacts/contracts/ERC20.sol/ERC20.json';
 import Guess from '../artifacts/contracts/Guess.sol/Guess.json';
-const ERC20_ADDRESS = '0x572128E5115008812fcD3016d98177EED387faaF';
-const GUESS_ADDRESS = '0x555b8eA821486338D8Bd8637dD379314B09CF26A';
+
+// expect address on deployed to hardhat
+//const ERC20_ADDRESS = '0x572128E5115008812fcD3016d98177EED387faaF';
+//const GUESS_ADDRESS = '0x555b8eA821486338D8Bd8637dD379314B09CF26A';
+
+// pre-deployed on sepolia
+const ERC20_ADDRESS = '0x555b8eA821486338D8Bd8637dD379314B09CF26A';
+const GUESS_ADDRESS = '0xa084b73aF850bAa0A9320baDC46660ad5dE3E1d6';
 
 const guessButton = document.getElementById('guess-button') as HTMLButtonElement;
 const approveButton = document.getElementById('approve-button') as HTMLButtonElement;

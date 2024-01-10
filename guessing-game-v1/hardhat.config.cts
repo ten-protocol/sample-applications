@@ -29,7 +29,7 @@ const config: HardhatUserConfig = {
       deploy: [ "scripts/" ],
       chainId: 11155111,
       url: `https://eth-sepolia.g.alchemy.com/v2/${API_KEY}`,
-      gasPrice: 100000000,
+      gasPrice: 34254316565,
       accounts: [ `0x${APP_DEV_PK}`, `0x${APP_USR_PK}` ]
     },
     hardhat: {
