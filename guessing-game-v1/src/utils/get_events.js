@@ -51,26 +51,27 @@ commander
     .version('1.0.0', '-v, --version')
     .usage('[OPTIONS]...')
     .option('--network <value>', 'Set network to hardhat or obscuro (defaults hardhat)')
+    .option('--address <value>', 'The contract address of the guessing game')
+    .option('--token <value>', 'The ten gateway token')
+    .option('--api_key <value>', 'The sepolia API key')
     .parse(process.argv)
 
 const options = commander.opts()
-var json = fs.readFileSync('game.abi')
-var abi = JSON.parse(json)
+var json = fs.readFileSync('../../artifacts/contracts/Guess.sol/Guess.json')
+var abi = JSON.parse(json)['abi']
 
+contractAddress = options.address
 if (options.network === 'ten') {
-  network_http = 'http://127.0.0.1:4000'
-  network_ws = 'ws://127.0.0.1:4001'
-  contractAddress = '0x2f1C77134D5E6dc76e90708A5D0d8B6918b1b7d3'
+  network_http = 'https://testnet.ten.xyz/v1/'+options.token
+  network_ws = 'wss://testnet.ten.xyz:81/v1/'+options.token
 }
-else if (options.network === 'arbitrum') {
-  network_http = 'https://arb-goerli.g.alchemy.com/v2/'+ARB_API_KEY
-  network_ws = 'wss://arb-goerli.g.alchemy.com/v2/'+ARB_API_KEY
-  contractAddress = '0x555b8eA821486338D8Bd8637dD379314B09CF26A'
+else if (options.network === 'sepolia') {
+  network_http = 'https://eth-sepolia.g.alchemy.com/v2'+options.api_key
+  network_ws = 'wss://eth-sepolia.g.alchemy.com/v2/'+options.api_key
 }
 else if (options.network === 'hardhat') {
   network_http = 'http://127.0.0.1:8545/'
   network_ws = 'ws://127.0.0.1:8545'
-  contractAddress = '0x555b8eA821486338D8Bd8637dD379314B09CF26A'
 }
 
 const provider = new ethers.providers.WebSocketProvider(network_ws)

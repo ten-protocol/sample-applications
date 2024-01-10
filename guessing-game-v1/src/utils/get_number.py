@@ -20,7 +20,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Try to cheat and get the target from storage')
     parser.add_argument('--network', help='Set network to hardhat or obscuro (defaults hardhat)', required=True)
     parser.add_argument('--address', help='The contract address of the guessing game')
-    parser.add_argument('--token', help='The ten gatewaya token')
+    parser.add_argument('--token', help='The ten gateway token')
     parser.add_argument('--api_key', help='The sepolia API key')
     args = parser.parse_args()
 
