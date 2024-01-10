@@ -57,7 +57,7 @@ const options = commander.opts()
 var json = fs.readFileSync('game.abi')
 var abi = JSON.parse(json)
 
-if (options.network === 'obscuro') {
+if (options.network === 'ten') {
   network_http = 'http://127.0.0.1:4000'
   network_ws = 'ws://127.0.0.1:4001'
   contractAddress = '0x2f1C77134D5E6dc76e90708A5D0d8B6918b1b7d3'

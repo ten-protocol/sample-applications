@@ -1,4 +1,4 @@
-import argparse, ast, sys, os
+import argparse, ast, sys
 from web3 import Web3
 
 
@@ -19,20 +19,21 @@ def get_target():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Try to cheat and get the target from storage')
     parser.add_argument('--network', help='Set network to hardhat or obscuro (defaults hardhat)', required=True)
+    parser.add_argument('--address', help='The contract address of the guessing game')
+    parser.add_argument('--token', help='The ten gatewaya token')
+    parser.add_argument('--api_key', help='The sepolia API key')
     args = parser.parse_args()
 
     web3 = None
-    if args.network == 'obscuro':
-        web3 = Web3(Web3.HTTPProvider('http://127.0.0.1:4000/'))
-        contractAddress = '0x2f1C77134D5E6dc76e90708A5D0d8B6918b1b7d3'
-    elif args.network == 'arbitrum':
-        web3 = Web3(Web3.HTTPProvider('https://arb-goerli.g.alchemy.com/v2/%s'%os.getenv("ARB_API_KEY")))
-        contractAddress = '0x555b8eA821486338D8Bd8637dD379314B09CF26A'
+    contractAddress = args.address
+    if args.network == 'ten':
+        web3 = Web3(Web3.HTTPProvider('https://testnet.ten.xyz/v1/%s' % args.token))
+    elif args.network == 'sepolia':
+        web3 = Web3(Web3.HTTPProvider('https://eth-sepolia.g.alchemy.com/v2/%s' % args.api_key))
     elif args.network == 'hardhat':
         web3 = Web3(Web3.HTTPProvider('http://127.0.0.1:8545/'))
-        contractAddress = '0x555b8eA821486338D8Bd8637dD379314B09CF26A'
     else:
-        print('--network should be either obscuro, arbitrum or hardhat')
+        print('--network should be either ten, sepolia or hardhat')
         sys.exit(-1)
 
     try:
