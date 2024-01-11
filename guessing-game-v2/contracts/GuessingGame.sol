@@ -21,7 +21,7 @@ contract GuessingGame {
 
     constructor() {
         owner = msg.sender;
-        _setSecretNumber(); // Initialize the secret number when the contract is deployed.
+        _resetSecretNumber(); // Initialize the secret number when the contract is deployed.
     }
 
     function guess(uint256 _number) external payable {
@@ -33,17 +33,16 @@ contract GuessingGame {
             lastDifference[msg.sender] = MAX_GUESS + 1; // Reset the last difference if the player is guessing after a secret no. reset.
         }
 
-        uint256 currentDifference = _number > secretNumber ? _number - secretNumber : secretNumber - _number;
         string memory feedback;
 
         if (_number == secretNumber) {
             payable(msg.sender).transfer(address(this).balance);
             feedback = "correct! You won the prize";
             emit Guessed(msg.sender, _number, true, feedback);
-            _setSecretNumber();
-            lastResetTime = block.timestamp; // Record the timestamp of the last game reset.
+            _resetSecretNumber();
             totalGuesses = 0; // Reset the total number of guesses made.
         } else {
+        uint256 currentDifference = _number > secretNumber ? _number - secretNumber : secretNumber - _number;
             if (lastResetTime > lastGuess[msg.sender]) {
                 if (currentDifference < lastDifference[msg.sender]) {
                     feedback = "warmer";
@@ -62,9 +61,10 @@ contract GuessingGame {
         }
     }
 
-    function _setSecretNumber() private {
+    function _resetSecretNumber() private {
         uint256 randomNumber = block.difficulty;
         secretNumber = (randomNumber % MAX_GUESS) + 1; // Generate a new random secret number.
+        ResetTime = block.timestamp; // Record the timestamp of the last game reset.
     }
 
     function getContractBalance() external view returns (uint256) {
