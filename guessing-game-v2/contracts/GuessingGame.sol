@@ -30,7 +30,7 @@ function guess(uint256 _number) external payable {
     require(msg.value == GUESS_FEE, 'You need to pay a fees of 0.443 ETH to make a guess');
     totalGuesses += 1;
 
-    if (lastGuess[msg.sender] == 0 || lastResetTime > lastGuess[msg.sender]) {
+    if (lastResetTime > lastGuess[msg.sender]) {
         lastDifference[msg.sender] = MAX_GUESS + 1;
     }
 
