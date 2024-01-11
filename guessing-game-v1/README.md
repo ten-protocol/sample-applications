@@ -37,7 +37,7 @@ e.g.
 ```shell
 APP_DEV_PK=<pk>
 APP_USR_PK=<pk>
-TEN_TOKEN=<key>
+TOKEN=<key>
 API_KEY=<key>
 ```
 

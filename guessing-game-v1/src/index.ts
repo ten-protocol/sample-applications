@@ -11,6 +11,10 @@ import Guess from '../artifacts/contracts/Guess.sol/Guess.json';
 const ERC20_ADDRESS = '0x555b8eA821486338D8Bd8637dD379314B09CF26A';
 const GUESS_ADDRESS = '0xa084b73aF850bAa0A9320baDC46660ad5dE3E1d6';
 
+// pre-deployed on ten
+//const ERC20_ADDRESS = '0x611798eB8EEd726C0487f329EAc410300590F915';
+//const GUESS_ADDRESS = '0x9ddBd536C075bC35C69280A09B02d5C52F30b54d';
+
 const guessButton = document.getElementById('guess-button') as HTMLButtonElement;
 const approveButton = document.getElementById('approve-button') as HTMLButtonElement;
 const guessInput = document.getElementById('guess-input') as HTMLInputElement;

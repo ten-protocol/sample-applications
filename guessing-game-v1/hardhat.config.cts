@@ -4,7 +4,7 @@ import "@nomicfoundation/hardhat-toolbox";
 import 'hardhat-deploy';
 import 'hardhat-ignore-warnings';
 
-const { APP_DEV_PK, APP_USR_PK, TEN_TOKEN, API_KEY } = process.env;
+const { APP_DEV_PK, APP_USR_PK, TOKEN, API_KEY } = process.env;
 
 const config: HardhatUserConfig = {
   solidity: "0.8.17",
@@ -21,7 +21,7 @@ const config: HardhatUserConfig = {
     ten: {
       deploy: [ "scripts/" ],
       chainId: 443,
-      url: `https://testnet.ten.xyz/v1/${TEN_TOKEN}`,
+      url: `https://testnet.ten.xyz/v1/${TOKEN}`,
       gasPrice: 2000000000,
       accounts: [ `0x${APP_DEV_PK}`, `0x${APP_USR_PK}` ]
     },
