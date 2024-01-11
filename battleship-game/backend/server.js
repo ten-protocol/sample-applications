@@ -2,7 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 dotenv.config();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 4000;
 const battleshipRoutes = require("./routes/battleshipRoutes");
 
 const connectDB = require("./config/db");
@@ -17,5 +17,5 @@ app.use("/", battleshipRoutes);
 connectDB();
 
 app.listen(port, () => {
-	console.log(`Server running on port: ${port}`);
+  console.log(`Server running on port: ${port}`);
 });
