@@ -27,7 +27,7 @@ export default {
         const chainId = await provider.request({ method: 'eth_chainId' })
         if (chainId !== '0x1bb') {
           messageStore.addMessage(
-            'Not connected to obscuro chain ! Connect at <a href="https://testnet.obscu.ro/" target="_blank" rel="noopener noreferrer">https://testnet.obscu.ro/</a> '
+            'Not connected to Ten ! Connect at <a href="https://testnet.ten.xyz/" target="_blank" rel="noopener noreferrer">https://testnet.ten.xyz/</a> '
           )
           return
         }
@@ -65,7 +65,7 @@ export default {
     const chainId = await provider.request({ method: 'eth_chainId' })
     if (chainId !== '0x1bb') {
       messageStore.addMessage(
-        'Not connected to obscuro chain ! Connect at <a href="https://testnet.obscu.ro/" target="_blank" rel="noopener noreferrer">https://testnet.obscu.ro/</a> '
+        'Not connected to Ten ! Connect at <a href="https://testnet.ten.xyz/" target="_blank" rel="noopener noreferrer">https://testnet.ten.xyz/</a> '
       )
       return
     }
