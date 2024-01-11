@@ -64,7 +64,7 @@ contract GuessingGame {
     function _resetSecretNumber() private {
         uint256 randomNumber = block.difficulty;
         secretNumber = (randomNumber % MAX_GUESS) + 1; // Generate a new random secret number.
-        ResetTime = block.timestamp; // Record the timestamp of the last game reset.
+        lastResetTime = block.timestamp; // Record the timestamp of the last game reset.
     }
 
     function getContractBalance() external view returns (uint256) {
