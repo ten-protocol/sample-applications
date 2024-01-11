@@ -3,21 +3,21 @@ pragma solidity ^0.8.18;
 
 contract ImageGuessGame {
     struct Challenge {
-        string imageURL;
-        uint256 startTime;
-        uint256 endTime;
-        uint256[2] hiddenCoordinates;
-        bool isActive;
+        string imageURL;               // IPFS Link
+        uint256 startTime;             // Timestamp when the challenge started.
+        uint256 endTime;               // Timestamp when the challenge ends.
+        uint256[2] hiddenCoordinates;  // Coordinates hidden in the image.
+        bool isActive;                 // Flag indicating if the challenge is active.
     }
 
     struct Guess {
         address user;
-        uint256[2] guessCoordinates;
+        uint256[2] guessCoordinates;  // Coordinates guessed by the user.
     }
 
     Challenge[] public challenges;
-    mapping(uint256 => Guess[]) private guesses;
-    mapping(uint256 => address) private challengeWinners;
+    mapping(uint256 => Guess[]) private guesses;  // Mapping of challenge IDs to guess data.
+    mapping(uint256 => address) private challengeWinners; // Mapping of challenge IDs to winners.
     uint256 public entryFee;
     address public owner;
 
@@ -85,7 +85,7 @@ contract ImageGuessGame {
     }
 
     function calculateDistance(uint256[2] memory a, uint256[2] memory b) private pure returns (uint256) {
-        return (a[0] - b[0])**2 + (a[1] - b[1])**2;
+        return (a[0] - b[0])**2 + (a[1] - b[1])**2;  // Calculate the squared distance between two sets of coordinates.
     }
 
 }
