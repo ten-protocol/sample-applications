@@ -13,7 +13,7 @@ python3 get_number.py --network hardhat --address <game address>
 python3 get_number.py --network sepolia --address <game address> --api_key <api key>
 
 # to get from ten 
-python3 get_number.py --network ten --address <game address> --token <gateway token>
+python3 get_number.py --network ten --address <game address>
 ```
 
 ## JS script to get events logs to see other guesses
@@ -28,5 +28,5 @@ node get_events.js --network hardhat --address <game address>
 node get_events.js --network sepolia --address <game address> --api_key <api key>
 
 # to get from ten 
-node get_events.js --network ten --address <game address> --token <gateway token>
+node get_events.js --network ten --address <game address> 
 ```
