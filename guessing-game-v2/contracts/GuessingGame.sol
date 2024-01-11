@@ -45,7 +45,7 @@ function guess(uint256 _number) external payable {
         lastResetTime = block.timestamp;
         totalGuesses = 0;
     } else {
-        if (lastGuess[msg.sender] != 0 && lastResetTime <= lastGuess[msg.sender]) {
+        if (lastResetTime > lastGuess[msg.sender]) {
             if (currentDifference < lastDifference[msg.sender]) {
                 feedback = "warmer";
             } else if (currentDifference > lastDifference[msg.sender]) {
