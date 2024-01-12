@@ -1,35 +1,35 @@
 <script setup lang="ts">
-import { CELLS, BATTLESHIPS } from "../lib/constants";
-import ColumnLabels from "../components/ColumnLabels.vue";
-import RowLabels from "../components/RowLabels.vue";
-import { onMounted, ref } from "vue";
-import { useBattleStore } from "../store/battleStore";
+import { CELLS, BATTLESHIPS } from '../lib/constants'
+import ColumnLabels from '../components/ColumnLabels.vue'
+import RowLabels from '../components/RowLabels.vue'
+import { onMounted, ref } from 'vue'
+import { useBattleStore } from '../store/battleStore'
 
 defineProps<{
-  user: "player" | "cpu";
-}>();
+  user: 'player' | 'cpu'
+}>()
 
-const battleStore = useBattleStore();
-const cpuCells = ref<HTMLElement | null>(null);
+const battleStore = useBattleStore()
+const cpuCells = ref<HTMLElement | null>(null)
 
 function handleShootCpuShip(i: string) {
   if (cpuCells.value) {
-    const cells = Array.from(cpuCells.value.children) as HTMLElement[];
-    battleStore.shootCpuShip(i, cells, BATTLESHIPS, "Nuel");
+    const cells = Array.from(cpuCells.value.children) as HTMLElement[]
+    battleStore.shootCpuShip(i, cells, BATTLESHIPS, 'Nuel')
   }
 }
 
 onMounted(() => {
   if (cpuCells.value) {
-    const cells = Array.from(cpuCells.value.children) as HTMLElement[];
-    BATTLESHIPS.forEach((ship) => battleStore.addCpuShip(ship, cells));
+    const cells = Array.from(cpuCells.value.children) as HTMLElement[]
+    BATTLESHIPS.forEach((ship) => battleStore.addCpuShip(ship, cells))
 
-    battleStore.getHitCells();
-    battleStore.getHitShips();
-    battleStore.getSunkShips();
-    battleStore.getMessages();
+    battleStore.getHitCells()
+    battleStore.getHitShips()
+    battleStore.getSunkShips()
+    battleStore.getMessages()
   }
-});
+})
 </script>
 
 <template>
