@@ -3,6 +3,7 @@ import { useMessageStore } from '@/stores/messageStore'
 import GuessingGameJson from '@/assets/contract/artifacts/contracts/GuessingGame.sol/GuessingGame.json'
 import ContractAddress from '@/assets/contract/address.json'
 import Common from './common'
+import { trackEvent } from './utils'
 
 export default class Web3Service {
   constructor(signer) {
@@ -16,14 +17,12 @@ export default class Web3Service {
 
     const minimumBalance = ethers.utils.parseEther(Common.GUESS_COST)
     const messageStore = useMessageStore()
+
     messageStore.addMessage('Issuing Guess...')
 
     try {
-      // Check guess value is within range
-      if (guessValue > maxGuess) {
-        messageStore.addMessage(
-          `Guess value is too high. You can only guess up to ${maxGuess.toString()}.`
-        )
+      if (+guessValue > +(await maxGuess.toString())) {
+        messageStore.addMessage(`Guess value is too high. You can only guess up to ${maxGuess}.`)
         return
       }
       // Check balance
@@ -38,6 +37,7 @@ export default class Web3Service {
       const receipt = await submitTx.wait()
       messageStore.addMessage('Issued Guess tx: ' + receipt.transactionHash)
       if (receipt.events[0].args.success) {
+        trackEvent('guess_success', { value: guessValue })
         messageStore.addMessage(
           `[GuessingGame Contract] ${guessValue} was the right answer ! You won!`
         )

@@ -1,11 +1,8 @@
 <template>
-  <button
-    class="bg-neutral-200 py-[5px] px-4 text-[14px] font-semibold rounded-md border-2 border-neutral-300"
-    @click="connectMetamask"
-  >
+  <el-button @click="connectMetamask" size="large">
     <img src="@/assets/icons/icon_metamask.png" alt="Connect with wallet" class="metamask-icon" />
     Connect Wallet
-  </button>
+  </el-button>
 </template>
 
 <script>
@@ -14,6 +11,7 @@ import { useWalletStore } from '@/stores/walletStore'
 import { useMessageStore } from '@/stores/messageStore'
 import { ref } from 'vue'
 import Web3listener from '@/lib/web3listener'
+import { trackEvent } from '../lib/utils'
 
 export default {
   name: 'MetaMaskConnectButton',
@@ -29,7 +27,7 @@ export default {
         const chainId = await provider.request({ method: 'eth_chainId' })
         if (chainId !== '0x1bb') {
           messageStore.addMessage(
-            'Not connected to obscuro chain ! Connect at <a href="https://testnet.obscu.ro/" target="_blank" rel="noopener noreferrer">https://testnet.obscu.ro/</a> '
+            'Not connected to Ten ! Connect at <a href="https://testnet.ten.xyz/" target="_blank" rel="noopener noreferrer">https://testnet.ten.xyz/</a> '
           )
           return
         }
@@ -40,6 +38,10 @@ export default {
         // Set provider and address in the store
         walletStore.setProvider(provider)
         walletStore.setAddress(accounts[0])
+
+        trackEvent('connect_wallet', {
+          value: accounts[0]
+        })
 
         messageStore.addMessage('Connected to wallet ! Account: ' + accounts[0])
         buttonText.value = 'Connected!'
@@ -63,7 +65,7 @@ export default {
     const chainId = await provider.request({ method: 'eth_chainId' })
     if (chainId !== '0x1bb') {
       messageStore.addMessage(
-        'Not connected to obscuro chain ! Connect at <a href="https://testnet.obscu.ro/" target="_blank" rel="noopener noreferrer">https://testnet.obscu.ro/</a> '
+        'Not connected to Ten ! Connect at <a href="https://testnet.ten.xyz/" target="_blank" rel="noopener noreferrer">https://testnet.ten.xyz/</a> '
       )
       return
     }
