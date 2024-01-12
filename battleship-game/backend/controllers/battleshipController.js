@@ -1,155 +1,155 @@
-const ShipPosition = require("../models/shipPositionModel");
-const HitCell = require("../models/hitCellModel");
-const HitShip = require("../models/hitShipModel");
-const SunkShip = require("../models/sunkShipModel");
-const Message = require("../models/messageModel");
+const ShipPosition = require('../models/shipPositionModel')
+const HitCell = require('../models/hitCellModel')
+const HitShip = require('../models/hitShipModel')
+const SunkShip = require('../models/sunkShipModel')
+const Message = require('../models/messageModel')
 
 const saveShipPos = async (req, res) => {
-  const { shipType, cellIds } = req.body;
+  const { shipType, cellIds } = req.body
 
   try {
     const savedShipPosition = await ShipPosition.create({
       shipType,
-      cellIds,
-    });
+      cellIds
+    })
 
-    res.status(201).json(savedShipPosition);
+    res.status(201).json(savedShipPosition)
   } catch (error) {
-    console.error("Error saving shipPositions:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error('Error saving shipPositions:', error)
+    res.status(500).json({ error: 'Internal Server Error' })
   }
-};
+}
 
 const getShipPos = async (req, res) => {
   try {
-    const shipPositions = await ShipPosition.find();
+    const shipPositions = await ShipPosition.find()
     res.status(200).json(
       shipPositions.map((pos) => {
         return {
           shipType: pos.shipType,
-          cellIds: pos.cellIds,
-        };
+          cellIds: pos.cellIds
+        }
       })
-    );
+    )
   } catch (error) {
-    console.error("Error getting shipPositions:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error('Error getting shipPositions:', error)
+    res.status(500).json({ error: 'Internal Server Error' })
   }
-};
+}
 
 const saveHitCell = async (req, res) => {
-  const { hit, cell } = req.body;
+  const { hit, cell } = req.body
 
   try {
-    const savedCell = await HitCell.create({ hit, cell });
-    res.status(201).json(savedCell);
+    const savedCell = await HitCell.create({ hit, cell })
+    res.status(201).json(savedCell)
   } catch (error) {
-    console.error("Error saving hit cell:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error('Error saving hit cell:', error)
+    res.status(500).json({ error: 'Internal Server Error' })
   }
-};
+}
 
 const getHitCells = async (req, res) => {
   try {
-    const hitCells = await HitCell.find();
+    const hitCells = await HitCell.find()
     res.status(200).json(
       hitCells.map((cell) => {
         return {
           hit: cell.hit,
-          cell: cell.cell,
-        };
+          cell: cell.cell
+        }
       })
-    );
+    )
   } catch (error) {
-    console.error("Error getting hit cells:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error('Error getting hit cells:', error)
+    res.status(500).json({ error: 'Internal Server Error' })
   }
-};
+}
 
 const saveHitShip = async (req, res) => {
-  const { ship } = req.body;
+  const { ship } = req.body
 
   try {
-    const savedShip = await HitShip.create({ ship });
-    res.status(201).json(savedShip);
+    const savedShip = await HitShip.create({ ship })
+    res.status(201).json(savedShip)
   } catch (error) {
-    console.error("Error saving hit cell:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error('Error saving hit cell:', error)
+    res.status(500).json({ error: 'Internal Server Error' })
   }
-};
+}
 
 const getHitShips = async (req, res) => {
   try {
-    const hitShips = await HitShip.find();
+    const hitShips = await HitShip.find()
     res.status(200).json(
       hitShips.map((ship) => {
-        return ship.ship;
+        return ship.ship
       })
-    );
+    )
   } catch (error) {
-    console.error("Error getting hit cells:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error('Error getting hit cells:', error)
+    res.status(500).json({ error: 'Internal Server Error' })
   }
-};
+}
 
 const saveSunkShip = async (req, res) => {
-  const { shipType, name, length } = req.body;
+  const { shipType, name, length } = req.body
 
   try {
-    const sunkShip = await SunkShip.create({ shipType, name, length });
-    res.status(201).json(sunkShip);
+    const sunkShip = await SunkShip.create({ shipType, name, length })
+    res.status(201).json(sunkShip)
   } catch (error) {
-    console.error("Error saving hit cell:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error('Error saving hit cell:', error)
+    res.status(500).json({ error: 'Internal Server Error' })
   }
-};
+}
 
 const getSunkShips = async (req, res) => {
   try {
-    const sunkShips = await SunkShip.find();
+    const sunkShips = await SunkShip.find()
     res.status(200).json(
       sunkShips.map((ship) => {
         return {
           shipType: ship.shipType,
           name: ship.name,
-          length: ship.length,
-        };
+          length: ship.length
+        }
       })
-    );
+    )
   } catch (error) {
-    console.error("Error getting hit cells:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error('Error getting hit cells:', error)
+    res.status(500).json({ error: 'Internal Server Error' })
   }
-};
+}
 
 const saveMessage = async (req, res) => {
-  const { message } = req.body;
+  const { message } = req.body
 
   try {
-    const messageObj = await Message.create({ message });
-    res.status(201).json(messageObj);
+    const messageObj = await Message.create({ message })
+    res.status(201).json(messageObj)
   } catch (error) {
-    console.error("Error saving hit cell:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error('Error saving hit cell:', error)
+    res.status(500).json({ error: 'Internal Server Error' })
   }
-};
+}
 
 const getMessages = async (req, res) => {
   try {
-    const messages = await Message.find();
+    const messages = await Message.find()
     res.status(200).json(
       messages.map((message) => {
         return {
           id: message.id,
-          message: message.message,
-        };
+          message: message.message
+        }
       })
-    );
+    )
   } catch (error) {
-    console.error("Error getting hit cells:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error('Error getting hit cells:', error)
+    res.status(500).json({ error: 'Internal Server Error' })
   }
-};
+}
 
 module.exports = {
   saveShipPos,
@@ -161,5 +161,5 @@ module.exports = {
   saveSunkShip,
   getSunkShips,
   saveMessage,
-  getMessages,
-};
+  getMessages
+}
