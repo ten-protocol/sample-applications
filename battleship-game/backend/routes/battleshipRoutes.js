@@ -10,7 +10,8 @@ const {
   saveSunkShip,
   getSunkShips,
   saveMessage,
-  getMessages
+  getMessages,
+  resetGame
 } = require('../controllers/battleshipController')
 
 router.post('/saveShipPos', saveShipPos)
@@ -23,5 +24,6 @@ router.post('/saveSunkShip', saveSunkShip)
 router.get('/getSunkShips', getSunkShips)
 router.post('/saveMessage', saveMessage)
 router.get('/getMessages', getMessages)
+router.delete('/resetGame', resetGame)
 
 module.exports = router

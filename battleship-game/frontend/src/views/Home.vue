@@ -1,6 +1,5 @@
 <script setup lang="ts">
-// import Loading from '../components/Loading.vue'
-import Topbar from '../components/Topbar.vue'
+import Loading from '../components/Loading.vue'
 import Game from '../components/Game.vue'
 import Controls from '../components/Controls.vue'
 </script>
@@ -8,12 +7,8 @@ import Controls from '../components/Controls.vue'
 <template>
   <!-- <Loading /> -->
 
-  <div>
-    <Topbar />
-
-    <div class="flex gap-4">
-      <Game />
-      <Controls />
-    </div>
+  <div class="flex max-w-full">
+    <Game />
+    <Controls />
   </div>
 </template>

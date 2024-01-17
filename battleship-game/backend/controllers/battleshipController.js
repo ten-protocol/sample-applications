@@ -151,6 +151,21 @@ const getMessages = async (req, res) => {
   }
 }
 
+const resetGame = async (req, res) => {
+  try {
+    await ShipPosition.deleteMany({})
+    await HitCell.deleteMany({})
+    await HitShip.deleteMany({})
+    await SunkShip.deleteMany({})
+    await Message.deleteMany({})
+
+    res.status(200).send('Game reset')
+  } catch (error) {
+    console.error('Error resetting game:', error)
+    res.status(500).json({ error: 'Internal Server Error' })
+  }
+}
+
 module.exports = {
   saveShipPos,
   getShipPos,
@@ -161,5 +176,6 @@ module.exports = {
   saveSunkShip,
   getSunkShips,
   saveMessage,
-  getMessages
+  getMessages,
+  resetGame
 }

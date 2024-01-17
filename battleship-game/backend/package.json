@@ -1,5 +1,5 @@
 {
-  "name": "battleship-frontend",
+  "name": "battleships-server",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",

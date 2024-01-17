@@ -1,8 +1,9 @@
 import { defineStore } from 'pinia'
+import { Message } from '../types'
 
 export const useMessageStore = defineStore('messages', {
   state: () => ({
-    messages: [] as string[]
+    messages: [] as Message[]
   }),
 
   getters: {
@@ -15,7 +16,7 @@ export const useMessageStore = defineStore('messages', {
   },
 
   actions: {
-    addMessage(message: string) {
+    addMessage(message: Message) {
       this.messages.push(message)
     },
     removeMessage(index: number) {

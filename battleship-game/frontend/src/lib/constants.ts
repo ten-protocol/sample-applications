@@ -4,19 +4,35 @@ export const COLUMN_LABELS: string[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 
 
 export const ROW_LABELS: string[] = ['', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
 
-function generateStringArray() {
+function formatAddress(address: string) {
+  const afterX = address.substring(2)
+  const firstFourCharacters = afterX.substring(0, 4)
+  const lastFourCharacters = afterX.slice(-4)
+
+  return `0x${firstFourCharacters}...${lastFourCharacters}`
+}
+
+export const PLAYER_ID: string = formatAddress('0x742d35Cc6634C0532925a3b844Bc454e4438f44e')
+
+export const WIDTH: number = 100
+
+export const CELL_WIDTH = 20
+
+export const GRID_WIDTH: number = WIDTH * CELL_WIDTH
+
+function generateGridArray(rows: number, columns: number) {
   const result: string[] = []
 
-  for (let row = 1; row <= 10; row++) {
-    for (let col = 'A'.charCodeAt(0); col <= 'J'.charCodeAt(0); col++) {
-      result.push(String.fromCharCode(col) + row)
+  for (let row = 1; row <= rows; row++) {
+    for (let col = 1; col <= columns; col++) {
+      result.push(`${col}-${row}`)
     }
   }
 
   return result
 }
 
-export const CELLS: string[] = generateStringArray()
+export const CELLS: string[] = generateGridArray(WIDTH, WIDTH)
 
 export const BATTLESHIPS: Ship[] = [
   {
@@ -31,7 +47,7 @@ export const BATTLESHIPS: Ship[] = [
   },
   {
     shipType: 'cruiser',
-    name: 'Cruier',
+    name: 'Cruiser',
     length: 2
   },
   {
@@ -46,6 +62,4 @@ export const BATTLESHIPS: Ship[] = [
   }
 ]
 
-export const WIDTH: number = 10
-
-export const BASE_URL = 'http://localhost:4000'
+export const BASE_URL = 'http://localhost:4500'

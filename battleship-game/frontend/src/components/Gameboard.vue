@@ -1,54 +1,74 @@
-<script setup lang="ts">
-import { CELLS, BATTLESHIPS } from '../lib/constants'
-import ColumnLabels from '../components/ColumnLabels.vue'
-import RowLabels from '../components/RowLabels.vue'
-import { onMounted, ref } from 'vue'
+<script setup>
 import { useBattleStore } from '../store/battleStore'
-
-defineProps<{
-  user: 'player' | 'cpu'
-}>()
+import { BATTLESHIPS } from '../lib/constants'
+import { watch, ref } from 'vue'
 
 const battleStore = useBattleStore()
-const cpuCells = ref<HTMLElement | null>(null)
+const loading = ref(false)
 
-function handleShootCpuShip(i: string) {
-  if (cpuCells.value) {
-    const cells = Array.from(cpuCells.value.children) as HTMLElement[]
-    battleStore.shootCpuShip(i, cells, BATTLESHIPS, 'Nuel')
-  }
-}
+watch(
+  battleStore,
+  (newBattleStore, oldBattleStore) => {
+    if (newBattleStore.cpuSunkShips.length === 5) {
+      loading.value = true
 
-onMounted(() => {
-  if (cpuCells.value) {
-    const cells = Array.from(cpuCells.value.children) as HTMLElement[]
-    BATTLESHIPS.forEach((ship) => battleStore.addCpuShip(ship, cells))
-
-    battleStore.getHitCells()
-    battleStore.getHitShips()
-    battleStore.getSunkShips()
-    battleStore.getMessages()
-  }
-})
+      setTimeout(async () => {
+        try {
+          await battleStore.resetGame()
+          loading.value = false
+        } catch (error) {
+          console.log(error)
+        }
+      }, 3000)
+    }
+  },
+  { deep: true }
+)
 </script>
 
 <template>
-  <div class="relative flex mt-4 h-fit">
-    <ColumnLabels />
-    <RowLabels />
-    <div
-      :class="`flex-1 grid grid-cols-10 mt-[50px] ${
-        user === 'player' ? 'bg-aqua' : 'bg-gray-light'
-      }`"
-      :ref="user === 'player' ? 'playerCells' : 'cpuCells'"
-    >
-      <div
-        v-for="(cellName, i) in CELLS"
-        :key="cellName"
-        :id="String(i + 1)"
-        :class="`${cellName} cell flex items-center justify-center border border-white`"
-        @click="handleShootCpuShip(String(i + 1))"
-      ></div>
+  <div
+    v-if="battleStore.cpuSunkShips.length === BATTLESHIPS.length"
+    class="w-full h-full bg-black absolute top-0 left-0 text-[80px] text-white flex flex-col items-center gap-12 justify-center text-center"
+  >
+    <p>GAME OVER</p>
+    <div class="flex flex-col items-center justify-center text-center text-white gap-4 text-base">
+      <div class="lds-hourglass"></div>
+      <p>Resetting game...</p>
     </div>
   </div>
 </template>
+
+<style scoped>
+.lds-hourglass {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-hourglass:after {
+  content: ' ';
+  display: block;
+  border-radius: 50%;
+  width: 0;
+  height: 0;
+  margin: 8px;
+  box-sizing: border-box;
+  border: 32px solid #fff;
+  border-color: #fff transparent #fff transparent;
+  animation: lds-hourglass 1.2s infinite;
+}
+@keyframes lds-hourglass {
+  0% {
+    transform: rotate(0);
+    animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  }
+  50% {
+    transform: rotate(900deg);
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+  100% {
+    transform: rotate(1800deg);
+  }
+}
+</style>

@@ -1,15 +1,17 @@
 import { defineStore } from 'pinia'
 import { Message, Ship, ShipPosition } from '../types'
-import { WIDTH } from '../lib/constants'
+import { PLAYER_ID, WIDTH } from '../lib/constants'
 import battleship from '../services/battleship'
 
 export const useBattleStore = defineStore('battleStore', {
   state: () => ({
+    playerId: PLAYER_ID as string,
     angle: 0 as number,
     cpuShipPositions: [] as ShipPosition[],
     cpuHitShips: [] as string[],
     cpuSunkShips: [] as Ship[],
-    messages: [] as Message[]
+    messages: [] as Message[],
+    zoom: 1 as number
   }),
 
   getters: {},
@@ -57,7 +59,8 @@ export const useBattleStore = defineStore('battleStore', {
         )
       } else {
         valid = shipCells.every(
-          (_shipBlock, index) => Number(shipCells[0].id) < 90 + (WIDTH * index + 1)
+          (_shipBlock, index) =>
+            Number(shipCells[0].id) < WIDTH * WIDTH - WIDTH + (WIDTH * index + 1)
         )
       }
 
@@ -85,7 +88,7 @@ export const useBattleStore = defineStore('battleStore', {
       this.cpuShipPositions = res
     },
 
-    async shootCpuShip(i: string, cells: HTMLElement[], ships: Ship[], playerId: string) {
+    async shootCpuShip(i: string, cells: HTMLElement[], ships: Ship[]) {
       const cell = cells.find((cell) => cell.id === String(i))
 
       if (cell?.classList.contains('boom')) {
@@ -99,7 +102,7 @@ export const useBattleStore = defineStore('battleStore', {
           .map((subArray) => subArray[0].shipType)[0]
 
         const cellName = cell.classList[0]
-        const message = `Player ${playerId} hit a ship on cell ${cellName}`
+        const message = `Player ${this.playerId} hit a ship on cell ${cellName}`
         const hitCell = { hit: true, cell: cell!.id }
 
         await battleship.saveHitCell(hitCell)
@@ -168,6 +171,28 @@ export const useBattleStore = defineStore('battleStore', {
 
     removeMessage(index: number) {
       this.messages.splice(index, 1)
+    },
+
+    zoomBattleGrid(action: string) {
+      if (action === 'add') {
+        this.zoom++
+        console.log(this.zoom)
+      } else {
+        this.zoom--
+        console.log(this.zoom)
+      }
+    },
+
+    async resetGame() {
+      await battleship.resetGame()
+
+      this.cpuShipPositions = []
+      this.cpuHitShips = []
+      this.cpuSunkShips = []
+      this.messages = []
+      this.zoom = 1
+
+      window.location.reload()
     }
   }
 })

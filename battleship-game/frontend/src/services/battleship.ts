@@ -48,6 +48,10 @@ const getMessages = async () => {
   return res.data
 }
 
+const resetGame = async () => {
+  await axios.delete(`${BASE_URL}/resetGame`)
+}
+
 const battleship = {
   saveShipPos,
   getShipPos,
@@ -58,7 +62,8 @@ const battleship = {
   saveSunkShip,
   getSunkShips,
   saveMessage,
-  getMessages
+  getMessages,
+  resetGame
 }
 
 export default battleship

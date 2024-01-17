@@ -10,17 +10,21 @@ const reversedMessages = computed(() => {
 </script>
 
 <template>
-  <div class="w-[500px] h-[calc(100vh-48px)] bg-slate-900 p-6 flex flex-col justify-between">
-    <div>
-      <button
-        class="bg-slate-700 py-[5px] px-4 text-[14px] font-semibold rounded-md border-2 border-slate-800 text-white shadow-md shadow-slate-950/50 hover:bg-slate-700/70"
-      >
-        Connect Wallet
-      </button>
+  <div class="min-w-[500px] h-screen bg-slate-900 pt-[48px] p-6 flex flex-col gap-8">
+    <div class="h-[150px] w-full bg-slate-950 rounded-lg p-4">
+      <h2 class="text-white text-[12px] font-semibold mb-3">GRAVEYARD</h2>
+      <div class="flex flex-wrap gap-3">
+        <p
+          v-for="ship in battleStore.cpuSunkShips"
+          :key="ship.shipType"
+          class="text-white text-[12px] font-thin"
+        >
+          {{ ship.name }} ({{ ship.length }})
+        </p>
+      </div>
     </div>
-
     <div
-      class="h-[80%] w-full bg-slate-950 rounded-lg p-4 flex flex-col gap-4 overflow-y-auto scroll"
+      class="h-full w-full bg-slate-950 rounded-lg p-4 flex flex-col gap-4 overflow-y-auto scroll"
     >
       <p v-for="message in reversedMessages" :key="message.id" class="text-white text-[12px]">
         {{ message.message }}
