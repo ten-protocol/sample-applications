@@ -54,7 +54,7 @@ function getMousePosition(event) {
     <Topbar />
     <div class="w-full h-[calc(100vh-48px)] p-4 relative">
       <div
-        class="w-[1000px] h-full overflow-auto mx-auto"
+        class="w-full h-full overflow-auto mx-auto"
         @mousedown="startDrag"
         @mousemove="handleDrag"
         @mouseup="stopDrag"

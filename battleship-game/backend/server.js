@@ -2,7 +2,7 @@ const express = require('express')
 const dotenv = require('dotenv')
 const cors = require('cors')
 dotenv.config()
-const port = process.env.PORT || 4500
+const port = process.env.PORT || 4000
 const battleshipRoutes = require('./routes/battleshipRoutes')
 
 const connectDB = require('./config/db')

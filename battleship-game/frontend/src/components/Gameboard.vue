@@ -1,74 +1,60 @@
-<script setup>
-import { useBattleStore } from '../store/battleStore'
-import { BATTLESHIPS } from '../lib/constants'
-import { watch, ref } from 'vue'
+<script setup lang="ts">
+	import { CELLS, BATTLESHIPS } from "../lib/constants";
+	import { onMounted, ref } from "vue";
+	import { useBattleStore } from "../store/battleStore";
 
-const battleStore = useBattleStore()
-const loading = ref(false)
+	defineProps<{
+		user: "player" | "cpu";
+	}>();
 
-watch(
-  battleStore,
-  (newBattleStore, oldBattleStore) => {
-    if (newBattleStore.cpuSunkShips.length === 5) {
-      loading.value = true
+	const battleStore = useBattleStore();
+	const gridCells = ref<string[]>([]);
+	const cpuCells = ref<HTMLElement | null>(null);
+	const gridWidth = ref(`w-[800px]`);
+	const cellWidth = ref(`w-[8px]`);
 
-      setTimeout(async () => {
-        try {
-          await battleStore.resetGame()
-          loading.value = false
-        } catch (error) {
-          console.log(error)
-        }
-      }, 3000)
-    }
-  },
-  { deep: true }
-)
+	async function handleShootCpuShip(i: string) {
+		if (cpuCells.value) {
+			const cells = Array.from(cpuCells.value.children) as HTMLElement[];
+			await battleStore.shootCpuShip(i, cells, BATTLESHIPS);
+			await battleStore.getMessages();
+			await battleStore.getSunkShips();
+		}
+	}
+
+	async function renderGridCells() {
+		return new Promise<void>((resolve) => {
+			gridCells.value = CELLS;
+
+			resolve();
+		});
+	}
+
+	onMounted(async () => {
+		await renderGridCells();
+
+		if (cpuCells.value) {
+			const cells = Array.from(cpuCells.value.children) as HTMLElement[];
+			BATTLESHIPS.forEach((ship) => battleStore.addCpuShip(ship, cells));
+
+			battleStore.getHitCells();
+			battleStore.getHitShips();
+			battleStore.getSunkShips();
+		}
+	});
 </script>
 
 <template>
-  <div
-    v-if="battleStore.cpuSunkShips.length === BATTLESHIPS.length"
-    class="w-full h-full bg-black absolute top-0 left-0 text-[80px] text-white flex flex-col items-center gap-12 justify-center text-center"
-  >
-    <p>GAME OVER</p>
-    <div class="flex flex-col items-center justify-center text-center text-white gap-4 text-base">
-      <div class="lds-hourglass"></div>
-      <p>Resetting game...</p>
-    </div>
-  </div>
+	<div class="border border-blue-300 w-fit h-fit mx-auto">
+		<div
+			:class="`${gridWidth} flex flex-wrap bg-aqua `"
+			:ref="user === 'player' ? 'playerCells' : 'cpuCells'">
+			<div
+				v-for="(cellName, i) in gridCells"
+				:key="cellName"
+				:id="String(i + 1)"
+				:class="`${cellName} ${cellWidth} aspect-square flex items-center justify-center relative border border-white`"
+				@click="handleShootCpuShip(String(i + 1))"></div>
+		</div>
+	</div>
 </template>
-
-<style scoped>
-.lds-hourglass {
-  display: inline-block;
-  position: relative;
-  width: 80px;
-  height: 80px;
-}
-.lds-hourglass:after {
-  content: ' ';
-  display: block;
-  border-radius: 50%;
-  width: 0;
-  height: 0;
-  margin: 8px;
-  box-sizing: border-box;
-  border: 32px solid #fff;
-  border-color: #fff transparent #fff transparent;
-  animation: lds-hourglass 1.2s infinite;
-}
-@keyframes lds-hourglass {
-  0% {
-    transform: rotate(0);
-    animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
-  }
-  50% {
-    transform: rotate(900deg);
-    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
-  }
-  100% {
-    transform: rotate(1800deg);
-  }
-}
-</style>
