@@ -48,9 +48,9 @@ contract GuessingGame {
         uint256 currentDifference = _number > secretNumber ? _number - secretNumber : secretNumber - _number;
             if (lastResetTime > lastGuess[msg.sender]) {
                 if (currentDifference < lastDifference[msg.sender]) {
-                    feedback = "warmer";
+                    feedback = "Your guess is warmer";
                 } else if (currentDifference > lastDifference[msg.sender]) {
-                    feedback = "colder";
+                    feedback = "Your guess is colder";
                 } else {
                     feedback = "neither warmer nor colder";
                 }
