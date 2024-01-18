@@ -1,4 +1,4 @@
-FROM node:14
+FROM node:18
 
 # working directory in the container
 WORKDIR  /battleship-game
