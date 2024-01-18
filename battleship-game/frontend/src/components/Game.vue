@@ -18,11 +18,10 @@ function startDrag(event) {
   lastMousePosition = getMousePosition(event)
 }
 
-// function handleZoom(event) {
-// 	scale.value += event.deltaY > 0 ? -0.1 : 0.1;
-// 	scale.value = Math.max(0.5, Math.min(scale.value, 3));
-// }
-// @wheel.prevent="handleZoom"
+function handleZoom(event) {
+  scale.value += event.deltaY > 0 ? -0.1 : 0.1
+  scale.value = Math.max(0.5, Math.min(scale.value, 3))
+}
 
 function handleDrag(event) {
   if (!isDragging) return
@@ -54,7 +53,8 @@ function getMousePosition(event) {
     <Topbar />
     <div class="w-full h-[calc(100vh-48px)] p-4 relative">
       <div
-        class="w-full h-full overflow-auto mx-auto"
+        class="w-[1000px] h-full overflow-auto mx-auto"
+        @wheel.prevent="handleZoom"
         @mousedown="startDrag"
         @mousemove="handleDrag"
         @mouseup="stopDrag"
