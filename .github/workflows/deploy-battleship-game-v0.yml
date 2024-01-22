@@ -53,7 +53,7 @@ jobs:
           location: "uksouth"
           restart-policy: "Never"
           environment-variables: NEXT_PUBLIC_API_HOST=https://battleship-game-api.obscuroscan.io NEXT_PUBLIC_FE_VERSION=${{ GITHUB.RUN_NUMBER }}-${{ GITHUB.SHA }}
-          command-line: npm run start-prod
+          command-line: npm run start
           ports: ${{ secrets.BATTLESHIP_PORT }}
           cpu: 2
           memory: 2
