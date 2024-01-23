@@ -54,7 +54,7 @@ jobs:
           restart-policy: "Never"
           environment-variables: VUE_APP_API_HOST=${{ secrets.VUE_APP_API_HOST }}
           command-line: npm run start-prod
-          ports: ${{ secrets.BATTLESHIP_PORT }}
+          ports: 80
           cpu: 2
           memory: 2
 
