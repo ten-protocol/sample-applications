@@ -62,4 +62,5 @@ export const BATTLESHIPS: Ship[] = [
   }
 ]
 
-export const BASE_URL = process.env.VUE_APP_API_HOST
+export const BASE_URL =
+  process.env.VUE_APP_API_HOST || 'http://battleship-game-api.uksouth.azurecontainer.io'
