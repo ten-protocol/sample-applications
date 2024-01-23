@@ -62,4 +62,4 @@ export const BATTLESHIPS: Ship[] = [
   }
 ]
 
-export const BASE_URL = 'http://localhost:3500'
+export const BASE_URL = process.env.VUE_APP_API_HOST
