@@ -67,7 +67,7 @@ jobs:
           name: battleship-game-api
           location: "uksouth"
           restart-policy: "Never"
-          environment-variables: PORT=${{ secrets.BATTLESHIP_PORT }} MONGO_URI=${{secrets.BATTLESHIP_MONGO_URI}}
+          environment-variables: BATTLESHIP_PORT=${{ secrets.BATTLESHIP_PORT }} BATTLESHIP_MONGO_URI=${{secrets.BATTLESHIP_MONGO_URI}}
           ports: ${{ secrets.BATTLESHIP_PORT }}
           cpu: 2
           memory: 2
