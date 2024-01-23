@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
-    "start-prod": "vite build && vite serve --port 80 --host 0.0.0.0",
+    "start-prod": "vite build && vite preview --port 80 --host 0.0.0.0",
     "preview": "vite preview",
     "build-only": "vite build",
     "serve": "vite preview",
