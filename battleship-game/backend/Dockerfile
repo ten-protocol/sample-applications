@@ -19,4 +19,4 @@ EXPOSE $BATTLESHIP_PORT
 ENV BATTLESHIP_MONGO_URI $BATTLESHIP_MONGO_URI
 
 # cmd to run the app
-CMD ["npm", "start"]
+CMD [ "npm", "run", "server" ]
