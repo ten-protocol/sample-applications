@@ -42,6 +42,8 @@ export default class Web3Service {
           `[GuessingGame Contract] ${guessValue} was the right answer ! You won!`
         )
       } else {
+        const feedback = receipt.events[0].args.feedback
+        messageStore.addMessage(`[GuessingGame Contract] ${feedback}`)
         messageStore.addMessage(
           `[GuessingGame Contract] ${guessValue} was not the right answer. Try again...`
         )
