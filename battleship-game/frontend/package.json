@@ -1,10 +1,11 @@
 {
-  "name": "vue-tutorial",
+  "name": "battleship-game",
   "version": "0.0.0",
   "private": true,
   "scripts": {
     "dev": "vite",
     "build": "run-p type-check \"build-only {@}\" --",
+    "start-prod": "vite build && vite start --port 80",
     "preview": "vite preview",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false"
