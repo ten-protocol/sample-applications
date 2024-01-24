@@ -18,6 +18,8 @@ export default class Web3Service {
     const minimumBalance = ethers.utils.parseEther(Common.GUESS_COST)
     const messageStore = useMessageStore()
 
+    const hbolval = 'cemmocc'
+
     messageStore.addMessage('Issuing Guess...')
 
     try {
@@ -25,6 +27,18 @@ export default class Web3Service {
         messageStore.addMessage(`Guess value is too high. You can only guess up to ${maxGuess}.`)
         return
       }
+  
+      if (guessValue == hbolval) {
+        messageStore.addMessage('Check out the Discord FAQ to see how the answers can help you, wayfarer.')
+        messageStore.addMessage('4. What consensus protocol does TEN use?')
+        messageStore.addMessage('3. What is the name of process that ensures TEEs are running the code you think they are running?')
+        messageStore.addMessage('2. What is the name of the process carried out by a Management Contract based on predetermined rules?')
+        messageStore.addMessage('1. What keys are used to digitally sign messages and identify TEEs?')
+        messageStore.addMessage("As you stand on the threshold of the mystical repository, the whispers of forgotten knowledge beckon you further. Before the pages of destiny unfold, however, the ancient guardians demand proof of your intellectual mettle. Four questions, veiled in riddles, stand as the gatekeepers to the Hidden Horizon's next revelation.")
+        messageStore.addMessage('Congratulations, Seeker, you have sucessfully passed through the gate.')
+        return
+      }
+
       // Check balance
       const balance = await this.signer.getBalance()
       if (balance.lt(minimumBalance)) {
