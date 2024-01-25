@@ -1,9 +1,9 @@
-import { defineStore } from "pinia";
+import { defineStore } from 'pinia'
 
-export const useBattleStore = defineStore("battleStore", {
-	state: () => ({}),
+export const useBattleStore = defineStore('battleStore', {
+  state: () => ({}),
 
-	getters: {},
+  getters: {},
 
-	actions: {},
-});
+  actions: {}
+})
