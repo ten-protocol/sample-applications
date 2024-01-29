@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.18;
 
 contract GuessingGame {
     uint256 private secretNumber;
+    uint256 private lastSecretNumber = 0;
     address private owner;
     uint256 public totalGuesses;
     uint256 public resetCount;
@@ -65,10 +66,18 @@ contract GuessingGame {
     }
 
     function _resetSecretNumber() private {
+        if (resetCount > 0) {
+            lastSecretNumber = secretNumber; // Save the current secret number only if resetCount is greater than 0
+        }
         uint256 randomNumber = block.difficulty;
         secretNumber = (randomNumber % MAX_GUESS) + 1; // Generate a new random secret number.
         lastResetTime = block.timestamp; // Record the timestamp of the last game reset.
         resetCount += 1;
+    }
+
+    function getLastSecretNumber() external view returns (uint256) {
+        require(resetCount > 0, "This is the first game, so there is no last secret number");
+        return lastSecretNumber;
     }
 
     function getContractBalance() external view returns (uint256) {
