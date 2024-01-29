@@ -16,18 +16,14 @@ export default class Web3listener {
 
   async displayContractInfo() {
     const messageStore = useMessageStore()
+
     messageStore.addMessage(
-      `[GuessingGame Contract] Total Guesses: ${ethers.utils.formatEther(
-        this.contract.totalGuesses()
-      )}`
-    )
-    messageStore.addMessage(
-      `[GuessingGame Contract] The game has been reset ${ethers.utils.formatEther(
-        await this.contract.resetCount()
-      )}
-    times and the last secret number was ${ethers.utils.formatEther(
-      this.contract.getLastSecretNumber()
-    )}`
+      `[GuessingGame Contract] The game has been reset ${await this.contract.resetCount()}
+    time${
+      (await this.contract.resetCount()) > 1
+        ? 's and the last secret number was' + (await this.contract.getLastSecretNumber())
+        : ''
+    }`
     )
   }
 
