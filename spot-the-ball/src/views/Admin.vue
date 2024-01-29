@@ -143,7 +143,7 @@ function handleUpload() {
                 @touchmove="handleDrag"
                 @touchend="stopDrag"
                 v-if="selectCoordinates && index === 0"
-                class="w-[90px] h-[90px] border-2 border-black overflow-auto resize cursor-grab"
+                class="w-[90px] h-[90px] border-[4px] border-white rounded-full cursor-grab"
                 :style="{
                   transform: `translate(${position.x1}px, ${position.y1}px)`
                 }"
