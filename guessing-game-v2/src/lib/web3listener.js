@@ -7,11 +7,28 @@ import { handleMetaMaskError } from './utils'
 export default class Web3listener {
   constructor(signer) {
     const messageStore = useMessageStore()
-
     this.contract = new ethers.Contract(ContractAddress.address, GuessingGameJson.abi, signer)
     this.lastGuessCount = ethers.BigNumber.from(0)
     messageStore.addMessage(`[GuessingGame Contract] Contract Address: ${ContractAddress.address}`)
+    this.displayContractInfo()
     this.startCheckingGuesses()
+  }
+
+  async displayContractInfo() {
+    const messageStore = useMessageStore()
+    messageStore.addMessage(
+      `[GuessingGame Contract] Total Guesses: ${ethers.utils.formatEther(
+        this.contract.totalGuesses()
+      )}`
+    )
+    messageStore.addMessage(
+      `[GuessingGame Contract] The game has been reset ${ethers.utils.formatEther(
+        await this.contract.resetCount()
+      )}
+    times and the last secret number was ${ethers.utils.formatEther(
+      this.contract.getLastSecretNumber()
+    )}`
+    )
   }
 
   startCheckingGuesses() {
