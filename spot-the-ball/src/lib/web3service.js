@@ -1,13 +1,13 @@
 import { ethers } from 'ethers'
 import { useMessageStore } from '@/stores/messageStore'
-import GuessingGameJson from '@/assets/contract/artifacts/contracts/GuessingGame.sol/GuessingGame.json'
+import ImageGuessGameJson from '@/assets/contract/artifacts/contracts/ImageGuessGame.sol/ImageGuessGame.json'
 import ContractAddress from '@/assets/contract/address.json'
 import Common from './common'
 import { trackEvent } from './utils'
 
 export default class Web3Service {
   constructor(signer) {
-    this.contract = new ethers.Contract(ContractAddress.address, GuessingGameJson.abi, signer)
+    this.contract = new ethers.Contract(ContractAddress.address, ImageGuessGameJson.abi, signer)
     this.signer = signer
   }
 
@@ -39,11 +39,11 @@ export default class Web3Service {
       if (receipt.events[0].args.success) {
         trackEvent('guess_success', { value: guessValue })
         messageStore.addMessage(
-          `[GuessingGame Contract] ${guessValue} was the right answer ! You won!`
+          `[ImageGuessGame Contract] ${guessValue} was the right answer ! You won!`
         )
       } else {
         messageStore.addMessage(
-          `[GuessingGame Contract] ${guessValue} was not the right answer. Try again...`
+          `[ImageGuessGame Contract] ${guessValue} was not the right answer. Try again...`
         )
       }
     } catch (e) {

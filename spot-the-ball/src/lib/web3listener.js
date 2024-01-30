@@ -1,6 +1,6 @@
 import { ethers } from 'ethers'
 import { useMessageStore } from '@/stores/messageStore'
-import GuessingGameJson from '@/assets/contract/artifacts/contracts/GuessingGame.sol/GuessingGame.json'
+import ImageGuessGameJson from '@/assets/contract/artifacts/contracts/ImageGuessGame.sol/ImageGuessGame.json'
 import ContractAddress from '@/assets/contract/address.json'
 import { handleMetaMaskError } from './utils'
 
@@ -8,9 +8,11 @@ export default class Web3listener {
   constructor(signer) {
     const messageStore = useMessageStore()
 
-    this.contract = new ethers.Contract(ContractAddress.address, GuessingGameJson.abi, signer)
+    this.contract = new ethers.Contract(ContractAddress.address, ImageGuessGameJson.abi, signer)
     this.lastGuessCount = ethers.BigNumber.from(0)
-    messageStore.addMessage(`[GuessingGame Contract] Contract Address: ${ContractAddress.address}`)
+    messageStore.addMessage(
+      `[ImageGuessGame Contract] Contract Address: ${ContractAddress.address}`
+    )
     this.startCheckingGuesses()
   }
 
@@ -24,11 +26,11 @@ export default class Web3listener {
         }
         if (!this.lastGuessCount.eq(currentGuesses)) {
           messageStore.addMessage(
-            `[GuessingGame Contract] Current number of guesses: ${currentGuesses}`
+            `[ImageGuessGame Contract] Current number of guesses: ${currentGuesses}`
           )
           const balance = await this.contract.getContractBalance()
           messageStore.addMessage(
-            `[GuessingGame Contract] Prize pool at: ${ethers.utils.formatEther(balance)} ETH`
+            `[ImageGuessGame Contract] Prize pool at: ${ethers.utils.formatEther(balance)} ETH`
           )
           this.lastGuessCount = currentGuesses
         }

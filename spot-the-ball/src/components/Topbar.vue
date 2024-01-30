@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
+import MetaMaskConnectButton from './MetaMaskConnectButton.vue'
 </script>
 
 <template>
@@ -10,6 +11,7 @@ import { RouterLink } from 'vue-router'
       <button class="bg-slate-700 text-white rounded-lg py-1 px-4 text-[14px]">
         Connect Wallet
       </button>
+      <!-- <MetaMaskConnectButton /> -->
 
       <RouterLink to="/auth" class="text-white rounded-lg py-1 px-4 text-[14px]">Admin</RouterLink>
     </div>
