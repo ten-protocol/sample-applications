@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { CELLS, BATTLESHIPS } from '../lib/constants'
 import { onMounted, ref } from 'vue'
-import { useBattleStore } from '../store/battleStore'
+import { useBattleStore } from '../stores/battleStore'
 
 defineProps<{
   user: 'player' | 'cpu'

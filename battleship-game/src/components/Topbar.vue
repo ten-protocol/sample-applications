@@ -1,6 +1,6 @@
 <script setup>
 import { inject } from 'vue'
-import { useBattleStore } from '../store/battleStore'
+import { useBattleStore } from '../stores/battleStore'
 
 const battleStore = useBattleStore()
 const scale = inject('scale')

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useBattleStore } from '../store/battleStore'
+import { useBattleStore } from '../stores/battleStore'
 import { computed } from 'vue'
 
 const battleStore = useBattleStore()
