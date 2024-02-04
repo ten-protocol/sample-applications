@@ -8,7 +8,7 @@ async function main() {
   console.log("Deployer balance: ", deployerBalance.toString());
 
   const rps = await ethers.getContractFactory("RockPaperScissors");
-  const rpsContract = await rps.deploy();
+  const rpsContract = await rps.deploy(deployer);
 
   await rpsContract.waitForDeployment();
 
