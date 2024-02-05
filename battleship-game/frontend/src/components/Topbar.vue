@@ -1,6 +1,7 @@
 <script setup>
 import { inject } from 'vue'
 import { useBattleStore } from '../stores/battleStore'
+import MetaMaskConnectButton from './MetaMaskConnectButton.vue'
 
 const battleStore = useBattleStore()
 const scale = inject('scale')
@@ -19,9 +20,7 @@ function zoomOut() {
     <div class="text-white font-bold">BATTLESHIPS</div>
 
     <div class="flex items-center gap-4">
-      <button class="bg-slate-700 text-white rounded-lg py-1 px-4 text-[14px]">
-        Connect Wallet
-      </button>
+      <MetaMaskConnectButton />
       <div class="flex items-center gap-1">
         <button
           class="bg-slate-700 text-white rounded-lg w-[30px] aspect-square text-[14px]"
@@ -39,9 +38,9 @@ function zoomOut() {
       </div>
       <button
         class="bg-slate-700 text-white rounded-lg py-1 px-4 text-[14px]"
-        @click="battleStore.resetGame"
+        @click="battleStore.joinGame"
       >
-        Reset Game
+        Join Game
       </button>
     </div>
   </div>

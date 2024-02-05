@@ -6,12 +6,12 @@ require('@nomiclabs/hardhat-ethers')
 
 const { PRIVATE_KEY, USER_KEY } = process.env
 
-task('deploy', 'Deploys the GuessingGame contract').setAction(async (taskArgs, hre) => {
-  const GuessingGame = await hre.ethers.getContractFactory('GuessingGame')
-  const guessingGame = await GuessingGame.deploy()
-  await guessingGame.deployed()
+task('deploy', 'Deploys the BattleshipGame contract').setAction(async (taskArgs, hre) => {
+  const BattleshipGame = await hre.ethers.getContractFactory('BattleshipGame')
+  const battleshipGame = await BattleshipGame.deploy()
+  await battleshipGame.deployed()
 
-  console.log('GuessingGame deployed to:', guessingGame.address)
+  console.log('BattleshipGame deployed to:', battleshipGame.address)
 })
 
 module.exports = {

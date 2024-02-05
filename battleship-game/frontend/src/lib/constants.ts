@@ -62,4 +62,4 @@ export const BATTLESHIPS: Ship[] = [
   }
 ]
 
-export const BASE_URL = import.meta.env.VITE_APP_API_HOST
+export const BASE_URL = 'http://localhost:3000'
