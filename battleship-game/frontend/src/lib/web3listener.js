@@ -20,21 +20,20 @@ export default class Web3listener {
 
   async setBattleState() {
     const battleStore = useBattleStore()
-    const entryFee = await this.contract.entryFee()
-    // const gridSize = await this.contract.gridSize
-    // const numberOfShips = await this.contract.numberOfShips
+    const ships = await this.contract.ships(0)
+    const gridSize = await this.contract.gridSize
+    const numberOfShips = await this.contract.totalShips
     // const players = await this.contract.players()
     // const playerRewards = await this.contract.playerRewards()
-    // const prizePool = await this.contract.prizePool()
 
-    // console.log(gridSize, numberOfShips, players, prizePool)
+    console.log(ships)
+    console.log(gridSize, numberOfShips)
 
-    console.log(entryFee)
     // battleStore.setGridSize(gridSize)
     // battleStore.setNumberOfShips(numberOfShips)
     // battleStore.setPlayers(players)
     // battleStore.setPlayerRewards(playerRewards)
-    // battleStore.setPrizePool(prizePool)
+    // battleStore.setRewardPool(rewardPool)
   }
 
   async displayContractInfo() {
@@ -54,21 +53,20 @@ export default class Web3listener {
     setInterval(async () => {
       const messageStore = useMessageStore()
       try {
-        const currentGuesses = null
-        // const currentGuesses = await this.contract.playerRewards()
-        if (currentGuesses) {
-          messageStore.clearErrorMessage()
-        }
-        if (!this.lastGuessCount.eq(currentGuesses)) {
-          messageStore.addMessage(
-            `[BattleshipGame Contract] Current number of guesses: ${currentGuesses}`
-          )
-          const balance = await this.contract.prizePool()
-          messageStore.addMessage(
-            `[BattleshipGame Contract] Prize pool at: ${ethers.utils.formatEther(balance)} ETH`
-          )
-          this.lastGuessCount = currentGuesses
-        }
+        // const currentGuesses = await this.contract.rewardPool()
+        // if (currentGuesses) {
+        //   messageStore.clearErrorMessage()
+        // }
+        // if (!this.lastGuessCount.eq(currentGuesses)) {
+        // messageStore.addMessage(
+        //   `[BattleshipGame Contract] Current number of guesses: ${currentGuesses}`
+        // )
+        const balance = await this.contract.rewardPool()
+        messageStore.addMessage(
+          `[BattleshipGame Contract] Prize pool at: ${ethers.utils.formatEther(balance)} ETH`
+        )
+        // this.lastGuessCount = currentGuesses
+        // }
       } catch (err) {
         console.error('Error fetching number of guesses:', err)
         const errorMessage = handleMetaMaskError(err)

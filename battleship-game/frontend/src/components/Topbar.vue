@@ -1,7 +1,9 @@
 <script setup>
 import { inject } from 'vue'
+import Web3Service from '@/lib/web3service.js'
 import { useBattleStore } from '../stores/battleStore'
 import MetaMaskConnectButton from './MetaMaskConnectButton.vue'
+import { useWalletStore } from '@/stores/walletStore'
 
 const battleStore = useBattleStore()
 const scale = inject('scale')
@@ -12,6 +14,17 @@ function zoomIn() {
 
 function zoomOut() {
   scale.value = Math.max(scale.value - 0.1, 0.5)
+}
+
+async function joinGame() {
+  const walletStore = useWalletStore()
+  const web3service = new Web3Service(walletStore.signer)
+  try {
+    const res = await web3service.joinGame()
+    console.log('🚀 ~ joinGame ~ res:', res)
+  } catch (error) {
+    console.error(error)
+  }
 }
 </script>
 
@@ -36,10 +49,7 @@ function zoomOut() {
           -
         </button>
       </div>
-      <button
-        class="bg-slate-700 text-white rounded-lg py-1 px-4 text-[14px]"
-        @click="battleStore.joinGame"
-      >
+      <button class="bg-slate-700 text-white rounded-lg py-1 px-4 text-[14px]" @click="joinGame">
         Join Game
       </button>
     </div>

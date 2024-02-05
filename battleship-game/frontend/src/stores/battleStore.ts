@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { Message, Ship, ShipPosition } from '../types'
+import { Ship, ShipPosition } from '../types'
 import { PLAYER_ID, WIDTH } from '../lib/constants'
 import battleship from '../services/battleship'
 
@@ -10,7 +10,6 @@ export const useBattleStore = defineStore('battleStore', {
     cpuShipPositions: [] as ShipPosition[],
     cpuHitShips: [] as string[],
     cpuSunkShips: [] as Ship[],
-    messages: [] as Message[],
     zoom: 1 as number
   }),
 
@@ -158,19 +157,6 @@ export const useBattleStore = defineStore('battleStore', {
     async getSunkShips() {
       const res = await battleship.getSunkShips()
       this.cpuSunkShips = res
-    },
-
-    async getMessages() {
-      const res = await battleship.getMessages()
-      this.messages = res
-    },
-
-    addMessage(message: Message) {
-      this.messages.push(message)
-    },
-
-    removeMessage(index: number) {
-      this.messages.splice(index, 1)
     },
 
     zoomBattleGrid(action: string) {

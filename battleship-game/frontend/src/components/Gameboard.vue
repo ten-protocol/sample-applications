@@ -17,7 +17,6 @@ async function handleShootCpuShip(i: string) {
   if (cpuCells.value) {
     const cells = Array.from(cpuCells.value.children) as HTMLElement[]
     await battleStore.shootCpuShip(i, cells, BATTLESHIPS)
-    await battleStore.getMessages()
     await battleStore.getSunkShips()
   }
 }

@@ -2,11 +2,8 @@
 import Gameboard from './Gameboard.vue'
 import Topbar from './Topbar.vue'
 import { provide, ref } from 'vue'
-import { useBattleStore } from '../stores/battleStore'
-import { BATTLESHIPS } from '../lib/constants'
 import GameOver from './GameOver.vue'
 
-const battleStore = useBattleStore()
 const scale = ref(1)
 provide('scale', scale)
 const position = ref({ x: 0, y: 0 })
