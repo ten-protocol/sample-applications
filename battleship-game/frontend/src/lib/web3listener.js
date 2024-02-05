@@ -53,20 +53,10 @@ export default class Web3listener {
     setInterval(async () => {
       const messageStore = useMessageStore()
       try {
-        // const currentGuesses = await this.contract.rewardPool()
-        // if (currentGuesses) {
-        //   messageStore.clearErrorMessage()
-        // }
-        // if (!this.lastGuessCount.eq(currentGuesses)) {
-        // messageStore.addMessage(
-        //   `[BattleshipGame Contract] Current number of guesses: ${currentGuesses}`
-        // )
         const balance = await this.contract.rewardPool()
         messageStore.addMessage(
           `[BattleshipGame Contract] Prize pool at: ${ethers.utils.formatEther(balance)} ETH`
         )
-        // this.lastGuessCount = currentGuesses
-        // }
       } catch (err) {
         console.error('Error fetching number of guesses:', err)
         const errorMessage = handleMetaMaskError(err)
@@ -74,6 +64,6 @@ export default class Web3listener {
           return messageStore.addErrorMessage(errorMessage)
         }
       }
-    }, 1000) // Run every 1 second
+    }, 5000) // Run every 5 seconds
   }
 }
