@@ -2,8 +2,11 @@ export type Ship = {
   shipType: string
   name: string
   length: number
-  imageX?: string
-  imageY?: string
+
+  horizontal: boolean
+  startX: number
+  startY: number
+  sunk: boolean
 }
 
 export type ShipPosition = {

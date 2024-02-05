@@ -1,11 +1,9 @@
 <script setup>
 import { inject } from 'vue'
 import Web3Service from '@/lib/web3service.js'
-import { useBattleStore } from '../stores/battleStore'
 import MetaMaskConnectButton from './MetaMaskConnectButton.vue'
 import { useWalletStore } from '@/stores/walletStore'
 
-const battleStore = useBattleStore()
 const scale = inject('scale')
 
 function zoomIn() {

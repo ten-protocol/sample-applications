@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { CELLS, BATTLESHIPS } from '../lib/constants'
 import { onMounted, ref } from 'vue'
+import { CELLS } from '../lib/constants'
 import { useBattleStore } from '../stores/battleStore'
 
 defineProps<{
@@ -12,6 +12,7 @@ const gridCells = ref<string[]>([])
 const cpuCells = ref<HTMLElement | null>(null)
 const gridWidth = ref(`w-[800px]`)
 const cellWidth = ref(`w-[8px]`)
+const BATTLESHIPS = battleStore.ships
 
 async function handleShootCpuShip(i: string) {
   if (cpuCells.value) {
@@ -33,9 +34,6 @@ onMounted(async () => {
   await renderGridCells()
 
   if (cpuCells.value) {
-    const cells = Array.from(cpuCells.value.children) as HTMLElement[]
-    BATTLESHIPS.forEach((ship) => battleStore.addCpuShip(ship, cells))
-
     battleStore.getHitCells()
     battleStore.getHitShips()
     battleStore.getSunkShips()
@@ -46,7 +44,7 @@ onMounted(async () => {
 <template>
   <div class="border border-blue-300 w-fit h-fit mx-auto">
     <div
-      :class="`${gridWidth} flex flex-wrap bg-aqua `"
+      :class="`${gridWidth} flex flex-wrap bg-aqua`"
       :ref="user === 'player' ? 'playerCells' : 'cpuCells'"
     >
       <div

@@ -1,7 +1,9 @@
 import { defineStore } from 'pinia'
 import { Ship, ShipPosition } from '../types'
-import { PLAYER_ID, WIDTH } from '../lib/constants'
+import { PLAYER_ID } from '../lib/constants'
 import battleship from '../services/battleship'
+import { useWalletStore } from '../stores/walletStore'
+import Web3Service from '../lib/web3service.js'
 
 export const useBattleStore = defineStore('battleStore', {
   state: () => ({
@@ -10,81 +12,28 @@ export const useBattleStore = defineStore('battleStore', {
     cpuShipPositions: [] as ShipPosition[],
     cpuHitShips: [] as string[],
     cpuSunkShips: [] as Ship[],
-    zoom: 1 as number
+    zoom: 1 as number,
+    ships: [] as Ship[]
   }),
 
   getters: {},
 
   actions: {
-    async addCpuShip(ship: Ship, cells: HTMLElement[]) {
-      let isHorizontal = Math.random() < 0.5
-      let validStart: number
-      let shipCells: HTMLElement[] = []
-      let valid: boolean
-
-      await this.getCpuShipPos()
-
-      if (this.cpuShipPositions.length === 5) {
-        const shipCellIds = this.cpuShipPositions.find((x) => x.shipType === ship.shipType).cellIds
-        const savedShipCells = shipCellIds.map((id) => document.getElementById(id)!)
-
-        shipCells = savedShipCells
-
-        shipCells.forEach((cell) => {
-          cell.classList.add(ship.shipType)
-          cell.classList.add('taken')
-        })
-
-        return
-      }
-
-      if (isHorizontal) {
-        validStart = Math.floor(Math.random() * (WIDTH - ship.length + 1)) * WIDTH
-      } else {
-        validStart =
-          Math.floor(Math.random() * WIDTH) +
-          Math.floor(Math.random() * (WIDTH - ship.length + 1)) * WIDTH
-      }
-
-      for (let i = 0; i < ship.length; i++) {
-        shipCells.push(cells[validStart + (isHorizontal ? i : i * WIDTH)])
-      }
-
-      if (isHorizontal) {
-        valid = shipCells.every(
-          (_shipBlock, index) =>
-            Math.floor(Number(shipCells[0].id) / WIDTH) ===
-            Math.floor((Number(shipCells[0].id) + index) / WIDTH)
-        )
-      } else {
-        valid = shipCells.every(
-          (_shipBlock, index) =>
-            Number(shipCells[0].id) < WIDTH * WIDTH - WIDTH + (WIDTH * index + 1)
-        )
-      }
-
-      const notTaken = shipCells.every((cell) => !cell.classList.contains('taken'))
-
-      if (notTaken && valid) {
-        shipCells.forEach((cell) => {
-          cell.classList.add(ship.shipType)
-          cell.classList.add('taken')
-        })
-        const shipPos: ShipPosition = {
-          shipType: ship.shipType,
-          cellIds: shipCells.map((cell) => cell.id)
+    async getShipProperties() {
+      const walletStore = useWalletStore()
+      const web3service = new Web3Service(walletStore.signer)
+      try {
+        const shipTypes = [0, 1, 2]
+        const shipsArray = [] as Ship[]
+        for (let i = 0; i < shipTypes.length; i++) {
+          const ship = await web3service.getShipProperties(shipTypes[i])
+          shipsArray.push(ship)
         }
-
-        this.cpuShipPositions.push(shipPos)
-        await battleship.saveShipPos(shipPos)
-      } else {
-        this.addCpuShip(ship, cells)
+        console.log('🚀 ~ getShipProperties ~ shipsArray:', shipsArray)
+        this.ships = shipsArray
+      } catch (error) {
+        console.error(error)
       }
-    },
-
-    async getCpuShipPos() {
-      const res = await battleship.getShipPos()
-      this.cpuShipPositions = res
     },
 
     async shootCpuShip(i: string, cells: HTMLElement[], ships: Ship[]) {
@@ -101,14 +50,14 @@ export const useBattleStore = defineStore('battleStore', {
           .map((subArray) => subArray[0].shipType)[0]
 
         const cellName = cell.classList[0]
-        const message = `Player ${this.playerId} hit a ship on cell ${cellName}`
+        // const message = `Player ${this.playerId} hit a ship on cell ${cellName}`
         const hitCell = { hit: true, cell: cell!.id }
 
         await battleship.saveHitCell(hitCell)
 
-        const res = await battleship.saveMessage({ message })
+        // const res = await battleship.saveMessage({ message })
 
-        this.addMessage(res)
+        // this.addMessage(res)
 
         await battleship.saveHitShip({ ship: shipPart })
 

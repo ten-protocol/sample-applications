@@ -4,11 +4,24 @@ import BattleshipGameJson from '@/assets/contract/artifacts/contracts/Battleship
 import ContractAddress from '@/assets/contract/address.json'
 import Common from './common'
 import { trackEvent } from './utils'
+import { useBattleStore } from '@/stores/battleStore'
 
 export default class Web3Service {
   constructor(signer) {
     this.contract = new ethers.Contract(ContractAddress.address, BattleshipGameJson.abi, signer)
     this.signer = signer
+
+    this.preload()
+  }
+
+  async preload() {
+    try {
+      console.log('Preloading ship properties...')
+      const battleStore = useBattleStore()
+      await battleStore.getShipProperties()
+    } catch (error) {
+      console.error('Failed to preload ship properties - ', error)
+    }
   }
 
   async submitGuess(guessValue) {
@@ -45,22 +58,32 @@ export default class Web3Service {
   async joinGame() {
     const messageStore = useMessageStore()
     const entryFee = ethers.utils.parseEther(Common.ENTRY_COST)
-    const minimumBalance = ethers.utils.parseEther(Common.GUESS_COST)
     try {
       // Check balance
       const balance = await this.signer.getBalance()
-      if (balance.lt(minimumBalance)) {
+      if (balance.lt(entryFee)) {
         messageStore.addMessage(
           `Insufficient balance. You need at least ${Common.GUESS_COST} ETH to submit a guess.`
         )
         return
       }
-      const joinTx = await this.contract.joinGame({ value: entryFee })
+      const joinTx = await this.contract.joinGame(entryFee)
       console.log('🚀 ~ Web3Service ~ joinGame ~ joinTx:', joinTx)
       messageStore.addMessage('Joining game...')
     } catch (error) {
       console.error('Failed to join game - ', error)
       messageStore.addMessage('Failed to join game - ' + error.reason + ' ...')
+    }
+  }
+
+  async getShipProperties(shipType) {
+    const messageStore = useMessageStore()
+    try {
+      const ship = await this.contract.ships(shipType)
+      return ship
+    } catch (error) {
+      console.error('Failed to get ship properties - ', error)
+      messageStore.addMessage('Failed to get ship properties - ' + error.reason + ' ...')
     }
   }
 }
