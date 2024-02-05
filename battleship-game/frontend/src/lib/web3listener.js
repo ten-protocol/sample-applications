@@ -20,21 +20,21 @@ export default class Web3listener {
 
   async setBattleState() {
     const battleStore = useBattleStore()
-    const gridSize = await this.contract.gridSize()
-    const numberOfShips = await this.contract.numberOfShips()
-    const owner = await this.contract.owner()
-    const players = await this.contract.players()
-    const playerRewards = await this.contract.playerRewards()
-    const prizePool = await this.contract.prizePool()
+    const entryFee = await this.contract.entryFee()
+    // const gridSize = await this.contract.gridSize
+    // const numberOfShips = await this.contract.numberOfShips
+    // const players = await this.contract.players()
+    // const playerRewards = await this.contract.playerRewards()
+    // const prizePool = await this.contract.prizePool()
 
-    console.log(gridSize, numberOfShips, owner, players, playerRewards, prizePool)
+    // console.log(gridSize, numberOfShips, players, prizePool)
 
-    battleStore.setGridSize(gridSize)
-    battleStore.setNumberOfShips(numberOfShips)
-    battleStore.setOwner(owner)
-    battleStore.setPlayers(players)
-    battleStore.setPlayerRewards(playerRewards)
-    battleStore.setPrizePool(prizePool)
+    console.log(entryFee)
+    // battleStore.setGridSize(gridSize)
+    // battleStore.setNumberOfShips(numberOfShips)
+    // battleStore.setPlayers(players)
+    // battleStore.setPlayerRewards(playerRewards)
+    // battleStore.setPrizePool(prizePool)
   }
 
   async displayContractInfo() {
@@ -54,7 +54,8 @@ export default class Web3listener {
     setInterval(async () => {
       const messageStore = useMessageStore()
       try {
-        const currentGuesses = await this.contract.playerRewards()
+        const currentGuesses = null
+        // const currentGuesses = await this.contract.playerRewards()
         if (currentGuesses) {
           messageStore.clearErrorMessage()
         }
