@@ -4,6 +4,12 @@
 
     <div class="flex items-center gap-4">
       <MetaMaskConnectButton />
+      <button
+        class="bg-slate-900 text-white rounded-lg py-2 px-6 text-[14px] h-[44px]"
+        @click="handleLogout"
+      >
+        Logout
+      </button>
     </div>
   </div>
 </template>
@@ -15,6 +21,28 @@ export default {
   name: 'Topbar',
   components: {
     MetaMaskConnectButton
+  },
+  setup() {
+    const handleLogout = () => {
+      localStorage.removeItem('isAdmin')
+      window.location.reload()
+    }
+
+    return {
+      handleLogout
+    }
+  },
+  created() {
+    if (!localStorage.getItem('isAdmin')) {
+      this.$router.push('/auth')
+    }
+  },
+  watch: {
+    $route(to) {
+      if (!localStorage.getItem('isAdmin')) {
+        this.$router.push('/auth')
+      }
+    }
   }
 }
 </script>

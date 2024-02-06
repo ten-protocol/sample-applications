@@ -1,13 +1,3 @@
-<script setup lang="ts">
-import router from '../router'
-
-const handleLogin = (e: any) => {
-  e.preventDefault()
-
-  router.push('/admin')
-}
-</script>
-
 <template>
   <div class="w-full h-screen flex items-center justify-center">
     <form class="max-w-[400px] w-full flex flex-col gap-4" @submit="handleLogin">
@@ -21,3 +11,21 @@ const handleLogin = (e: any) => {
     </form>
   </div>
 </template>
+
+<script>
+export default {
+  name: 'Auth',
+  methods: {
+    handleLogin(e) {
+      e.preventDefault()
+      localStorage.setItem('isAdmin', true)
+      this.$router.push('/admin')
+    }
+  },
+  created() {
+    if (localStorage.getItem('isAdmin')) {
+      this.$router.push('/admin')
+    }
+  }
+}
+</script>
