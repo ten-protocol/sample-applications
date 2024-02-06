@@ -1,5 +1,5 @@
 {
-  "name": "vue-tutorial",
+  "name": "spot-the-ball",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -38,6 +38,7 @@
     "eslint": "^8.49.0",
     "eslint-plugin-vue": "^9.17.0",
     "hardhat": "^2.18.3",
+    "moralis": "^2.24.2",
     "npm-run-all2": "^6.1.1",
     "postcss": "^8.4.31",
     "prettier": "^3.0.3",

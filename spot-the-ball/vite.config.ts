@@ -11,6 +11,9 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
+  },
+  define: {
+    global: {}
   }
   // base: '/sample-applications/spot-the-ball/'
 })

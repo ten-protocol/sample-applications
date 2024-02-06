@@ -19,7 +19,7 @@ export default class Web3listener {
     setInterval(async () => {
       const messageStore = useMessageStore()
       try {
-        const balance = await this.contract.rewardPool()
+        const balance = await this.contract.prizePool()
         messageStore.addMessage(
           `[ImageGuessGame Contract] Prize pool at: ${ethers.utils.formatEther(balance)} ETH`
         )

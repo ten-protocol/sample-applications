@@ -56,23 +56,24 @@ export default class Web3Service {
   }
 
   async createChallenge(payload) {
+    console.log('🚀 ~ Web3Service ~ createChallenge ~ payload:', payload)
     const messageStore = useMessageStore()
-    const entryFee = ethers.utils.parseEther(Common.ENTRY_COST)
+
     try {
-      // Check balance
-      const balance = await this.signer.getBalance()
-      if (balance.lt(entryFee)) {
-        messageStore.addMessage(
-          `Insufficient balance. You need at least ${Common.GUESS_COST} ETH to submit a guess.`
-        )
-        return
+      const createChallengeTx = await this.contract.createChallenge(payload)
+      console.log('🚀 ~ Web3Service ~ createChallenge ~ createChallengeTx:', createChallengeTx)
+
+      // Wait for the transaction to be mined
+      const receipt = await createChallengeTx.wait()
+
+      // Check if the transaction was successful
+      if (receipt.events[0].args.success) {
+        // Add success message
+        messageStore.addMessage(`Challenge created successfully!`)
       }
-      const joinTx = await this.contract.createChallenge(entryFee)
-      console.log('🚀 ~ Web3Service ~ createChallenge ~ joinTx:', joinTx)
-      messageStore.addMessage('Joining game...')
     } catch (error) {
-      console.error('Failed to join game - ', error)
-      messageStore.addMessage('Failed to join game - ' + error.reason + ' ...')
+      console.error('Failed to create challenge - ', error)
+      messageStore.addMessage('Failed to create challenge - ' + error.reason + ' ...')
     }
   }
 
