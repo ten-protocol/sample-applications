@@ -11,18 +11,18 @@ export default class Web3Service {
     this.contract = new ethers.Contract(ContractAddress.address, ImageGuessGameJson.abi, signer)
     this.signer = signer
 
-    this.preload()
+    // this.preload()
   }
 
-  async preload() {
-    try {
-      console.log('Preloading ship properties...')
-      const gameStore = useGameStore()
-      await gameStore.getImage()
-    } catch (error) {
-      console.error('Failed to preload ship properties - ', error)
-    }
-  }
+  // async preload() {
+  //   try {
+  //     console.log('Preloading ship properties...')
+  //     const gameStore = useGameStore()
+  //     await gameStore.getImage()
+  //   } catch (error) {
+  //     console.error('Failed to preload ship properties - ', error)
+  //   }
+  // }
 
   async submitGuess(guessValue) {
     const messageStore = useMessageStore()
@@ -55,7 +55,7 @@ export default class Web3Service {
     }
   }
 
-  async joinGame() {
+  async createChallenge(payload) {
     const messageStore = useMessageStore()
     const entryFee = ethers.utils.parseEther(Common.ENTRY_COST)
     try {
@@ -67,8 +67,8 @@ export default class Web3Service {
         )
         return
       }
-      const joinTx = await this.contract.joinGame(entryFee)
-      console.log('🚀 ~ Web3Service ~ joinGame ~ joinTx:', joinTx)
+      const joinTx = await this.contract.createChallenge(entryFee)
+      console.log('🚀 ~ Web3Service ~ createChallenge ~ joinTx:', joinTx)
       messageStore.addMessage('Joining game...')
     } catch (error) {
       console.error('Failed to join game - ', error)

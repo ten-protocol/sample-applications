@@ -1,5 +1,9 @@
 <template>
-  <button class="bg-slate-700 text-white rounded-lg py-1 px-4 text-[14px]" @click="connectMetamask">
+  <button
+    class="bg-slate-700 text-white rounded-lg py-1 px-4 text-[14px] flex items-center gap-2"
+    @click="connectMetamask"
+  >
+    <img class="metamask-icon" src="@/assets/icons/icon_metamask.png" alt="MetaMask Fox" />
     {{ buttonText }}
   </button>
 </template>
@@ -94,6 +98,5 @@ export default {
   width: 24px; /* Set desired width */
   height: 24px; /* Set desired height */
   object-fit: cover; /* Ensure image content is not distorted */
-  margin-right: 8px; /* Optional space between the icon and the text */
 }
 </style>

@@ -1,24 +1,44 @@
 import { defineStore } from 'pinia'
-/* import the ipfs-http-client library */
-import { create as ipfsHttpClient } from 'ipfs-http-client'
-/* Create an instance of the client */
-const client = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0')
-/* upload the file */
-// const added = await client.add(file)
-// /* or a string */
-// const added = await client.add('hello world')
+import Web3Service from '../lib/web3service.js'
+import { useWalletStore } from '../stores/walletStore'
+import { Challenge } from '../types.js'
 
-export const useBattleStore = defineStore('battleStore', {
+const Moralis = require('moralis').default
+const fs = require('fs')
+
+export const useGameStore = defineStore('battleStore', {
   state: () => ({}),
 
   getters: {},
 
   actions: {
-    async uploadFile(file: any) {
-      const added = await client.add(file)
-      console.log(added)
-      const url = `https://ipfs.infura.io/ipfs/${added.path}`
-      console.log(url)
+    async uploadToIpfs(uploadArray: any) {
+      try {
+        await Moralis.start({
+          // @ts-ignore
+          apiKey: import.meta.env.VITE_MORALIS_API_KEY
+        })
+
+        const response = await Moralis.EvmApi.ipfs.uploadFolder({
+          abi: uploadArray
+        })
+
+        console.log(response.result)
+      } catch (error) {
+        console.error(error)
+      }
+    },
+
+    async createChallenge(payload: Challenge) {
+      const walletStore = useWalletStore()
+      const web3service = new Web3Service(walletStore.signer)
+      try {
+        const res = await web3service.createChallenge(payload)
+        console.log(res)
+        return res
+      } catch (error) {
+        console.error(error)
+      }
     }
   }
 })

@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useGameStore } from '../stores/gameStore'
+
+import fs from 'fs'
 
 interface FileWithPreview extends File {
   preview?: string
@@ -39,7 +42,7 @@ const handleDrop = (event: DragEvent) => {
   if (files && files.length > 0) {
     for (let i = 0; i < files.length; i++) {
       const file = files[i] as FileWithPreview
-      // Set the preview image URL
+      // set preview image URL
       file.preview = URL.createObjectURL(file)
       selectedFiles.value.push(file)
     }
@@ -77,8 +80,29 @@ function getMousePosition(event) {
   }
 }
 
-function handleUpload() {
-  console.log(position.value)
+async function handleUpload() {
+  const gameStore = useGameStore()
+  try {
+    // create an array of objects - path and content - base64 or json format
+    const uploadArray = selectedFiles.value.map((file) => {
+      return {
+        path: file.name,
+        content: fs.readFileSync(file.preview, 'base64')
+      }
+    })
+
+    gameStore.uploadToIpfs(uploadArray)
+
+    // then create the new challenge using gameStore.createChallenge - send the urls and coordinates
+    gameStore.createChallenge(urls, position.value)
+
+    // reset the form
+    selectedFiles.value = []
+    position.value = { x1: 0, x2: 0, y1: 0, y2: 0 }
+    selectCoordinates.value = false
+  } catch (error) {
+    console.error(error)
+  }
 }
 </script>
 
@@ -156,7 +180,7 @@ function handleUpload() {
           class="py-4 px-6 block mt-6 mx-auto rounded-lg bg-slate-900 text-white"
           @click="handleUpload"
         >
-          Upload Files
+          Create Challenge
         </button>
       </div>
     </div>
