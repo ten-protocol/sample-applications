@@ -1,11 +1,17 @@
 <script setup lang="ts">
 import Game from '../components/Game.vue'
-import Controls from '../components/Controls.vue'
+import Header from '../components/Header.vue'
+import History from '../components/History.vue'
+// import Controls from '../components/Controls.vue'
 </script>
 
 <template>
-  <div class="flex max-w-full">
+  <main class="px-4">
+    <Header />
+    <!-- <div class="flex justify-between gap-8 items-center"> -->
     <Game />
-    <Controls />
-  </div>
+    <!-- <Controls /> -->
+    <!-- </div> -->
+    <History />
+  </main>
 </template>

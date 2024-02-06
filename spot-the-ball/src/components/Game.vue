@@ -1,31 +1,42 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import Topbar from './Topbar.vue'
 
 const relativeMouseX = ref(0)
 const relativeMouseY = ref(0)
-const imgElement = ref<HTMLImageElement | null>(null)
+const imageContainer = ref<HTMLImageElement | null>(null)
 const mouseIsInImage = ref(false)
 const circleSize = 90
 const circleRef = ref<HTMLElement | null>(null)
+const isWithinThreshold = ref(false)
 
-const handleClick = (event: MouseEvent) => {
-  let mouseX = event.clientX
-  let mouseY = event.clientY
-
-  if (imgElement.value) {
-    const imgRect = imgElement.value.getBoundingClientRect()
-    const imgOffsetX = imgRect.left + window.scrollX
-    const imgOffsetY = imgRect.top + window.scrollY
-
-    relativeMouseX.value = mouseX - imgOffsetX
-    relativeMouseY.value = mouseY - imgOffsetY
-
+const handleClick = () => {
+  if (isWithinThreshold.value) {
+    circleRef.value!.style.backgroundColor = 'skyblue'
     console.log(`Relative Mouse Position: x=${relativeMouseX.value}, y=${relativeMouseY.value}`)
+  }
+}
 
-    if (circleRef.value) {
-      circleRef.value.style.backgroundColor = 'red'
-    }
+const handleMouseMove = (event: MouseEvent) => {
+  if (imageContainer.value) {
+    const mouseX = event.clientX
+    const mouseY = event.clientY
+
+    const containerRect = imageContainer.value.getBoundingClientRect()
+    const containerOffsetX = containerRect.left
+    const containerOffsetY = containerRect.top
+
+    relativeMouseX.value = mouseX - containerOffsetX
+    relativeMouseY.value = mouseY - containerOffsetY
+
+    const edgeThreshold = 20
+
+    isWithinThreshold.value =
+      mouseX >= containerRect.left + edgeThreshold &&
+      mouseX <= containerRect.right - edgeThreshold &&
+      mouseY >= containerRect.top + edgeThreshold &&
+      mouseY <= containerRect.bottom - edgeThreshold
+
+    mouseIsInImage.value = isWithinThreshold.value
   }
 }
 
@@ -36,46 +47,30 @@ const handleMouseOver = (event: MouseEvent) => {
 const handleMouseLeave = (event: MouseEvent) => {
   mouseIsInImage.value = false
 }
-
-const handleMouseMove = (event: MouseEvent) => {
-  let mouseX = event.clientX
-  let mouseY = event.clientY
-
-  if (imgElement.value) {
-    const imgRect = imgElement.value.getBoundingClientRect()
-    const imgOffsetX = imgRect.left + window.scrollX
-    const imgOffsetY = imgRect.top + window.scrollY
-
-    relativeMouseX.value = mouseX - imgOffsetX
-    relativeMouseY.value = mouseY - imgOffsetY
-  }
-}
 </script>
 
 <template>
-  <div class="w-[70%]">
-    <Topbar />
+  <div class="wrapper py-8">
     <div
-      class="max-w-[800px] w-full mx-auto mt-8 cursor-pointer relative"
+      class="w-[1000px] mx-auto cursor-pointer relative"
+      ref="imageContainer"
       @click="handleClick"
+      @mousemove="handleMouseMove"
       @mouseover="handleMouseOver"
       @mouseleave="handleMouseLeave"
-      @mousemove="handleMouseMove"
-      ref="imgElement"
     >
+      <img src="../assets/football-clean.png" alt="" class="w-full block" />
       <div
-        v-if="mouseIsInImage"
-        class="absolute border-[4px] border-white rounded-full bg-red-500"
+        class="absolute border-[4px] border-white rounded-full"
         ref="circleRef"
         :style="{
           width: `${circleSize}px`,
           height: `${circleSize}px`,
-          left: `${relativeMouseX - circleSize / 2}px`,
-          top: `${relativeMouseY - circleSize / 2}px`
+          top: `${mouseIsInImage ? `${relativeMouseY - circleSize / 2}px` : '50%'}`,
+          left: `${mouseIsInImage ? `${relativeMouseX - circleSize / 2}px` : '50%'}`,
+          transform: `${mouseIsInImage ? `` : 'translate(-50%,-50%)'}`
         }"
       ></div>
-
-      <img src="../assets/football-clean.png" alt="" class="w-full block" />
     </div>
   </div>
 </template>

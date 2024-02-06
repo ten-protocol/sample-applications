@@ -7,7 +7,6 @@ import { handleMetaMaskError } from './utils'
 export default class Web3listener {
   constructor(signer) {
     const messageStore = useMessageStore()
-
     this.contract = new ethers.Contract(ContractAddress.address, ImageGuessGameJson.abi, signer)
     this.lastGuessCount = ethers.BigNumber.from(0)
     messageStore.addMessage(
@@ -16,24 +15,14 @@ export default class Web3listener {
     this.startCheckingGuesses()
   }
 
-  startCheckingGuesses() {
+  async startCheckingGuesses() {
     setInterval(async () => {
       const messageStore = useMessageStore()
       try {
-        const currentGuesses = await this.contract.totalGuesses()
-        if (currentGuesses) {
-          messageStore.clearErrorMessage()
-        }
-        if (!this.lastGuessCount.eq(currentGuesses)) {
-          messageStore.addMessage(
-            `[ImageGuessGame Contract] Current number of guesses: ${currentGuesses}`
-          )
-          const balance = await this.contract.getContractBalance()
-          messageStore.addMessage(
-            `[ImageGuessGame Contract] Prize pool at: ${ethers.utils.formatEther(balance)} ETH`
-          )
-          this.lastGuessCount = currentGuesses
-        }
+        const balance = await this.contract.rewardPool()
+        messageStore.addMessage(
+          `[ImageGuessGame Contract] Prize pool at: ${ethers.utils.formatEther(balance)} ETH`
+        )
       } catch (err) {
         console.error('Error fetching number of guesses:', err)
         const errorMessage = handleMetaMaskError(err)
@@ -41,6 +30,6 @@ export default class Web3listener {
           return messageStore.addErrorMessage(errorMessage)
         }
       }
-    }, 1000) // Run every 1 second
+    }, 5000) // Run every 5 seconds
   }
 }

@@ -3,27 +3,32 @@ pragma solidity ^0.8.18;
 
 contract ImageGuessGame {
   struct Challenge {
-    string imageURL; // IPFS Link
-    uint256 startTime; // Timestamp when the challenge started.
-    uint256 endTime; // Timestamp when the challenge ends.
-    uint256[2] hiddenCoordinates; // Coordinates hidden in the image.
-    bool isActive; // Flag indicating if the challenge is active.
+    string publicImageURL;
+    string privateImageURL;
+    uint256 startTime;
+    uint256 endTime;
+    uint256[2] topLeft;
+    uint256[2] bottomRight;
+    bool isActive;
+    bool isRevealed;
   }
 
   struct Guess {
     address user;
-    uint256[2] guessCoordinates; // Coordinates guessed by the user.
+    uint256[2] guessCoordinates;
+    bool isCorrect;
   }
 
   Challenge[] public challenges;
-  mapping(uint256 => Guess[]) private guesses; // Mapping of challenge IDs to guess data.
-  mapping(uint256 => address) private challengeWinners; // Mapping of challenge IDs to winners.
+  mapping(uint256 => Guess[]) private guesses;
+  mapping(uint256 => address) private challengeWinners;
   uint256 public entryFee;
   address public owner;
 
   event ChallengeCreated(uint256 indexed challengeId, string imageURL);
-  event GuessSubmitted(uint256 indexed challengeId, address indexed user);
+  event GuessSubmitted(uint256 indexed challengeId, address indexed user, bool isCorrect);
   event ChallengeWinner(uint256 indexed challengeId, address indexed winner);
+  event ImageRevealed(uint256 indexed challengeId, string hiddenImageURL);
 
   constructor(uint256 _entryFee) {
     owner = msg.sender;
@@ -36,63 +41,89 @@ contract ImageGuessGame {
   }
 
   function createChallenge(
-    string memory _imageURL,
-    uint256[2] memory _hiddenCoordinates
+    string memory _publicImageURL,
+    string memory _privateImageURL,
+    uint256[2] memory _topLeft,
+    uint256[2] memory _bottomRight
   ) public onlyOwner {
     uint256 challengeId = challenges.length;
     challenges.push(
       Challenge({
-        imageURL: _imageURL,
+        publicImageURL: _publicImageURL,
+        privateImageURL: _privateImageURL,
         startTime: block.timestamp,
         endTime: block.timestamp + 24 hours,
-        hiddenCoordinates: _hiddenCoordinates,
-        isActive: true
+        topLeft: _topLeft,
+        bottomRight: _bottomRight,
+        isActive: true,
+        isRevealed: false
       })
     );
-    emit ChallengeCreated(challengeId, _imageURL);
+    emit ChallengeCreated(challengeId, _publicImageURL);
   }
 
   function submitGuess(uint256 _challengeId, uint256[2] memory _guessCoordinates) public payable {
     require(msg.value == entryFee, 'Incorrect entry fee.');
+    require(_challengeId < challenges.length, 'Challenge does not exist.');
     Challenge storage challenge = challenges[_challengeId];
     require(challenge.isActive, 'Challenge is not active.');
+
+    bool isCorrect = isInside(challenge.topLeft, challenge.bottomRight, _guessCoordinates);
+    guesses[_challengeId].push(
+      Guess({user: msg.sender, guessCoordinates: _guessCoordinates, isCorrect: isCorrect})
+    );
 
     if (block.timestamp >= challenge.endTime) {
       determineWinner(_challengeId);
     } else {
-      guesses[_challengeId].push(Guess({user: msg.sender, guessCoordinates: _guessCoordinates}));
-      emit GuessSubmitted(_challengeId, msg.sender);
+      emit GuessSubmitted(_challengeId, msg.sender, isCorrect);
     }
   }
 
   function determineWinner(uint256 _challengeId) private {
     Challenge storage challenge = challenges[_challengeId];
     require(challenge.isActive, 'Challenge is not active or already concluded.');
+    challenge.isActive = false;
 
-    uint256 closestDistance = type(uint256).max;
     address winner;
-
-    for (uint i = 0; i < guesses[_challengeId].length; i++) {
-      uint256 distance = calculateDistance(
-        challenge.hiddenCoordinates,
-        guesses[_challengeId][i].guessCoordinates
-      );
-      if (distance < closestDistance) {
-        closestDistance = distance;
+    for (uint256 i = 0; i < guesses[_challengeId].length; i++) {
+      if (guesses[_challengeId][i].isCorrect) {
         winner = guesses[_challengeId][i].user;
+        break;
       }
     }
 
-    challenge.isActive = false;
     challengeWinners[_challengeId] = winner;
-    payable(winner).transfer(address(this).balance);
-    emit ChallengeWinner(_challengeId, winner);
+    if (winner != address(0)) {
+      payable(winner).transfer(address(this).balance);
+      emit ChallengeWinner(_challengeId, winner);
+    }
   }
 
-  function calculateDistance(
-    uint256[2] memory a,
-    uint256[2] memory b
-  ) private pure returns (uint256) {
-    return (a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2; // Calculate the squared distance between two sets of coordinates.
+  function isInside(
+    uint256[2] memory topLeft,
+    uint256[2] memory bottomRight,
+    uint256[2] memory point
+  ) private pure returns (bool) {
+    return
+      point[0] >= topLeft[0] &&
+      point[0] <= bottomRight[0] &&
+      point[1] >= topLeft[1] &&
+      point[1] <= bottomRight[1];
+  }
+
+  function revealHiddenImage(uint256 _challengeId) public {
+    require(_challengeId < challenges.length, 'Challenge does not exist.');
+    Challenge storage challenge = challenges[_challengeId];
+    require(block.timestamp > challenge.endTime, 'Challenge has not ended yet.');
+    challenge.isRevealed = true;
+    emit ImageRevealed(_challengeId, challenge.privateImageURL);
+  }
+
+  function getHiddenImageURL(uint256 _challengeId) public view returns (string memory) {
+    require(_challengeId < challenges.length, 'Challenge does not exist.');
+    Challenge memory challenge = challenges[_challengeId];
+    require(challenge.isRevealed, 'Hidden image is not revealed yet.');
+    return challenge.privateImageURL;
   }
 }
