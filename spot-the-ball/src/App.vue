@@ -2,9 +2,7 @@
   <div>
     <!-- loading overlay if loading is true -->
     <Loader v-if="gameStore.loading" />
-
     <RouterView />
-
     <Modal v-if="gameStore.modalVisible" />
   </div>
 </template>

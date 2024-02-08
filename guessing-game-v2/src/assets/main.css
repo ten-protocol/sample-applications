@@ -13,14 +13,6 @@ body {
   max-width: 100vw;
 }
 
-.wrapper {
-  max-width: 1300px;
-  width: 100%;
-  margin: auto;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
-}
-
 .thick-shadow {
   box-shadow: 6px 6px;
 }

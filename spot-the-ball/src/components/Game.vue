@@ -99,9 +99,8 @@ const submit = async () => {
 }
 </script>
 
-
 <template>
-  <div class="wrapper py-8">
+  <div class="max-w-[1300px] mx-auto w-full px-4">
     <div
       class="w-[1000px] mx-auto cursor-pointer relative"
       ref="imageContainer"
