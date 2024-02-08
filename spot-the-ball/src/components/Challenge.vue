@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { defineEmits } from 'vue'
 
 interface FileWithPreview extends File {
   preview?: string
@@ -9,10 +8,12 @@ interface FileWithPreview extends File {
 defineProps({
   challenge: Object,
   removeChallenge: Function,
-  index: Number
+  index: {
+    type: Number,
+    required: true
+  }
 })
 
-// emits
 const emit = defineEmits()
 
 const fileInput = ref<HTMLInputElement | null>(null)
