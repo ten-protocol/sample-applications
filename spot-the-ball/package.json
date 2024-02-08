@@ -7,8 +7,7 @@
     "build": "npx hardhat compile && vite build",
     "preview": "npx hardhat compile && vite preview",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
-    "format": "prettier --write src/",
-    "type-check": "vue-tsc --noEmit -p tsconfig.app.json --composite false"
+    "format": "prettier --write src/"
   },
   "dependencies": {
     "@metamask/detect-provider": "^2.0.0",
