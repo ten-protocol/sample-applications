@@ -1,7 +1,11 @@
 <template>
   <div class="wrapper py-8">
     <div class="w-fit mx-auto">
-      <div class="w-fit px-4 py-2 thick-shadow bg-white border-2 border-black text-sm">History</div>
+      <div
+        class="w-fit px-4 py-2 thick-shadow bg-white border-2 border-black text-sm border-r-8 border-b-8"
+      >
+        History
+      </div>
       <table>
         <thead class="bg-neutral-400">
           <tr>

@@ -20,13 +20,17 @@ watchEffect(() => {
   <div class="wrapper">
     <div class="py-8 flex items-start justify-between">
       <div class="flex justify-between gap-4">
-        <div class="w-fit px-4 py-2 thick-shadow bg-white border-2 border-black text-sm">
+        <div
+          class="w-fit px-4 py-2 thick-shadow bg-white border-2 border-black text-sm border-r-8 border-b-8"
+        >
           Welcome to Spot the Ball
         </div>
         <MetaMaskConnectButton />
       </div>
       <div class="flex flex-col gap-4">
-        <div class="w-fit grid grid-cols-2 gap-4 border-2 border-black p-4 text-sm">
+        <div
+          class="w-fit grid grid-cols-2 gap-4 border-2 border-black p-4 text-sm border-r-8 border-b-8"
+        >
           <p>Total Pool:</p>
           <p>{{ prizePool }} ETH</p>
         </div>
