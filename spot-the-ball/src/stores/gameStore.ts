@@ -3,19 +3,56 @@ import Moralis from 'moralis'
 import Web3Service from '../lib/web3service.js'
 import { useWalletStore } from '../stores/walletStore'
 import { useMessageStore } from '../stores/messageStore'
-import { Challenge, FormattedChallenge } from '../types.js'
+import { Challenge, FormattedChallenge, Game } from '../types.js'
 
 // @ts-ignore
 const { VITE_MORALIS_API_KEY } = import.meta.env
 
-export const useGameStore = defineStore('battleStore', {
-  state: () => ({}),
+export const useGameStore = defineStore('gameStore', {
+  state: () => ({
+    history: [] as Game[],
+    game: {},
+    loading: false,
+    modalMessage: '',
+    modalTitle: '',
+    modalVisible: false,
+    showPreviousMoves: false
+  }),
 
   getters: {},
 
   actions: {
+    addGuessHistory(guess: Game) {
+      this.history.push(guess)
+    },
+
+    showModal(title: string, message: string) {
+      this.modalTitle = title
+      this.modalMessage = message
+      this.modalVisible = true
+    },
+
+    hideModal() {
+      this.modalVisible = false
+    },
+
+    async getHistory() {
+      const walletStore = useWalletStore()
+      const messageStore = useMessageStore()
+      try {
+        if (!walletStore.signer) {
+          messageStore.addMessage('Not connected with Metamask...')
+          return
+        }
+        const web3service = new Web3Service(walletStore.signer)
+        const res = await web3service.getGuessHistory()
+        this.history = res
+      } catch (error) {
+        console.error(error)
+      }
+    },
+
     async uploadToIpfs(uploadArray: any) {
-      console.log('🚀 ~ uploadToIpfs ~ uploadArray:', uploadArray)
       if (!VITE_MORALIS_API_KEY) {
         console.error('VITE_MORALIS_API_KEY not found')
         return
@@ -24,7 +61,6 @@ export const useGameStore = defineStore('battleStore', {
         console.error('Moralis not found')
         return
       }
-      console.log('🚀 ~ uploadToIpfs ~ Moralis:', Moralis)
       try {
         if (!Moralis.Core.isStarted) {
           await Moralis.start({
@@ -35,7 +71,6 @@ export const useGameStore = defineStore('battleStore', {
         const response = await Moralis.EvmApi.ipfs.uploadFolder({
           abi: uploadArray
         })
-        console.log('🚀 ~ uploadToIpfs ~ response:', response)
         return response.result
       } catch (error) {
         console.error(error)
@@ -80,11 +115,25 @@ export const useGameStore = defineStore('battleStore', {
             bottomRight: [challenges[i].position.x2, challenges[i].position.y2]
           })
         }
-        console.log('🚀 ~ createChallenge ~ uploadedChallenges:', uploadedChallenges)
 
         const res = await web3service.createChallenge(uploadedChallenges)
-        console.log(res)
         return res
+      } catch (error) {
+        console.error(error)
+      }
+    },
+
+    async getGame() {
+      const walletStore = useWalletStore()
+      const messageStore = useMessageStore()
+      try {
+        if (!walletStore.signer) {
+          messageStore.addMessage('Not connected with Metamask...')
+          return
+        }
+        const web3service = new Web3Service(walletStore.signer)
+        const res = await web3service.getChallengePublicInfo()
+        this.game = res
       } catch (error) {
         console.error(error)
       }

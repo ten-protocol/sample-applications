@@ -2,46 +2,78 @@ import { ethers } from 'ethers'
 import { useMessageStore } from '@/stores/messageStore'
 import ImageGuessGameJson from '@/assets/contract/artifacts/contracts/ImageGuessGame.sol/ImageGuessGame.json'
 import ContractAddress from '@/assets/contract/address.json'
-import Common from './common'
-import { trackEvent } from './utils'
-import { useGameStore } from '@/stores/gameStore'
+import { formatTimeAgo, trackEvent, bigNumberToNumber } from './utils'
+import Common from '@/lib/common'
+import Web3listener from './web3listener'
 
 export default class Web3Service {
   constructor(signer) {
     this.contract = new ethers.Contract(ContractAddress.address, ImageGuessGameJson.abi, signer)
     this.signer = signer
-
-    // this.preload()
   }
 
-  // async preload() {
-  //   try {
-  //     console.log('Preloading ship properties...')
-  //     const gameStore = useGameStore()
-  //     await gameStore.getImage()
-  //   } catch (error) {
-  //     console.error('Failed to preload ship properties - ', error)
-  //   }
-  // }
+  async getGuessHistory() {
+    try {
+      const challengeId = await this.getChallengeId()
+      const historyTx = await this.contract.viewMyGuesses(challengeId)
+      // above is the response from the contract, we need to convert it to a more readable format
+      // the first array is the x and y coordinates of the guesses
+      // the second array is the timestamp of the guesses
+      // to get a readable timestamp, we need to fetch the block timestamp from the blockchain using ethers.js and subtract the block timestamp from the timestamp in the response
 
-  async submitGuess(guessValue) {
+      const provider = new ethers.providers.Web3Provider(window.ethereum)
+      const blockNumber = await provider.getBlockNumber()
+      const currentBlock = await provider.getBlock(blockNumber)
+      const currentTimestamp = currentBlock.timestamp
+
+      const guessCoordinates = historyTx[0]
+      const guessTimestamps = historyTx[1]
+      const guessHistory = guessCoordinates.map((coordinates, index) => {
+        const x = bigNumberToNumber(coordinates[0])
+        const y = bigNumberToNumber(coordinates[1])
+        const guessTimestamp = bigNumberToNumber(guessTimestamps[index])
+        const readableTimestamp = currentTimestamp - guessTimestamp
+        return {
+          x,
+          y,
+          timestamp: formatTimeAgo(readableTimestamp),
+          win: 'N/A', // this is not available from the contract
+          transactionHash: 'N/A', // this is not available from the contract
+          reward: 0 // this is not available from the contract
+        }
+      })
+      return guessHistory
+    } catch (error) {
+      console.error('Failed to preload guess history - ', error)
+    }
+  }
+
+  async submitGuess(challengeId, [coordinateX, coordinateY]) {
+    const entryCost = ethers.utils.parseEther(Common.ENTRY_COST)
     const messageStore = useMessageStore()
 
     messageStore.addMessage('Issuing Guess...')
 
     try {
-      const submitTx = await this.contract.guess(guessValue, { value: guessFee })
+      const submitTx = await this.contract.submitGuess(challengeId, [coordinateX, coordinateY], {
+        value: entryCost
+      })
       const receipt = await submitTx.wait()
       messageStore.addMessage('Issued Guess tx: ' + receipt.transactionHash)
-      if (receipt.events[0].args.success) {
-        trackEvent('guess_success', { value: guessValue })
-        messageStore.addMessage(
-          `[ImageGuessGame Contract] ${guessValue} was the right answer ! You won!`
-        )
+
+      const web3listener = new Web3listener(this.signer)
+      web3listener.startCheckingGuesses(receipt)
+
+      if (receipt.events[0].args[2]) {
+        const message = 'Congratulations! You are the winner!'
+        messageStore.addMessage(message)
+
+        return message
       } else {
-        messageStore.addMessage(
-          `[ImageGuessGame Contract] ${guessValue} was not the right answer. Try again...`
-        )
+        const message = 'You are not the winner, try again!'
+        messageStore.addMessage(message)
+
+        return message
       }
     } catch (e) {
       if (e.reason) {
@@ -51,40 +83,56 @@ export default class Web3Service {
       messageStore.addMessage(
         'Failed to issue Guess - unexpected error occurred, check the console logs...'
       )
-      console.log(e)
+      console.error('Failed to issue Guess - ', e)
+    }
+  }
+
+  async getChallengeId() {
+    const messageStore = useMessageStore()
+    try {
+      const challengeId = await this.contract.currentChallengeIndex()
+      const formattedChallengeId = bigNumberToNumber(challengeId)
+      return formattedChallengeId
+    } catch (error) {
+      console.error('Failed to get challenge id - ', error)
+      messageStore.addMessage('Failed to get challenge id - ' + error.reason + ' ...')
     }
   }
 
   async createChallenge(payload) {
-    console.log('🚀 ~ Web3Service ~ createChallenge ~ payload:', payload)
     const messageStore = useMessageStore()
 
     try {
-      const createChallengeTx = await this.contract.createChallenge(payload)
-      console.log('🚀 ~ Web3Service ~ createChallenge ~ createChallengeTx:', createChallengeTx)
+      // create each challenge with each object in the array
+      const createChallengeRes = await Promise.all(
+        payload.map(async (challenge) => {
+          const createChallengeTx = await this.contract.createChallenge(challenge)
 
-      // Wait for the transaction to be mined
-      const receipt = await createChallengeTx.wait()
+          const receipt = await createChallengeTx.wait()
+          trackEvent('Challenge Created', {
+            transactionHash: receipt.transactionHash,
+            challengeId: receipt.events[0].args.challengeId.toNumber()
+          })
 
-      // Check if the transaction was successful
-      if (receipt.events[0].args.success) {
-        // Add success message
-        messageStore.addMessage(`Challenge created successfully!`)
-      }
+          return receipt
+        })
+      )
+      return createChallengeRes
     } catch (error) {
       console.error('Failed to create challenge - ', error)
       messageStore.addMessage('Failed to create challenge - ' + error.reason + ' ...')
     }
   }
 
-  async getImage(shipType) {
+  async getChallengePublicInfo() {
     const messageStore = useMessageStore()
     try {
-      const ship = await this.contract.ships(shipType)
-      return ship
+      const challengeId = await this.getChallengeId()
+      const challenge = await this.contract.getChallengePublicInfo(challengeId)
+      return challenge
     } catch (error) {
-      console.error('Failed to get ship properties - ', error)
-      messageStore.addMessage('Failed to get ship properties - ' + error.reason + ' ...')
+      console.error('Failed to get challenge properties - ', error)
+      messageStore.addMessage('Failed to get challenge properties - ' + error.reason + ' ...')
     }
   }
 }

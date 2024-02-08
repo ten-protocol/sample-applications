@@ -1,10 +1,3 @@
-<script setup lang="ts">
-import Game from '../components/Game.vue'
-import Header from '../components/Header.vue'
-import History from '../components/History.vue'
-// import Controls from '../components/Controls.vue'
-</script>
-
 <template>
   <main class="px-4">
     <Header />
@@ -15,3 +8,9 @@ import History from '../components/History.vue'
     <History />
   </main>
 </template>
+
+<script setup>
+import Game from '../components/Game.vue'
+import Header from '../components/Header.vue'
+import History from '../components/History.vue'
+</script>

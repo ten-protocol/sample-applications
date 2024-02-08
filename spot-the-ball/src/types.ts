@@ -19,3 +19,11 @@ export type Message = {
   id: number
   text: string
 }
+
+export type Game = {
+  transactionHash: string
+  win: boolean
+  x: number
+  y: number
+  timestamp: string
+}

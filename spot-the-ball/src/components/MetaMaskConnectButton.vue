@@ -14,7 +14,10 @@ import { useWalletStore } from '@/stores/walletStore'
 import { useMessageStore } from '@/stores/messageStore'
 import { ref } from 'vue'
 import Web3listener from '@/lib/web3listener'
+import Web3Service from '@/lib/web3service'
 import { trackEvent } from '../lib/utils'
+import Common from '../lib/common'
+import { useGameStore } from '../stores/gameStore'
 
 export default {
   name: 'MetaMaskConnectButton',
@@ -64,6 +67,7 @@ export default {
     const provider = await detectEthereumProvider()
     const messageStore = useMessageStore()
     const walletStore = useWalletStore()
+    const gameStore = useGameStore()
 
     const chainId = await provider.request({ method: 'eth_chainId' })
     if (chainId !== '0x1bb') {
@@ -81,7 +85,8 @@ export default {
           walletStore.setAddress(accounts[0])
           messageStore.addMessage('Connected to wallet ! Account: ' + accounts[0])
           this.buttonText = 'Connected!'
-          new Web3listener(walletStore.signer, '0xe03D05a56d35D7c87Ea0578A27C5d4fdF1C81c63')
+          new Web3Service(walletStore.signer, Common.CONTRACT_ADDRESS)
+          new Web3listener(walletStore.signer, Common.CONTRACT_ADDRESS)
         } else {
           messageStore.addMessage('No wallet connected...')
         }
@@ -89,6 +94,9 @@ export default {
       .catch((error) => {
         console.error('Error checking MetaMask connection:', error)
       })
+
+    await gameStore.getHistory()
+    await gameStore.getGame()
   }
 }
 </script>

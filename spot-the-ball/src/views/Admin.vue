@@ -1,8 +1,44 @@
-<script setup lang="ts">
+
+
+<template>
+  <div>
+    <TopBar />
+    <div class="flex flex-col gap-4 p-4">
+      <Challenge
+        v-for="(challenge, index) in challenges"
+        :key="index"
+        :index="index"
+        :challenge="challenge"
+        @remove="removeChallenge(index)"
+        @fileChange="addFilessToChallenge($event, index)"
+        @positionChange="addPositionToChallenge($event, index)"
+      />
+
+      <div class="space-x-4 flex justify-end">
+        <button class="py-4 px-6 rounded-lg bg-grey-900 text-dark" @click="addChallenge">
+          Add another challenge
+        </button>
+        <button
+          class="py-4 px-6 rounded-lg bg-slate-900 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+          @click="handleUpload"
+          :disabled="
+            challenges.some(
+              (challenge) => challenge.selectedFiles.length === 0 || challenge.position.x1 === 0
+            )
+          "
+        >
+          Create Challenge(s)
+        </button>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
 import { ref } from 'vue'
 import { useGameStore } from '../stores/gameStore'
-import Topbar from '../components/Topbar.vue'
 import Challenge from '../components/Challenge.vue'
+import TopBar from '../components/TopBar.vue'
 
 const challenges = ref([
   {
@@ -34,11 +70,16 @@ const addPositionToChallenge = (position, index) => {
 
 async function handleUpload() {
   const gameStore = useGameStore()
+  gameStore.loading = true
   try {
     const createChallengeResp = await gameStore.createChallenge(challenges.value)
-    console.log('🚀 ~ handleUpload ~ createChallengeResp:', createChallengeResp)
+    gameStore.showModal(
+      'Success',
+      'The following challenge(s) have been created: ' +
+        createChallengeResp.map((c) => c.transactionHash).join(', ')
+    )
 
-    // Reset the form
+    // resets the form
     challenges.value = [
       {
         selectedFiles: [],
@@ -47,40 +88,8 @@ async function handleUpload() {
     ]
   } catch (error) {
     console.error(error)
+  } finally {
+    gameStore.loading = false
   }
 }
 </script>
-
-<template>
-  <div>
-    <Topbar />
-    <div class="flex flex-col gap-4 p-4">
-      <Challenge
-        v-for="(challenge, index) in challenges"
-        :key="index"
-        :index="index"
-        :challenge="challenge"
-        @remove="removeChallenge(index)"
-        @fileChange="addFilessToChallenge($event, index)"
-        @positionChange="addPositionToChallenge($event, index)"
-      />
-
-      <div class="space-x-4 flex justify-end">
-        <button class="py-4 px-6 rounded-lg bg-grey-900 text-dark" @click="addChallenge">
-          Add another challenge
-        </button>
-        <button
-          class="py-4 px-6 rounded-lg bg-slate-900 text-white disabled:opacity-50 disabled:cursor-not-allowed"
-          @click="handleUpload"
-          :disabled="
-            !challenges.every(
-              (challenge) => challenge.selectedFiles.length && challenge.position.x1
-            )
-          "
-        >
-          Create Challenge(s)
-        </button>
-      </div>
-    </div>
-  </div>
-</template>

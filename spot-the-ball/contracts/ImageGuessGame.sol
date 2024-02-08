@@ -21,6 +21,22 @@ contract ImageGuessGame {
   address public owner;
   mapping(uint256 => address[]) public challengeWinners;
 
+  /// @dev Structure for challenge creation parameters.
+  struct ChallengeCreationParams {
+    string publicImageURL;
+    string privateImageURL;
+    uint256[2] topLeft;
+    uint256[2] bottomRight;
+  }
+
+  /// @dev Mapping from challenge ID to a nested mapping of player addresses to their guess coordinates.
+  /// The nested mapping stores an array of 2-element uint256 arrays representing the x and y coordinates guessed by each player for the challenge.
+  mapping(uint256 => mapping(address => uint256[2][])) private guessCoordinates;
+
+  /// @dev Mapping from challenge ID to a nested mapping of player addresses to their guess timestamps.
+  /// The nested mapping stores an array of timestamps representing when each guess was made by the player for the challenge.
+  mapping(uint256 => mapping(address => uint256[])) private guessTimestamps;
+
   /// @notice Event emitted when a new challenge is created.
   /// @param challengeId The index of the challenge in the array
   /// @param imageURL URL of the publicly visible image
@@ -31,7 +47,15 @@ contract ImageGuessGame {
   /// @param challengeId The index of the challenge
   /// @param user The address of the user who made the guess
   /// @param isCorrect Boolean indicating if the guess was correct
-  event GuessSubmitted(uint256 indexed challengeId, address indexed user, bool isCorrect);
+  /// @param guessCoordinates The coordinates guessed by the user
+  /// @param timestamp The timestamp when the guess was submitted
+  event GuessSubmitted(
+    uint256 indexed challengeId,
+    address indexed user,
+    bool isCorrect,
+    uint256[2] guessCoordinates,
+    uint256 timestamp
+  );
 
   /// @notice Event emitted when a challenge is won.
   /// @param challengeId The index of the challenge
@@ -61,29 +85,31 @@ contract ImageGuessGame {
     _;
   }
 
-  /// @notice Allows the owner to create a new challenge.
-  /// @param _publicImageURL URL of the publicly visible image
-  /// @param _privateImageURL URL of the hidden image to be revealed upon winning
-  /// @param _topLeft Top left coordinates of the hidden item
-  /// @param _bottomRight Bottom right coordinates of the hidden item
-  function createChallenge(
-    string memory _publicImageURL,
-    string memory _privateImageURL,
-    uint256[2] memory _topLeft,
-    uint256[2] memory _bottomRight
-  ) public onlyOwner {
+  /// @notice Allows the owner to create a new challenge using a struct for parameters.
+  function createChallenge(ChallengeCreationParams memory params) public onlyOwner {
+    // Add the new challenge to the array
     challenges.push(
       Challenge({
-        publicImageURL: _publicImageURL,
-        privateImageURL: _privateImageURL,
-        topLeft: _topLeft,
-        bottomRight: _bottomRight,
-        isActive: challenges.length == 0,
+        publicImageURL: params.publicImageURL,
+        privateImageURL: params.privateImageURL,
+        topLeft: params.topLeft,
+        bottomRight: params.bottomRight,
+        isActive: false,
         isRevealed: false,
         prizePool: 0
       })
     );
-    emit ChallengeCreated(challenges.length - 1, _publicImageURL, 0);
+
+    if (
+      challenges.length == 1 ||
+      (!challenges[currentChallengeIndex].isActive &&
+        currentChallengeIndex + 1 == challenges.length)
+    ) {
+      challenges[challenges.length - 1].isActive = true;
+      currentChallengeIndex = challenges.length - 1;
+    }
+
+    emit ChallengeCreated(challenges.length - 1, params.publicImageURL, 0);
   }
 
   /// @notice Returns public information about a challenge.
@@ -114,6 +140,9 @@ contract ImageGuessGame {
     Challenge storage challenge = challenges[_challengeId];
     require(challenge.isActive, 'Challenge has ended & no more challenges are available');
 
+    guessCoordinates[_challengeId][msg.sender].push(_guessCoordinates);
+    guessTimestamps[_challengeId][msg.sender].push(block.timestamp);
+
     challenge.prizePool += msg.value;
 
     bool isCorrect = isInside(challenge.topLeft, challenge.bottomRight, _guessCoordinates);
@@ -135,7 +164,7 @@ contract ImageGuessGame {
         emit NoMoreChallengesFound();
       }
     } else {
-      emit GuessSubmitted(_challengeId, msg.sender, isCorrect);
+      emit GuessSubmitted(_challengeId, msg.sender, isCorrect, _guessCoordinates, block.timestamp);
     }
   }
 
@@ -154,5 +183,16 @@ contract ImageGuessGame {
       point[0] <= bottomRight[0] &&
       point[1] >= topLeft[1] &&
       point[1] <= bottomRight[1];
+  }
+
+  /// @notice Allows a user to view their guess coordinates and timestamps for a specific challenge.
+  /// @param _challengeId The index of the challenge
+  /// @return coordinates An array of guess coordinates made by the user for the specified challenge
+  /// @return timestamps An array of timestamps corresponding to each guess made by the user
+  function viewMyGuesses(
+    uint256 _challengeId
+  ) public view returns (uint256[2][] memory coordinates, uint256[] memory timestamps) {
+    require(_challengeId < challenges.length, 'Challenge does not exist.');
+    return (guessCoordinates[_challengeId][msg.sender], guessTimestamps[_challengeId][msg.sender]);
   }
 }

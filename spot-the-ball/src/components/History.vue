@@ -1,22 +1,3 @@
-<script setup lang="ts">
-const HISTORY = [
-  {
-    moveTxId: '0X123',
-    time: '2 min ago',
-    coordinates: '300-900',
-    win: 'Yes',
-    reward: '2.2'
-  },
-  {
-    moveTxId: '0X456',
-    time: '6 min ago',
-    coordinates: '678-433',
-    win: 'No',
-    reward: '0'
-  }
-]
-</script>
-
 <template>
   <div class="wrapper py-8">
     <div class="w-fit mx-auto">
@@ -26,19 +7,19 @@ const HISTORY = [
           <tr>
             <th>Move TxId</th>
             <th>Time</th>
-            <th>Co-Ordinates (X</th>
-            <th>Y)</th>
+            <th>X Coordinate</th>
+            <th>Y Coordinate</th>
             <th>Win</th>
             <th>Reward (ETH)</th>
           </tr>
         </thead>
         <tbody>
-          <template v-if="HISTORY.length">
-            <tr v-for="move in HISTORY" :key="move.moveTxId">
-              <td>{{ move.moveTxId }}</td>
-              <td>{{ move.time }}</td>
-              <td>{{ move.coordinates.split('-')[0] }}</td>
-              <td>{{ move.coordinates.split('-')[1] }}</td>
+          <template v-if="HISTORY">
+            <tr v-for="(move, index) in HISTORY" :key="index">
+              <td>{{ move.transactionHash }}</td>
+              <td>{{ move.timestamp }}</td>
+              <td>{{ move.x }}</td>
+              <td>{{ move.y }}</td>
               <td>{{ move.win }}</td>
               <td>{{ move.reward }}</td>
             </tr>
@@ -51,6 +32,19 @@ const HISTORY = [
     </div>
   </div>
 </template>
+
+<script setup>
+import { ref, watchEffect } from 'vue'
+import { useGameStore } from '../stores/gameStore'
+
+const gameStore = useGameStore()
+
+const HISTORY = ref(gameStore.history)
+
+watchEffect(() => {
+  HISTORY.value = gameStore.history
+})
+</script>
 
 <style scoped>
 table {

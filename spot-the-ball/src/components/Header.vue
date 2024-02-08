@@ -1,10 +1,19 @@
 <script setup lang="ts">
+import { ref, watchEffect } from 'vue'
+import { formatEther } from 'ethers/lib/utils'
 import MetaMaskConnectButton from './MetaMaskConnectButton.vue'
-import { useWalletStore } from '../stores/walletStore'
 import { useGameStore } from '../stores/gameStore'
 
-const walletStore = useWalletStore()
 const gameStore = useGameStore()
+const prizePool = ref('')
+
+const showPreviousMoves = (event: Event) => {
+  gameStore.showPreviousMoves = (event.target as HTMLInputElement).checked
+}
+
+watchEffect(() => {
+  prizePool.value = formatEther(gameStore.game?.[3] || 0)
+})
 </script>
 
 <template>
@@ -19,13 +28,11 @@ const gameStore = useGameStore()
       <div class="flex flex-col gap-4">
         <div class="w-fit grid grid-cols-2 gap-4 border-2 border-black p-4 text-sm">
           <p>Total Pool:</p>
-          <p>7 ETH</p>
-          <p>Time remaining:</p>
-          <p>4 hours, 16 minutes</p>
+          <p>{{ prizePool }} ETH</p>
         </div>
 
         <div class="flex items-center gap-2 text-sm">
-          <input type="checkbox" />
+          <input type="checkbox" @change="showPreviousMoves" />
           <label>Previous moves</label>
         </div>
       </div>
