@@ -13,10 +13,7 @@
   "dependencies": {
     "@metamask/detect-provider": "^2.0.0",
     "@metamask/rpc-errors": "^6.1.0",
-    "axios": "^1.6.5",
-    "element-plus": "^2.4.2",
     "ethers": "^5.7.2",
-    "ipfs-http-client": "^60.0.1",
     "oh-vue-icons": "^1.0.0-rc3",
     "path": "^0.12.7",
     "pinia": "^2.1.7",
