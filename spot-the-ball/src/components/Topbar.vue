@@ -18,7 +18,7 @@
 import MetaMaskConnectButton from './MetaMaskConnectButton.vue'
 
 export default {
-  name: 'TopBar',
+  name: 'Topbar',
   components: {
     MetaMaskConnectButton
   },

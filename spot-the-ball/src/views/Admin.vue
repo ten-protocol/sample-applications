@@ -2,7 +2,7 @@
 
 <template>
   <div>
-    <TopBar />
+    <Topbar />
     <div class="flex flex-col gap-4 p-4">
       <Challenge
         v-for="(challenge, index) in challenges"
@@ -38,7 +38,7 @@
 import { ref } from 'vue'
 import { useGameStore } from '../stores/gameStore'
 import Challenge from '../components/Challenge.vue'
-import TopBar from '../components/TopBar.vue'
+import Topbar from '../components/Topbar.vue'
 
 const challenges = ref([
   {
