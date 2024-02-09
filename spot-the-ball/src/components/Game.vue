@@ -112,7 +112,15 @@ const submit = async () => {
       <template v-if="game?.[0]">
         <img :src="game[0]" alt="Spot the ball" class="w-full block" />
       </template>
+      <template v-else>
+        <div class="w-full h-[500px] bg-gray-200 cursor-not-allowed relative">
+          <div class="flex items-center justify-center h-full">
+            <p class="text-2xl">No game found...</p>
+          </div>
+        </div>
+      </template>
       <div
+        v-if="game?.[0]"
         class="absolute border-[4px] border-white rounded-full"
         ref="circleRef"
         :style="{

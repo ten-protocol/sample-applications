@@ -7,17 +7,17 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
-      path: '/',
+      path: '/sample-applications/spot-the-ball/',
       name: 'home',
       component: Home
     },
     {
-      path: '/auth',
+      path: '/sample-applications/spot-the-ball/auth',
       name: 'auth',
       component: Auth
     },
     {
-      path: '/admin',
+      path: '/sample-applications/spot-the-ball/admin',
       name: 'admin',
       component: Admin
     }

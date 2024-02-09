@@ -13,11 +13,8 @@ export function bigNumberToNumber(bigNumber) {
   return ethers.BigNumber.from(bigNumber).toNumber()
 }
 
-export function formatTimeAgo(unixTimestampSeconds) {
-  if (!unixTimestampSeconds) {
-    return 'Unknown'
-  }
-  const date = new Date(Number(unixTimestampSeconds) * 1000)
+export function formatTimeAgo(timestamp) {
+  const date = new Date(timestamp * 1000)
   return formatDistanceToNow(date, { addSuffix: true })
 }
 

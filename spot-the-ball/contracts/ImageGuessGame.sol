@@ -121,7 +121,11 @@ contract ImageGuessGame {
   function getChallengePublicInfo(
     uint256 challengeId
   ) public view returns (string memory, bool, bool, uint256) {
+    require(challengeId < challenges.length, 'Challenge does not exist.');
+
     Challenge storage challenge = challenges[challengeId];
+    require(challenge.isActive || challenge.isRevealed, 'No active or available challenge.');
+
     return (
       challenge.publicImageURL,
       challenge.isActive,
@@ -185,14 +189,24 @@ contract ImageGuessGame {
       point[1] <= bottomRight[1];
   }
 
-  /// @notice Allows a user to view their guess coordinates and timestamps for a specific challenge.
+  /// @notice Allows a user to view their guess coordinates and the time elapsed since each guess was made for a specific challenge.
   /// @param _challengeId The index of the challenge
   /// @return coordinates An array of guess coordinates made by the user for the specified challenge
-  /// @return timestamps An array of timestamps corresponding to each guess made by the user
+  /// @return timesElapsed An array of times elapsed (in seconds) since each guess was made by the user
   function viewMyGuesses(
     uint256 _challengeId
-  ) public view returns (uint256[2][] memory coordinates, uint256[] memory timestamps) {
+  ) public view returns (uint256[2][] memory coordinates, uint256[] memory timesElapsed) {
     require(_challengeId < challenges.length, 'Challenge does not exist.');
-    return (guessCoordinates[_challengeId][msg.sender], guessTimestamps[_challengeId][msg.sender]);
+
+    uint256[] storage guessTimes = guessTimestamps[_challengeId][msg.sender];
+    uint256[] memory elapsedTimes = new uint256[](guessTimes.length);
+
+    for (uint256 i = 0; i < guessTimes.length; i++) {
+      // Calculate the time elapsed since the guess was made
+      uint256 timeElapsed = block.timestamp - guessTimes[i];
+      elapsedTimes[i] = timeElapsed;
+    }
+
+    return (guessCoordinates[_challengeId][msg.sender], elapsedTimes);
   }
 }
