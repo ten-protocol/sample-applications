@@ -1,5 +1,4 @@
 import { serializeError } from '@metamask/rpc-errors'
-import { formatDistanceToNow } from 'date-fns'
 import { ethers } from 'ethers'
 
 export function trackEvent(eventName, eventData) {
@@ -13,9 +12,26 @@ export function bigNumberToNumber(bigNumber) {
   return ethers.BigNumber.from(bigNumber).toNumber()
 }
 
-export function formatTimeAgo(timestamp) {
-  const date = new Date(timestamp * 1000)
-  return formatDistanceToNow(date, { addSuffix: true })
+export function formatTimeAgo(seconds) {
+  if (isNaN(seconds)) {
+    return 'Unknown'
+  }
+  if (seconds <= 0) {
+    return 'Just now'
+  }
+  if (seconds < 60) {
+    return `${seconds} second${seconds > 1 ? 's' : ''} ago`
+  }
+  if (seconds < 3600) {
+    const min = Math.floor(seconds / 60)
+    return `${min} minute${min > 1 ? 's' : ''} ago`
+  }
+  if (seconds < 86400) {
+    const hours = Math.floor(seconds / 3600)
+    return `${hours} hour${hours > 1 ? 's' : ''} ago`
+  }
+  const days = Math.floor(seconds / 86400)
+  return `${days} day${days > 1 ? 's' : ''} ago`
 }
 
 export function handleMetaMaskError(error) {

@@ -21,26 +21,18 @@ export default class Web3Service {
       // the second array is the timestamp of the guesses
       // to get a readable timestamp, we need to fetch the block timestamp from the blockchain using ethers.js and subtract the block timestamp from the timestamp in the response
 
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
-      const blockNumber = await provider.getBlockNumber()
-      const currentBlock = await provider.getBlock(blockNumber)
-      const currentTimestamp = currentBlock.timestamp
-
       const guessCoordinates = historyTx[0]
       const guessTimestamps = historyTx[1]
       const guessHistory = guessCoordinates.map((coordinates, index) => {
         const x = bigNumberToNumber(coordinates[0])
         const y = bigNumberToNumber(coordinates[1])
         const guessTimestamp = bigNumberToNumber(guessTimestamps[index])
-        console.log('🚀 ~ Web3Service ~ guessHistory ~ guessTimestamp:', guessTimestamp)
-        const readableTimestamp = currentTimestamp - guessTimestamp
+
         return {
           x,
           y,
-          timestamp: bigNumberToNumber(guessTimestamp),
-          // timestamp: formatTimeAgo(readableTimestamp),
+          timestamp: formatTimeAgo(bigNumberToNumber(guessTimestamp)),
           win: 'N/A', // this is not available from the contract
-          transactionHash: 'N/A', // this is not available from the contract
           reward: 0 // this is not available from the contract
         }
       })
@@ -98,7 +90,6 @@ export default class Web3Service {
     const messageStore = useMessageStore()
     try {
       const challengeId = await this.contract.currentChallengeIndex()
-      console.log('🚀 ~ Web3Service ~ getChallengeId ~ challengeId:', challengeId)
       const formattedChallengeId = bigNumberToNumber(challengeId)
       return formattedChallengeId
     } catch (error) {
@@ -114,6 +105,7 @@ export default class Web3Service {
       // create each challenge with each object in the array
       const createChallengeRes = await Promise.all(
         payload.map(async (challenge) => {
+          console.log('🚀 ~ Web3Service ~ payload.map ~ challenge:', challenge)
           const createChallengeTx = await this.contract.createChallenge(challenge)
 
           const receipt = await createChallengeTx.wait()
@@ -136,9 +128,7 @@ export default class Web3Service {
     const messageStore = useMessageStore()
     try {
       const challengeId = await this.getChallengeId()
-      console.log('🚀 ~ Web3Service ~ getChallengePublicInfo ~ challengeId:', challengeId)
       const challenge = await this.contract.getChallengePublicInfo(challengeId)
-      console.log('🚀 ~ Web3Service ~ getChallengePublicInfo ~ challenge:', challenge)
       return challenge
     } catch (error) {
       console.error('Failed to get challenge properties - ', error)

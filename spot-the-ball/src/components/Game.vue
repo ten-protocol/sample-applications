@@ -29,7 +29,6 @@ watchEffect(() => {
 
 const handleClick = async () => {
   if (isWithinThreshold.value) {
-    circleRef.value!.style.backgroundColor = 'skyblue'
     await submit()
   }
 }
@@ -84,10 +83,11 @@ const submit = async () => {
     }
     const web3Service = new Web3Service(walletStore.signer)
     const challengeId = await web3Service.getChallengeId()
-    const res = await web3Service.submitGuess(challengeId, [
-      relativeMouseX.value,
-      relativeMouseY.value
-    ])
+    const payload = [
+      challengeId,
+      [Math.round(relativeMouseX.value), Math.round(relativeMouseY.value)]
+    ]
+    const res = await web3Service.submitGuess(...payload)
     if (res) {
       gameStore.showModal('', res)
     }
@@ -128,7 +128,8 @@ const submit = async () => {
           height: `${circleSize}px`,
           top: `${mouseIsInImage ? `${relativeMouseY - circleSize / 2}px` : '50%'}`,
           left: `${mouseIsInImage ? `${relativeMouseX - circleSize / 2}px` : '50%'}`,
-          transform: `${mouseIsInImage ? `` : 'translate(-50%,-50%)'}`
+          transform: `${mouseIsInImage ? `` : 'translate(-50%,-50%)'}`,
+          background: '#87ceeb'
         }"
       ></div>
       <template v-if="showPreviousMoves">

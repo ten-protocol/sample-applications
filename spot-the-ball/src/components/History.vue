@@ -20,7 +20,7 @@
         <tbody>
           <template v-if="HISTORY?.length">
             <tr v-for="(move, index) in HISTORY" :key="index">
-              <td>{{ index }}</td>
+              <td>{{ index + 1 }}</td>
               <td>{{ move.timestamp }}</td>
               <td>{{ move.x }}</td>
               <td>{{ move.y }}</td>

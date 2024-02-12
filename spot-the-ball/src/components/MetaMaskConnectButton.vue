@@ -24,6 +24,7 @@ export default {
   setup() {
     const walletStore = useWalletStore()
     const messageStore = useMessageStore()
+    const gameStore = useGameStore()
     const buttonText = ref('Connect with MetaMask')
 
     async function connectMetamask() {
@@ -52,7 +53,11 @@ export default {
         messageStore.addMessage('Connected to wallet ! Account: ' + accounts[0])
         buttonText.value = 'Connected!'
 
-        new Web3listener(walletStore.signer, '0xe03D05a56d35D7c87Ea0578A27C5d4fdF1C81c63')
+        new Web3Service(walletStore.signer, Common.CONTRACT_ADDRESS)
+        new Web3listener(walletStore.signer, Common.CONTRACT_ADDRESS)
+
+        await gameStore.getHistory()
+        await gameStore.getGame()
       } else {
         messageStore.addMessage('Please install MetaMask!')
       }

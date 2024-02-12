@@ -13,19 +13,15 @@ export default class Web3listener {
     messageStore.addMessage(
       `[ImageGuessGame Contract] Contract Address: ${ContractAddress.address}`
     )
+
+    this.startCheckingPublicChallenge()
   }
 
   async startCheckingGuesses(receipt) {
-    // setInterval(async () => {
     const messageStore = useMessageStore()
     const gameStore = useGameStore()
     try {
-      const provider = new ethers.providers.Web3Provider(window.ethereum)
-      const blockNumber = await provider.getBlockNumber()
-      const currentBlock = await provider.getBlock(blockNumber)
-      const currentTimestamp = currentBlock.timestamp
       const guessTimestamp = bigNumberToNumber(receipt.events[0].args[4])
-      const readableTimestamp = currentTimestamp - guessTimestamp
       // start listening for new guesses using the events - GuessSubmitted and ChallengeWinner - with the receipt
       // add the new guesses to the gameStore, not replacing the old ones
       if (
@@ -37,8 +33,7 @@ export default class Web3listener {
           win: receipt.events[0].args[2] ? 'Yes' : 'No', // "Yes" if the guess is a winner, "No" if not
           x: bigNumberToNumber(receipt.events[0].args[3][0]),
           y: bigNumberToNumber(receipt.events[0].args[3][1]),
-          // timestamp: formatTimeAgo(readableTimestamp),
-          timestamp: guessTimestamp,
+          timestamp: 'Just now',
           reward: 0 // this is not available from the contract
         }
         gameStore.addGuessHistory(guess)
@@ -50,6 +45,21 @@ export default class Web3listener {
         return messageStore.addErrorMessage(errorMessage)
       }
     }
-    // }, 5000) // Run every 5 seconds
+  }
+
+  startCheckingPublicChallenge() {
+    setInterval(async () => {
+      const gameStore = useGameStore()
+      const messageStore = useMessageStore()
+      try {
+        await gameStore.getGame()
+      } catch (err) {
+        console.error('Error fetching challenge:', err)
+        const errorMessage = handleMetaMaskError(err)
+        if (errorMessage) {
+          return messageStore.addErrorMessage(errorMessage)
+        }
+      }
+    }, 2000) // Run every 2 seconds
   }
 }
