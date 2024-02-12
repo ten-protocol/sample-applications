@@ -81,6 +81,7 @@ export default class Web3Service {
     } catch (e) {
       if (e.reason) {
         messageStore.addMessage('Failed to issue Guess - ' + e.reason + ' ...')
+        console.error('Failed to issue Guess - ', e)
         return
       }
       messageStore.addMessage(

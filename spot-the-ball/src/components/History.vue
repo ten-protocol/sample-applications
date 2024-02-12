@@ -18,7 +18,7 @@
           </tr>
         </thead>
         <tbody>
-          <template v-if="HISTORY.length">
+          <template v-if="HISTORY?.length">
             <tr v-for="(move, index) in HISTORY" :key="index">
               <td>{{ move.transactionHash }}</td>
               <td>{{ move.timestamp }}</td>
