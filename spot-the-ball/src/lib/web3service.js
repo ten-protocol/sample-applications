@@ -51,13 +51,16 @@ export default class Web3Service {
   }
 
   async submitGuess(challengeId, [coordinateX, coordinateY]) {
+    // ensuring that coordinatex and coordinatey are not fractional components but whole numbers
+    const updatedCoordinates = [Math.round(coordinateX), Math.round(coordinateY)]
+
     const entryCost = ethers.utils.parseEther(Common.ENTRY_COST)
     const messageStore = useMessageStore()
 
     messageStore.addMessage('Issuing Guess...')
 
     try {
-      const submitTx = await this.contract.submitGuess(challengeId, [coordinateX, coordinateY], {
+      const submitTx = await this.contract.submitGuess(challengeId, updatedCoordinates, {
         value: entryCost,
         gasLimit: ethers.utils.hexlify(3000000)
       })

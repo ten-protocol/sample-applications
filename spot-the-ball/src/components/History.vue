@@ -9,7 +9,7 @@
       <table>
         <thead class="bg-neutral-400">
           <tr>
-            <th>Move TxId</th>
+            <th></th>
             <th>Time</th>
             <th>X Coordinate</th>
             <th>Y Coordinate</th>
@@ -20,7 +20,7 @@
         <tbody>
           <template v-if="HISTORY?.length">
             <tr v-for="(move, index) in HISTORY" :key="index">
-              <td>{{ move.transactionHash }}</td>
+              <td>{{ index }}</td>
               <td>{{ move.timestamp }}</td>
               <td>{{ move.x }}</td>
               <td>{{ move.y }}</td>
