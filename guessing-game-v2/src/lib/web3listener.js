@@ -21,7 +21,7 @@ export default class Web3listener {
       `[GuessingGame Contract] The game has been reset ${await this.contract.resetCount()}
     time${
       (await this.contract.resetCount()) > 1
-        ? 's and the last secret number was' + (await this.contract.getLastSecretNumber())
+        ? 's and the last secret number was ' + (await this.contract.getLastSecretNumber())
         : ''
     }`
     )
