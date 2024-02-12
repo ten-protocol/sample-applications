@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-contract BattleshipGame {
+contract Battleship {
   uint256 public entryFee;
   bool gameStarted = false;
-  uint8 constant gridSize = 50;
-  uint8 constant shipSize = 3;
-  uint8 constant totalShips = 3;
+  uint256 constant gridSize = 50;
+  uint256 constant shipSize = 3;
+  uint256 constant totalShips = 3;
   struct Ship {
-    uint8 startX;
-    uint8 startY;
+    uint256 startX;
+    uint256 startY;
     bool horizontal;
     bool sunk;
     bool[shipSize] hitParts;
@@ -17,11 +17,11 @@ contract BattleshipGame {
   Ship[totalShips] public ships;
   int256[gridSize][gridSize] public board;
 
-  uint8 public hitRewardPercentage = 1;
-  uint8 public sinkRewardPercentage = 5;
+  uint256 public hitRewardPercentage = 1;
+  uint256 public sinkRewardPercentage = 5;
 
-  mapping(address => uint8) public playerHits;
-  mapping(address => uint8) public playerSinks;
+  mapping(address => uint256) public playerHits;
+  mapping(address => uint256) public playerSinks;
 
   address[] public players;
 
@@ -35,15 +35,15 @@ contract BattleshipGame {
 
   Winner[] public winners;
 
-  event ShipHit(uint8 x, uint8 y);
-  event ShipMiss(uint8 x, uint8 y);
-  event ShipSunk(uint8 shipIndex);
+  event ShipHit(uint256 x, uint256 y);
+  event ShipMiss(uint256 x, uint256 y);
+  event ShipSunk(uint256 shipIndex);
   event GameWon(address winner);
 
   constructor(uint256 _entryFee) {
     entryFee = _entryFee;
-    for (uint8 i = 0; i < gridSize; i++) {
-      for (uint8 j = 0; j < gridSize; j++) {
+    for (uint256 i = 0; i < gridSize; i++) {
+      for (uint256 j = 0; j < gridSize; j++) {
         board[i][j] = -1;
       }
     }
@@ -59,22 +59,32 @@ contract BattleshipGame {
   }
 
   function placeShips() internal {
-    uint8 attempts;
-    uint8 maxAttempts = 100;
-    for (uint8 i = 0; i < totalShips; i++) {
+    uint256 attempts;
+    uint256 maxAttempts = 100;
+    for (uint256 i = 0; i < totalShips; i++) {
       bool placed = false;
       attempts = 0;
       while (!placed && attempts < maxAttempts) {
         attempts++;
-        uint256 seed = uint256(
+        uint256 x = uint256(
           keccak256(abi.encodePacked(block.timestamp, block.difficulty, attempts))
-        );
-        uint8 x = uint8(seed % (gridSize - shipSize + 1)); // Cast result to uint8 after calculation
-        uint8 y = uint8((seed / gridSize) % gridSize); // Cast result to uint8 after calculation
-        bool horizontal = seed & 1 == 0;
+        ) % (gridSize - shipSize + 1);
+        uint256 y = uint256(
+          keccak256(abi.encodePacked(blockhash(block.number - 1), block.timestamp, attempts))
+        ) % (gridSize);
+        bool horizontal = uint256(
+          keccak256(abi.encodePacked(block.difficulty, block.timestamp, attempts))
+        ) %
+          2 ==
+          0;
+
+        bool[shipSize] memory hitParts;
+        for (uint256 j = 0; j < shipSize; j++) {
+          hitParts[j] = false;
+        }
 
         if (canPlaceShip(x, y, horizontal)) {
-          ships[i] = Ship(x, y, horizontal, false, [false, false, false]);
+          ships[i] = Ship(x, y, horizontal, false, hitParts);
           markShipOnBoard(i, x, y, horizontal);
           placed = true;
         }
@@ -83,10 +93,10 @@ contract BattleshipGame {
     }
   }
 
-  function canPlaceShip(uint8 x, uint8 y, bool horizontal) internal view returns (bool) {
-    for (uint8 i = 0; i < shipSize; i++) {
-      uint8 checkX = x + (horizontal ? i : 0);
-      uint8 checkY = y + (horizontal ? 0 : i);
+  function canPlaceShip(uint256 x, uint256 y, bool horizontal) internal view returns (bool) {
+    for (uint256 i = 0; i < shipSize; i++) {
+      uint256 checkX = x + (horizontal ? i : 0);
+      uint256 checkY = y + (horizontal ? 0 : i);
 
       if (checkX >= gridSize || checkY >= gridSize || board[checkX][checkY] != -1) {
         return false;
@@ -95,31 +105,29 @@ contract BattleshipGame {
     return true;
   }
 
-  function markShipOnBoard(uint8 shipIndex, uint8 x, uint8 y, bool horizontal) internal {
-    for (uint8 i = 0; i < shipSize; i++) {
-      uint8 markX = x + (horizontal ? i : 0);
-      uint8 markY = y + (horizontal ? 0 : i);
-      board[markX][markY] = int256(uint256(shipIndex));
+  function markShipOnBoard(uint256 shipIndex, uint256 x, uint256 y, bool horizontal) internal {
+    for (uint256 i = 0; i < shipSize; i++) {
+      uint256 markX = x + (horizontal ? i : 0);
+      uint256 markY = y + (horizontal ? 0 : i);
+      board[markX][markY] = int256(shipIndex);
     }
   }
 
   function takeShot(uint256 x, uint256 y) public {
     require(gameStarted, 'Game has not started');
-    //
     require(x < gridSize && y < gridSize, 'Coordinates out of bounds');
 
     if (board[x][y] >= 0) {
-      uint256 shipIndexUint = uint256(board[x][y]);
-      uint8 shipIndex = uint8(shipIndexUint);
+      uint256 shipIndex = uint256(board[x][y]);
       Ship storage ship = ships[shipIndex];
-      uint8 hitPart = uint8(ship.horizontal ? (x - ship.startX) : (y - ship.startY));
+      uint256 hitPart = ship.horizontal ? (x - ship.startX) : (y - ship.startY);
 
       require(!ship.hitParts[hitPart], 'Part already hit');
 
       ship.hitParts[hitPart] = true;
       playerHits[msg.sender] += 1;
 
-      emit ShipHit(uint8(x), uint8(y));
+      emit ShipHit(x, y);
 
       if (isShipSunk(ship)) {
         ship.sunk = true;
@@ -127,7 +135,7 @@ contract BattleshipGame {
         emit ShipSunk(shipIndex);
       }
     } else {
-      emit ShipMiss(uint8(x), uint8(y));
+      emit ShipMiss(x, y);
     }
 
     checkGameCompletion();
@@ -136,8 +144,9 @@ contract BattleshipGame {
   function updateWinner(address playerAddress, bool isHit, bool isSink) internal {
     for (uint256 i = 0; i < winners.length; i++) {
       if (winners[i].playerAddress == playerAddress) {
-        if (isHit) winners[i].hits++;
-        if (isSink) winners[i].sinks++;
+        if (isHit) winners[i].hits += 1;
+        if (isSink) winners[i].sinks += 1;
+        return;
       }
     }
     winners.push(Winner(playerAddress, isHit ? 1 : 0, isSink ? 1 : 0));
