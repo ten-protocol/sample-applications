@@ -37,7 +37,8 @@ export default class Web3listener {
           win: receipt.events[0].args[2] ? 'Yes' : 'No', // "Yes" if the guess is a winner, "No" if not
           x: bigNumberToNumber(receipt.events[0].args[3][0]),
           y: bigNumberToNumber(receipt.events[0].args[3][1]),
-          timestamp: formatTimeAgo(readableTimestamp),
+          // timestamp: formatTimeAgo(readableTimestamp),
+          timestamp: guessTimestamp,
           reward: 0 // this is not available from the contract
         }
         gameStore.addGuessHistory(guess)

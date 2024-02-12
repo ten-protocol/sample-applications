@@ -32,11 +32,13 @@ export default class Web3Service {
         const x = bigNumberToNumber(coordinates[0])
         const y = bigNumberToNumber(coordinates[1])
         const guessTimestamp = bigNumberToNumber(guessTimestamps[index])
+        console.log('🚀 ~ Web3Service ~ guessHistory ~ guessTimestamp:', guessTimestamp)
         const readableTimestamp = currentTimestamp - guessTimestamp
         return {
           x,
           y,
-          timestamp: formatTimeAgo(readableTimestamp),
+          timestamp: bigNumberToNumber(guessTimestamp),
+          // timestamp: formatTimeAgo(readableTimestamp),
           win: 'N/A', // this is not available from the contract
           transactionHash: 'N/A', // this is not available from the contract
           reward: 0 // this is not available from the contract
@@ -56,7 +58,8 @@ export default class Web3Service {
 
     try {
       const submitTx = await this.contract.submitGuess(challengeId, [coordinateX, coordinateY], {
-        value: entryCost
+        value: entryCost,
+        gasLimit: ethers.utils.hexlify(3000000)
       })
       const receipt = await submitTx.wait()
       messageStore.addMessage('Issued Guess tx: ' + receipt.transactionHash)
@@ -91,6 +94,7 @@ export default class Web3Service {
     const messageStore = useMessageStore()
     try {
       const challengeId = await this.contract.currentChallengeIndex()
+      console.log('🚀 ~ Web3Service ~ getChallengeId ~ challengeId:', challengeId)
       const formattedChallengeId = bigNumberToNumber(challengeId)
       return formattedChallengeId
     } catch (error) {
@@ -111,7 +115,7 @@ export default class Web3Service {
           const receipt = await createChallengeTx.wait()
           trackEvent('Challenge Created', {
             transactionHash: receipt.transactionHash,
-            challengeId: receipt.events[0].args.challengeId.toNumber()
+            challengeId: await this.getChallengeId()
           })
 
           return receipt
@@ -128,7 +132,9 @@ export default class Web3Service {
     const messageStore = useMessageStore()
     try {
       const challengeId = await this.getChallengeId()
+      console.log('🚀 ~ Web3Service ~ getChallengePublicInfo ~ challengeId:', challengeId)
       const challenge = await this.contract.getChallengePublicInfo(challengeId)
+      console.log('🚀 ~ Web3Service ~ getChallengePublicInfo ~ challenge:', challenge)
       return challenge
     } catch (error) {
       console.error('Failed to get challenge properties - ', error)

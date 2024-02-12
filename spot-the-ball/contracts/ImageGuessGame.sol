@@ -121,11 +121,7 @@ contract ImageGuessGame {
   function getChallengePublicInfo(
     uint256 challengeId
   ) public view returns (string memory, bool, bool, uint256) {
-    require(challengeId < challenges.length, 'Challenge does not exist.');
-
     Challenge storage challenge = challenges[challengeId];
-    require(challenge.isActive || challenge.isRevealed, 'No active or available challenge.');
-
     return (
       challenge.publicImageURL,
       challenge.isActive,
@@ -202,7 +198,6 @@ contract ImageGuessGame {
     uint256[] memory elapsedTimes = new uint256[](guessTimes.length);
 
     for (uint256 i = 0; i < guessTimes.length; i++) {
-      // Calculate the time elapsed since the guess was made
       uint256 timeElapsed = block.timestamp - guessTimes[i];
       elapsedTimes[i] = timeElapsed;
     }
