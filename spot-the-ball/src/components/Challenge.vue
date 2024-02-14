@@ -77,6 +77,7 @@ function handleDrag(event) {
   if (!isDragging) return
 
   const currentMousePosition = getMousePosition(event)
+
   const deltaX = currentMousePosition.x1 - lastMousePosition.x1
   const deltaY = currentMousePosition.y1 - lastMousePosition.y1
 
@@ -107,7 +108,10 @@ function getMousePosition(event) {
     <summary class="cursor-pointer">Challenge {{ index + 1 }}</summary>
 
     <div class="flex justify-end">
-      <button @click="emit('remove')" class="text-red-900 font-bold underline cursor-pointer">
+      <button
+        @click="index > 1 ? emit('remove') : (selectedFiles = [])"
+        class="text-red-900 font-bold underline cursor-pointer"
+      >
         Remove
       </button>
     </div>

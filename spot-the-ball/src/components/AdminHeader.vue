@@ -34,13 +34,13 @@ export default {
   },
   created() {
     if (!localStorage.getItem('isAdmin')) {
-      this.$router.push('/auth')
+      this.$router.push('/sample-applications/spot-the-ball/auth')
     }
   },
   watch: {
     $route(to) {
       if (!localStorage.getItem('isAdmin')) {
-        this.$router.push('/auth')
+        this.$router.push('/sample-applications/spot-the-ball/auth')
       }
     }
   }

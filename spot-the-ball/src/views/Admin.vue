@@ -56,8 +56,12 @@ const addChallenge = () => {
 
 const removeChallenge = (index) => {
   if (challenges.value.length > 1) {
-    challenges.value.splice(index, 1)
+    return challenges.value.splice(index, 1)
   }
+  return (challenges.value[0] = {
+    selectedFiles: [],
+    position: { x1: 0, x2: 0, y1: 0, y2: 0 }
+  })
 }
 
 const addFilessToChallenge = (files, index) => {

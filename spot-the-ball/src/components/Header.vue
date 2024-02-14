@@ -6,6 +6,7 @@ import { useGameStore } from '../stores/gameStore'
 
 const gameStore = useGameStore()
 const prizePool = ref('')
+const gameActive = ref(false)
 
 const showPreviousMoves = (event: Event) => {
   gameStore.showPreviousMoves = (event.target as HTMLInputElement).checked
@@ -13,6 +14,7 @@ const showPreviousMoves = (event: Event) => {
 
 watchEffect(() => {
   prizePool.value = formatEther(gameStore.game?.[3] || 0)
+  gameActive.value = gameStore.isGameActive
 })
 </script>
 
@@ -36,7 +38,12 @@ watchEffect(() => {
         </div>
 
         <div class="flex items-center gap-2 text-sm">
-          <input type="checkbox" @change="showPreviousMoves" />
+          <input
+            type="checkbox"
+            @change="showPreviousMoves"
+            :disabled="!gameActive"
+            :class="{ 'cursor-not-allowed': !gameActive }"
+          />
           <label>Previous moves</label>
         </div>
       </div>

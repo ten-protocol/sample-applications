@@ -1,10 +1,10 @@
 <template>
   <main class="px-4">
     <Header />
-    <!-- <div class="flex justify-between gap-8 items-center"> -->
     <Game />
-    <!-- <Controls /> -->
-    <!-- </div> -->
+    <!-- <div class="flex justify-between gap-8 items-center">
+    <Controls />
+    </div> -->
     <History />
   </main>
 </template>

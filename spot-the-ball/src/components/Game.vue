@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, watchEffect } from 'vue'
-import { ethers } from 'ethers'
 import { useGameStore } from '../stores/gameStore'
 import Web3Service from '../lib/web3service'
 import { useMessageStore } from '../stores/messageStore'
@@ -17,6 +16,8 @@ const circleRef = ref<HTMLElement | null>(null)
 const isWithinThreshold = ref(false)
 
 const game = ref()
+const gameActive = ref(gameStore.isGameActive)
+const gameRevealed = ref(gameStore.isGameRevealed)
 const submitDisabled = ref(false)
 const HISTORY = ref(gameStore.history)
 const showPreviousMoves = ref(gameStore.showPreviousMoves)
@@ -25,10 +26,12 @@ watchEffect(() => {
   game.value = gameStore.game
   HISTORY.value = gameStore.history
   showPreviousMoves.value = gameStore.showPreviousMoves
+  gameRevealed.value = gameStore.isGameRevealed
+  gameActive.value = gameStore.isGameActive
 })
 
 const handleClick = async () => {
-  if (isWithinThreshold.value) {
+  if (isWithinThreshold.value && !gameRevealed.value && gameActive.value) {
     await submit()
   }
 }
@@ -66,12 +69,12 @@ const handleMouseLeave = (event: MouseEvent) => {
 }
 
 const submit = async () => {
+  if (window.confirm('Are you sure you want to submit this guess?') === false) {
+    return
+  }
   submitDisabled.value = true
   gameStore.loading = true
   try {
-    if (!window.confirm('Are you sure you want to submit this guess?')) {
-      return
-    }
     const messageStore = useMessageStore()
     const walletStore = useWalletStore()
 
@@ -102,25 +105,29 @@ const submit = async () => {
 <template>
   <div class="max-w-[1300px] mx-auto w-full px-4">
     <div
-      class="w-[1000px] mx-auto cursor-pointer relative"
+      class="w-[800px] mx-auto cursor-pointer relative"
       ref="imageContainer"
       @click="handleClick"
       @mousemove="handleMouseMove"
       @mouseover="handleMouseOver"
       @mouseleave="handleMouseLeave"
     >
-      <template v-if="game?.[0]">
-        <img :src="game[0]" alt="Spot the ball" class="w-full block" />
+      <template v-if="game?.[0] && !gameRevealed">
+        <img
+          :src="game[0]"
+          alt="Spot the ball"
+          :class="{ 'w-full block': game, 'cursor-not-allowed': gameRevealed }"
+        />
       </template>
       <template v-else>
         <div class="w-full h-[500px] bg-gray-200 cursor-not-allowed relative">
           <div class="flex items-center justify-center h-full">
-            <p class="text-2xl">No game found...</p>
+            <p class="text-2xl">No challenge available</p>
           </div>
         </div>
       </template>
       <div
-        v-if="game?.[0]"
+        v-if="!gameRevealed && game[0]"
         class="absolute border-[4px] border-white rounded-full"
         ref="circleRef"
         :style="{

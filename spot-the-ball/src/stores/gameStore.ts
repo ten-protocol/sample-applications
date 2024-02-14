@@ -16,7 +16,9 @@ export const useGameStore = defineStore('gameStore', {
     modalMessage: '',
     modalTitle: '',
     modalVisible: false,
-    showPreviousMoves: false
+    showPreviousMoves: false,
+    isGameActive: false,
+    isGameRevealed: false
   }),
 
   getters: {},
@@ -134,6 +136,8 @@ export const useGameStore = defineStore('gameStore', {
         const web3service = new Web3Service(walletStore.signer)
         const res = await web3service.getChallengePublicInfo()
         this.game = res
+        this.isGameActive = res?.[1]
+        this.isGameRevealed = res?.[2]
       } catch (error) {
         console.error(error)
       }

@@ -19,12 +19,12 @@ export default {
     handleLogin(e) {
       e.preventDefault()
       localStorage.setItem('isAdmin', true)
-      this.$router.push('/admin')
+      this.$router.push('/sample-applications/spot-the-ball/admin')
     }
   },
   created() {
     if (localStorage.getItem('isAdmin')) {
-      this.$router.push('/admin')
+      this.$router.push('/sample-applications/spot-the-ball/admin')
     }
   }
 }

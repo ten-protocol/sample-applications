@@ -21,7 +21,7 @@ export default class Web3listener {
     const messageStore = useMessageStore()
     const gameStore = useGameStore()
     try {
-      const guessTimestamp = bigNumberToNumber(receipt.events[0].args[4])
+      // const guessTimestamp = formatTimeAgo(bigNumberToNumber(receipt.events[0].args[4]))
       // start listening for new guesses using the events - GuessSubmitted and ChallengeWinner - with the receipt
       // add the new guesses to the gameStore, not replacing the old ones
       if (
@@ -60,6 +60,6 @@ export default class Web3listener {
           return messageStore.addErrorMessage(errorMessage)
         }
       }
-    }, 2000) // Run every 2 seconds
+    }, 1000) // Run every second
   }
 }
