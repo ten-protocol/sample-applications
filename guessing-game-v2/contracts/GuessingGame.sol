@@ -55,11 +55,20 @@ contract GuessingGame {
         guessCount[msg.sender] += 1;
         totalGuesses += 1;
 
-        if (lastResetTime > lastGuess[msg.sender]) {
-            lastDifference[msg.sender] = MAX_GUESS + 1;
-        }
-
         string memory feedback;
+        uint256 currentDifference = _number > secretNumber ? _number - secretNumber : secretNumber - _number;
+
+        if (lastGuess[msg.sender] == 0 || lastResetTime > lastGuess[msg.sender]) {
+            feedback = "First guess, try again!";
+        } else {
+            if (currentDifference < lastDifference[msg.sender]) {
+                feedback = "Your guess is warmer.";
+            } else if (currentDifference > lastDifference[msg.sender]) {
+                feedback = "Your guess is colder.";
+            } else {
+                feedback = "Neither warmer nor colder.";
+            }
+        }
 
         if (_number == secretNumber) {
             payable(msg.sender).transfer(address(this).balance);
@@ -68,19 +77,6 @@ contract GuessingGame {
             _resetSecretNumber();
             totalGuesses = 0;
         } else {
-            uint256 currentDifference = _number > secretNumber ? _number - secretNumber : secretNumber - _number;
-            if (lastResetTime > lastGuess[msg.sender]) {
-                if (currentDifference < lastDifference[msg.sender]) {
-                    feedback = "Warmer.";
-                } else if (currentDifference > lastDifference[msg.sender]) {
-                    feedback = "Colder.";
-                } else {
-                    feedback = "Neither warmer nor colder.";
-                }
-            } else {
-                feedback = "First guess, try again!";
-            }
-
             lastGuess[msg.sender] = block.timestamp;
             lastDifference[msg.sender] = currentDifference;
             emit Guessed(msg.sender, _number, false, feedback);
