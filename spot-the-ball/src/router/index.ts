@@ -3,23 +3,21 @@ import Home from '../views/Home.vue'
 import Auth from '../views/Auth.vue'
 import Admin from '../views/Admin.vue'
 
-const base = '/sample-applications/spot-the-ball/'
-
 const router = createRouter({
-  history: createWebHistory(base),
+  history: createWebHistory(),
   routes: [
     {
-      path: base,
+      path: '/sample-applications/spot-the-ball/',
       name: 'home',
       component: Home
     },
     {
-      path: base + 'auth',
+      path: '/sample-applications/spot-the-ball/auth',
       name: 'auth',
       component: Auth
     },
     {
-      path: base + 'admin',
+      path: '/sample-applications/spot-the-ball/admin',
       name: 'admin',
       component: Admin
     }
