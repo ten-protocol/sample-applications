@@ -14,6 +14,7 @@ contract GuessingGame {
     mapping(address => uint256) private lastGuess;
     mapping(address => uint256) private lastDifference;
     mapping(address => uint256) private guessCount;
+    mapping(address => uint256) private winningGuessCount;
 
     uint256 public constant GUESS_FEE = 443e14;
     uint256 public constant MAX_GUESS = 1000;
@@ -74,6 +75,7 @@ contract GuessingGame {
             payable(msg.sender).transfer(address(this).balance);
             feedback = "Correct! You won the prize.";
             emit Guessed(msg.sender, _number, true, feedback);
+            winningGuessCount[msg.sender] += 1;
             _resetSecretNumber();
             totalGuesses = 0;
         } else {
@@ -123,7 +125,7 @@ contract GuessingGame {
     /// @notice Retrieves the number of guesses made by a specific player.
     /// @param _player The address of the player.
     /// @return The count of guesses made by the player.
-    function getGuessCount(address _player) external view onlyAdmin returns (uint256) {
-        return guessCount[_player];
+    function getGuessCount(address _player) external view onlyAdmin returns (uint256, uint256) {
+        return (guessCount[_player], winningGuessCount[_player]);
     }
 }
