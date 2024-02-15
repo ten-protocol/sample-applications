@@ -66,35 +66,9 @@ contract Battleship {
             attempts = 0;
             while (!placed && attempts < maxAttempts) {
                 attempts++;
-                uint256 x = uint256(
-                    keccak256(
-                        abi.encodePacked(
-                            block.timestamp,
-                            block.difficulty,
-                            attempts
-                        )
-                    )
-                ) % (gridSize - shipSize + 1);
-                uint256 y = uint256(
-                    keccak256(
-                        abi.encodePacked(
-                            blockhash(block.number - 1),
-                            block.timestamp,
-                            attempts
-                        )
-                    )
-                ) % (gridSize);
-                bool horizontal = uint256(
-                    keccak256(
-                        abi.encodePacked(
-                            block.difficulty,
-                            block.timestamp,
-                            attempts
-                        )
-                    )
-                ) %
-                    2 ==
-                    0;
+                uint256 x = uint256(keccak256(abi.encodePacked(block.timestamp, block.difficulty, attempts))) % (gridSize - shipSize + 1);
+                uint256 y = uint256(keccak256(abi.encodePacked(blockhash(block.number - 1), block.timestamp, attempts))) % (gridSize);
+                bool horizontal = uint256(keccak256(abi.encodePacked(block.difficulty, block.timestamp, attempts))) % 2 == 0;
 
                 bool[shipSize] memory hitParts;
                 for (uint256 j = 0; j < shipSize; j++) {
@@ -111,32 +85,19 @@ contract Battleship {
         }
     }
 
-    function canPlaceShip(
-        uint256 x,
-        uint256 y,
-        bool horizontal
-    ) internal view returns (bool) {
+    function canPlaceShip(uint256 x, uint256 y, bool horizontal) internal view returns (bool) {
         for (uint256 i = 0; i < shipSize; i++) {
             uint256 checkX = x + (horizontal ? i : 0);
             uint256 checkY = y + (horizontal ? 0 : i);
 
-            if (
-                checkX >= gridSize ||
-                checkY >= gridSize ||
-                board[checkX][checkY] != -1
-            ) {
+            if (checkX >= gridSize || checkY >= gridSize || board[checkX][checkY] != -1) {
                 return false;
             }
         }
         return true;
     }
 
-    function markShipOnBoard(
-        uint256 shipIndex,
-        uint256 x,
-        uint256 y,
-        bool horizontal
-    ) internal {
+    function markShipOnBoard(uint256 shipIndex, uint256 x, uint256 y, bool horizontal) internal {
         for (uint256 i = 0; i < shipSize; i++) {
             uint256 markX = x + (horizontal ? i : 0);
             uint256 markY = y + (horizontal ? 0 : i);
@@ -151,9 +112,7 @@ contract Battleship {
         if (board[x][y] >= 0) {
             uint256 shipIndex = uint256(board[x][y]);
             Ship storage ship = ships[shipIndex];
-            uint256 hitPart = ship.horizontal
-                ? (x - ship.startX)
-                : (y - ship.startY);
+            uint256 hitPart = ship.horizontal ? (x - ship.startX) : (y - ship.startY);
 
             require(!ship.hitParts[hitPart], "Part already hit");
 
@@ -164,122 +123,108 @@ contract Battleship {
 
             if (isShipSunk(ship)) {
                 ship.sunk = true;
-                playerSinks[msg.sender] += 1;
-                emit ShipSunk(shipIndex);
-            }
-        } else {
-            emit ShipMiss(x, y);
+                playerSinks[msg.sender] +=1;
+                            emit ShipSunk(shipIndex);
         }
-
-        checkGameCompletion();
+    } else {
+        emit ShipMiss(x, y);
     }
 
-    function updateWinner(
-        address playerAddress,
-        bool isHit,
-        bool isSink
-    ) internal {
-        for (uint256 i = 0; i < winners.length; i++) {
-            if (winners[i].playerAddress == playerAddress) {
-                if (isHit) winners[i].hits += 1;
-                if (isSink) winners[i].sinks += 1;
-                return;
-            }
-        }
-        winners.push(Winner(playerAddress, isHit ? 1 : 0, isSink ? 1 : 0));
-    }
+    checkGameCompletion();
+}
 
-    function isShipSunk(Ship memory ship) internal pure returns (bool) {
-        for (uint256 i = 0; i < shipSize; i++) {
-            if (!ship.hitParts[i]) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    function checkGameCompletion() internal {
-        uint256 sunkShips = 0;
-        for (uint256 i = 0; i < totalShips; i++) {
-            if (ships[i].sunk) {
-                sunkShips += 1;
-            }
-        }
-        if (sunkShips == totalShips) {
-            gameStarted = false;
-            distributePrizes();
+function updateWinner(address playerAddress, bool isHit, bool isSink) internal {
+    for (uint256 i = 0; i < winners.length; i++) {
+        if (winners[i].playerAddress == playerAddress) {
+            if (isHit) winners[i].hits += 1;
+            if (isSink) winners[i].sinks += 1;
+            return;
         }
     }
+    winners.push(Winner(playerAddress, isHit ? 1 : 0, isSink ? 1 : 0));
+}
 
-    function distributePrizes() internal {
-        uint256 totalHits = 0;
-        uint256 totalSinks = 0;
-
-        for (uint256 i = 0; i < players.length; i++) {
-            totalHits += playerHits[players[i]];
-            totalSinks += playerSinks[players[i]];
+function isShipSunk(Ship memory ship) internal pure returns (bool) {
+    for (uint256 i = 0; i < shipSize; i++) {
+        if (!ship.hitParts[i]) {
+            return false;
         }
+    }
+    return true;
+}
 
-        uint256 totalDistributed = 0;
-
-        for (uint256 i = 0; i < players.length; i++) {
-            uint256 playerReward = 0;
-            if (totalHits > 0) {
-                playerReward +=
-                    (playerHits[players[i]] *
-                        rewardPool *
-                        hitRewardPercentage) /
-                    (100 * totalHits);
-            }
-            if (totalSinks > 0) {
-                playerReward +=
-                    (playerSinks[players[i]] *
-                        rewardPool *
-                        sinkRewardPercentage) /
-                    (100 * totalSinks);
-            }
-
-            playerReward = playerReward > address(this).balance
-                ? address(this).balance
-                : playerReward;
-            totalDistributed += playerReward;
-
-            if (playerReward > 0) {
-                payable(players[i]).transfer(playerReward);
-            }
+function checkGameCompletion() internal {
+    uint256 sunkShips = 0;
+    for (uint256 i = 0; i < totalShips; i++) {
+        if (ships[i].sunk) {
+            sunkShips += 1;
         }
+    }
+    if (sunkShips == totalShips) {
+        gameStarted = false;
+        distributePrizes();
+    }
+}
 
-        if (totalDistributed > rewardPool) {
-            rewardPool = 0;
-        } else {
-            rewardPool -= totalDistributed;
-        }
+function distributePrizes() internal {
+    uint256 totalHits = 0;
+    uint256 totalSinks = 0;
 
-        resetGame();
+    for (uint256 i = 0; i < players.length; i++) {
+        totalHits += playerHits[players[i]];
+        totalSinks += playerSinks[players[i]];
     }
 
-    function resetGame() internal {
-        for (uint256 i = 0; i < players.length; i++) {
-            delete playerHits[players[i]];
-            delete playerSinks[players[i]];
+    uint256 totalDistributed = 0;
+
+    for (uint256 i = 0; i < players.length; i++) {
+        uint256 playerReward = 0;
+        if (totalHits > 0) {
+            playerReward += (playerHits[players[i]] * rewardPool * hitRewardPercentage) / (100 * totalHits);
+        }
+        if (totalSinks > 0) {
+            playerReward += (playerSinks[players[i]] * rewardPool * sinkRewardPercentage) / (100 * totalSinks);
         }
 
-        delete players;
+        playerReward = playerReward > address(this).balance ? address(this).balance : playerReward;
+        totalDistributed += playerReward;
 
-        for (uint256 i = 0; i < gridSize; i++) {
-            for (uint256 j = 0; j < gridSize; j++) {
-                board[i][j] = -1;
-            }
+        if (playerReward > 0) {
+            payable(players[i]).transfer(playerReward);
         }
-
-        for (uint256 i = 0; i < totalShips; i++) {
-            ships[i].sunk = false;
-            for (uint256 j = 0; j < shipSize; j++) {
-                ships[i].hitParts[j] = false;
-            }
-        }
-        placeShips();
-
-        gameStarted = true;
     }
+
+    if (totalDistributed > rewardPool) {
+        rewardPool = 0;
+    } else {
+        rewardPool -= totalDistributed;
+    }
+
+    resetGame();
+}
+
+function resetGame() internal {
+    for (uint256 i = 0; i < players.length; i++) {
+        delete playerHits[players[i]];
+        delete playerSinks[players[i]];
+    }
+
+    delete players;
+
+    for (uint256 i = 0; i < gridSize; i++) {
+        for (uint256 j = 0; j < gridSize; j++) {
+            board[i][j] = -1;
+        }
+    }
+
+    for (uint256 i = 0; i < totalShips; i++) {
+        ships[i].sunk = false;
+        for (uint256 j = 0; j < shipSize; j++) {
+            ships[i].hitParts[j] = false;
+        }
+    }
+    placeShips();
+
+    gameStarted = true;
+}
 }
