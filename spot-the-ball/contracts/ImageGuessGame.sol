@@ -100,13 +100,9 @@ contract ImageGuessGame {
       })
     );
 
-    if (
-      challenges.length == 1 ||
-      (!challenges[currentChallengeIndex].isActive &&
-        currentChallengeIndex + 1 == challenges.length)
-    ) {
-      challenges[challenges.length - 1].isActive = true;
-      currentChallengeIndex = challenges.length - 1;
+    if (challenges.length == 1) {
+      challenges[0].isActive = true;
+      currentChallengeIndex = 0;
     }
 
     emit ChallengeCreated(challenges.length - 1, params.publicImageURL, 0);
