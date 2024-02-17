@@ -101,8 +101,8 @@ contract ImageGuessGame {
     );
 
     if (challenges.length == 1) {
-        challenges[0].isActive = true;
-        currentChallengeIndex = 0;
+      challenges[0].isActive = true;
+      currentChallengeIndex = 0;
     }
 
     emit ChallengeCreated(challenges.length - 1, params.publicImageURL, 0);
