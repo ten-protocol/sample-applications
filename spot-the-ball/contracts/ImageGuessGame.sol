@@ -20,6 +20,7 @@ contract ImageGuessGame {
   uint256 public entryFee;
   address public owner;
   mapping(address => uint256) private guessCount;
+  mapping(address => uint256) private winningGuessCount;
   mapping(address => bool) private admins;
   mapping(uint256 => address[]) public challengeWinners;
 
@@ -154,6 +155,7 @@ contract ImageGuessGame {
     if (isCorrect) {
       payable(msg.sender).transfer(challenge.prizePool); // Send the prize pool to the winner
       challengeWinners[_challengeId].push(msg.sender);
+      winningGuessCount[msg.sender] += 1;
 
       emit ChallengeWinner(_challengeId, msg.sender, challenge.prizePool);
       emit ImageRevealed(_challengeId, challenge.privateImageURL);
@@ -225,7 +227,7 @@ contract ImageGuessGame {
   /// @notice Retrieves the number of guesses made by a specific player.
   /// @param _player The address of the player.
   /// @return The count of guesses made by the player.
-  function getGuessCount(address _player) external view onlyAdmin returns (uint256) {
-    return guessCount[_player];
+  function getGuessCount(address _player) external view onlyAdmin returns (uint256, uint256) {
+    return (guessCount[_player], winningGuessCount[_player]);
   }
 }
