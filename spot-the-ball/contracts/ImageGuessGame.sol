@@ -78,6 +78,7 @@ contract ImageGuessGame {
   /// @param _entryFee The entry fee required to submit a guess.
   constructor(uint256 _entryFee) {
     owner = msg.sender;
+    admins[owner] = true;
     entryFee = _entryFee;
     currentChallengeIndex = 0;
   }
