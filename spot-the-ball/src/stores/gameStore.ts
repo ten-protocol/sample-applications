@@ -6,7 +6,7 @@ import { useMessageStore } from '../stores/messageStore'
 import { Challenge, FormattedChallenge, Game } from '../types.js'
 
 // @ts-ignore
-const { VITE_MORALIS_API_KEY } = import.meta.env
+const VITE_MORALIS_API_KEY = import.meta.env.VITE_MORALIS_API_KEY
 
 export const useGameStore = defineStore('gameStore', {
   state: () => ({
