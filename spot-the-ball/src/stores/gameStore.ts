@@ -5,9 +5,6 @@ import { useWalletStore } from '../stores/walletStore'
 import { useMessageStore } from '../stores/messageStore'
 import { Challenge, FormattedChallenge, Game } from '../types.js'
 
-// @ts-ignore
-const VITE_MORALIS_API_KEY = import.meta.env.VITE_MORALIS_API_KEY
-
 export const useGameStore = defineStore('gameStore', {
   state: () => ({
     history: [] as Game[],
@@ -55,6 +52,8 @@ export const useGameStore = defineStore('gameStore', {
     },
 
     async uploadToIpfs(uploadArray: any) {
+      // @ts-ignore
+      const VITE_MORALIS_API_KEY = import.meta.env.VITE_MORALIS_API_KEY
       if (!VITE_MORALIS_API_KEY) {
         console.error('VITE_MORALIS_API_KEY not found')
         return
