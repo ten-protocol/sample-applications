@@ -19,6 +19,8 @@ contract ImageGuessGame {
   uint256 public currentChallengeIndex;
   uint256 public entryFee;
   address public owner;
+  mapping(address => uint256) private guessCount;
+  mapping(address => bool) private admins;
   mapping(uint256 => address[]) public challengeWinners;
 
   /// @dev Structure for challenge creation parameters.
@@ -85,6 +87,12 @@ contract ImageGuessGame {
     _;
   }
 
+  /// @notice Ensures that only an admin can call the modified function.
+  modifier onlyAdmin() {
+    require(admins[msg.sender], 'Only admins can call this function');
+    _;
+  }
+
   /// @notice Allows the owner to create a new challenge using a struct for parameters.
   function createChallenge(ChallengeCreationParams memory params) public onlyOwner {
     // Add the new challenge to the array
@@ -138,6 +146,7 @@ contract ImageGuessGame {
 
     guessCoordinates[_challengeId][msg.sender].push(_guessCoordinates);
     guessTimestamps[_challengeId][msg.sender].push(block.timestamp);
+    guessCount[msg.sender] += 1;
 
     challenge.prizePool += msg.value;
 
@@ -199,5 +208,24 @@ contract ImageGuessGame {
     }
 
     return (guessCoordinates[_challengeId][msg.sender], elapsedTimes);
+  }
+
+  /// @notice Adds an admin to the game.
+  /// @param _admin The address to be added as an admin.
+  function addAdmin(address _admin) external onlyOwner {
+    admins[_admin] = true;
+  }
+
+  /// @notice Removes an admin from the game.
+  /// @param _admin The address to be removed from the admin list.
+  function removeAdmin(address _admin) external onlyOwner {
+    admins[_admin] = false;
+  }
+
+  /// @notice Retrieves the number of guesses made by a specific player.
+  /// @param _player The address of the player.
+  /// @return The count of guesses made by the player.
+  function getGuessCount(address _player) external view onlyAdmin returns (uint256) {
+    return guessCount[_player];
   }
 }
