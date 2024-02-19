@@ -6,10 +6,10 @@
     <Controls />
     </div> -->
     <History />
-    <!-- adding admin link to navigate to admin page b'cos using gh-pages w/ SPAs doesn't work well
+    <!-- adding admin link to navigate to admin page b'cos using gh-pages w/ SPAs doesn't work well -->
     <router-link to="/admin" class="fixed bottom-4 right-4">
       <div class="w-2 h-2 bg-gray-100 rounded-full flex items-center justify-center"></div>
-    </router-link> -->
+    </router-link>
   </main>
 </template>
 
@@ -25,14 +25,6 @@ export default {
     Game,
     Header,
     History
-  },
-
-  mounted() {
-    const path = localStorage.getItem('path')
-    if (path) {
-      localStorage.removeItem('path')
-      this.router.navigate([path])
-    }
   }
 }
 </script>
