@@ -5,7 +5,10 @@
         <label class="text-[14px] font-semibold text-neutral-900">Enter code:</label>
         <input type="text" class="p-4 h-[44px] rounded-lg border border-neutral-800" />
       </div>
-      <button class="bg-slate-900 text-white rounded-lg py-2 px-6 text-[14px] h-[44px]">
+      <button
+        class="bg-slate-900 text-white rounded-lg py-2 px-6 text-[14px] h-[44px]"
+        type="submit"
+      >
         Login
       </button>
     </form>
@@ -19,12 +22,12 @@ export default {
     handleLogin(e) {
       e.preventDefault()
       localStorage.setItem('isAdmin', true)
-      this.$router.push('/sample-applications/spot-the-ball/admin')
+      this.$router.push('/admin')
     }
   },
   created() {
     if (localStorage.getItem('isAdmin')) {
-      this.$router.push('/sample-applications/spot-the-ball/admin')
+      this.$router.push('/admin')
     }
   }
 }
