@@ -13,16 +13,26 @@
   </main>
 </template>
 
-<script setup>
+<script >
 import Game from '../components/Game.vue'
 import Header from '../components/Header.vue'
 import History from '../components/History.vue'
 
-mounted(() => {
-  let path = localStorage.getItem('path')
-  if (path) {
-    localStorage.removeItem('path')
-    this.router.navigate([path])
+export default {
+  name: 'Home',
+
+  components: {
+    Game,
+    Header,
+    History
+  },
+
+  mounted() {
+    const path = localStorage.getItem('path')
+    if (path) {
+      localStorage.removeItem('path')
+      this.router.navigate([path])
+    }
   }
-})
+}
 </script>
