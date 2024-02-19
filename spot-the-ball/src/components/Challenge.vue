@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { CIRCLE_SIZE } from '../lib/utils'
 
 interface FileWithPreview extends File {
   preview?: string
@@ -82,9 +83,9 @@ function handleDrag(event) {
   const deltaY = currentMousePosition.y1 - lastMousePosition.y1
 
   position.value.x1 += deltaX
-  position.value.x2 = position.value.x1 + 90
+  position.value.x2 = position.value.x1 + CIRCLE_SIZE
   position.value.y1 += deltaY
-  position.value.y2 = position.value.y1 + 90
+  position.value.y2 = position.value.y1 + CIRCLE_SIZE
 
   lastMousePosition = currentMousePosition
 
@@ -179,7 +180,7 @@ function getMousePosition(event) {
                   @touchmove="handleDrag"
                   @touchend="stopDrag"
                   v-if="selectCoordinates && index === 0"
-                  class="w-[90px] h-[90px] border-[4px] border-white rounded-full cursor-grab"
+                  class="w-[70px] h-[70px] border-[4px] border-white rounded-full cursor-grab"
                   :style="{
                     transform: `translate(${position.x1}px, ${position.y1}px)`
                   }"

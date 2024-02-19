@@ -4,6 +4,7 @@ import { useGameStore } from '../stores/gameStore'
 import Web3Service from '../lib/web3service'
 import { useMessageStore } from '../stores/messageStore'
 import { useWalletStore } from '../stores/walletStore'
+import { CIRCLE_SIZE } from '../lib/utils'
 
 const gameStore = useGameStore()
 
@@ -11,7 +12,7 @@ const relativeMouseX = ref(0)
 const relativeMouseY = ref(0)
 const imageContainer = ref<HTMLImageElement | null>(null)
 const mouseIsInImage = ref(false)
-const circleSize = 90
+const circleSize = CIRCLE_SIZE
 const circleRef = ref<HTMLElement | null>(null)
 const isWithinThreshold = ref(false)
 

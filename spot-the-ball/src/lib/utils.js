@@ -57,3 +57,5 @@ export function handleMetaMaskError(error) {
 
   return errorMessage
 }
+
+export const CIRCLE_SIZE = 70
