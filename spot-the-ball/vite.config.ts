@@ -7,6 +7,10 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue(), vueJsx()],
+  define: {
+    'process.env': process.env,
+    MORALIS_API_KEY: process.env.VITE_APP_MORALIS_API_KEY
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
