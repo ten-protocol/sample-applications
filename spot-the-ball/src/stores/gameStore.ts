@@ -4,6 +4,7 @@ import Web3Service from '../lib/web3service.js'
 import { useWalletStore } from '../stores/walletStore'
 import { useMessageStore } from '../stores/messageStore'
 import { Challenge, FormattedChallenge, Game } from '../types.js'
+import Common from '../lib/common.js'
 
 export const useGameStore = defineStore('gameStore', {
   state: () => ({
@@ -52,10 +53,8 @@ export const useGameStore = defineStore('gameStore', {
     },
 
     async uploadToIpfs(uploadArray: any) {
-      // @ts-ignore
-      const VITE_MORALIS_API_KEY = import.meta.env.VITE_MORALIS_API_KEY
-      if (!VITE_MORALIS_API_KEY) {
-        console.error('VITE_MORALIS_API_KEY not found')
+      if (!Common.MORALIS_API_KEY) {
+        console.error('MORALIS_API_KEY not found')
         return
       }
       if (!Moralis) {
@@ -65,7 +64,7 @@ export const useGameStore = defineStore('gameStore', {
       try {
         if (!Moralis.Core.isStarted) {
           await Moralis.start({
-            apiKey: VITE_MORALIS_API_KEY
+            apiKey: Common.MORALIS_API_KEY
           })
         }
 
