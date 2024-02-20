@@ -52,10 +52,8 @@ export const useGameStore = defineStore('gameStore', {
     },
 
     async uploadToIpfs(uploadArray: any) {
-      // @ts-ignore
-      const VITE_MORALIS_API_KEY = import.meta.env.VITE_MORALIS_API_KEY
-      if (!VITE_MORALIS_API_KEY) {
-        console.error('VITE_MORALIS_API_KEY not found')
+      if (!__MORALIS_API_KEY__) {
+        console.error('MORALIS_API_KEY not found')
         return
       }
       if (!Moralis) {
@@ -65,7 +63,7 @@ export const useGameStore = defineStore('gameStore', {
       try {
         if (!Moralis.Core.isStarted) {
           await Moralis.start({
-            apiKey: VITE_MORALIS_API_KEY
+            apiKey: __MORALIS_API_KEY__
           })
         }
 

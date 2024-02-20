@@ -82,14 +82,22 @@ function handleDrag(event) {
   const deltaX = currentMousePosition.x1 - lastMousePosition.x1
   const deltaY = currentMousePosition.y1 - lastMousePosition.y1
 
-  position.value.x1 += deltaX
-  position.value.x2 = position.value.x1 + CIRCLE_SIZE
-  position.value.y1 += deltaY
-  position.value.y2 = position.value.y1 + CIRCLE_SIZE
+  // only update position if it's within the bounds
+  if (
+    position.value.x1 + deltaX >= 0 &&
+    position.value.x2 + deltaX <= 800 &&
+    position.value.y1 + deltaY >= 0 &&
+    position.value.y2 + deltaY <= 560
+  ) {
+    position.value.x1 += deltaX
+    position.value.x2 = position.value.x1 + CIRCLE_SIZE
+    position.value.y1 += deltaY
+    position.value.y2 = position.value.y1 + CIRCLE_SIZE
 
-  lastMousePosition = currentMousePosition
+    lastMousePosition = currentMousePosition
 
-  emit('positionChange', position.value)
+    emit('positionChange', position.value)
+  }
 }
 
 function stopDrag() {
