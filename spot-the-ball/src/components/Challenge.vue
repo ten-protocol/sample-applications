@@ -191,8 +191,10 @@ function getMousePosition(event) {
                   @touchmove="handleDrag"
                   @touchend="stopDrag"
                   v-if="selectCoordinates && index === 0"
-                  :class="`w-[${CIRCLE_SIZE}px] h-[${CIRCLE_SIZE}px] border-[4px] border-white rounded-full cursor-grab`"
+                  class="border-[4px] border-white rounded-full cursor-grab"
                   :style="{
+                    width: `${CIRCLE_SIZE}px`,
+                    height: `${CIRCLE_SIZE}px`,
                     transform: `translate(${position.x1}px, ${position.y1}px)`
                   }"
                 ></div>
