@@ -8,7 +8,7 @@
     <History />
     <!-- adding admin link to navigate to admin page b'cos using gh-pages w/ SPAs doesn't work well -->
     <router-link to="/admin" class="fixed bottom-4 right-4">
-      <div class="w-2 h-2 bg-gray-100 rounded-full flex items-center justify-center"></div>
+      <span class="w-2 h-2 bg-gray-800 hidden rounded-full flex items-center justify-center"></span>
     </router-link>
   </main>
 </template>

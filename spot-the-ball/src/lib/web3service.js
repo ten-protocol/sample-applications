@@ -135,4 +135,17 @@ export default class Web3Service {
       messageStore.addMessage('Failed to get challenge properties - ' + error.reason + ' ...')
     }
   }
+
+  async addAdmin(address) {
+    const messageStore = useMessageStore()
+    try {
+      const addAdminTx = await this.contract.addAdmin(address)
+      const receipt = await addAdminTx.wait()
+      messageStore.addMessage('Added admin - ' + receipt.transactionHash)
+      return receipt
+    } catch (error) {
+      console.error('Failed to add admin - ', error)
+      messageStore.addMessage('Failed to add admin - ' + error.reason + ' ...')
+    }
+  }
 }
