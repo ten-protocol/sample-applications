@@ -43,6 +43,7 @@ const handleMouseMove = (event: MouseEvent) => {
     const mouseY = event.clientY
 
     const containerRect = imageContainer.value.getBoundingClientRect()
+    // update relative mouse position only if mouse is within the container
     const containerOffsetX = containerRect.left
     const containerOffsetY = containerRect.top
 
@@ -66,7 +67,7 @@ const handleMouseOver = (event: MouseEvent) => {
 }
 
 const handleMouseLeave = (event: MouseEvent) => {
-  mouseIsInImage.value = false
+  // mouseIsInImage.value = false
 }
 
 const submit = async () => {
@@ -136,8 +137,7 @@ const submit = async () => {
           height: `${circleSize}px`,
           top: `${mouseIsInImage ? `${relativeMouseY - circleSize / 2}px` : '50%'}`,
           left: `${mouseIsInImage ? `${relativeMouseX - circleSize / 2}px` : '50%'}`,
-          transform: `${mouseIsInImage ? `` : 'translate(-50%,-50%)'}`,
-          background: '#87ceeb'
+          transform: `${mouseIsInImage ? `` : 'translate(-50%,-50%)'}`
         }"
       ></div>
       <template v-if="showPreviousMoves">

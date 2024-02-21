@@ -18,6 +18,7 @@ defineProps({
 const emit = defineEmits()
 
 const fileInput = ref<HTMLInputElement | null>(null)
+const imageContainer = ref<HTMLDivElement>()
 const selectCoordinates = ref(false)
 const selectedFiles = ref<FileWithPreview[]>([])
 const position = ref({ x1: 0, x2: 0, y1: 0, y2: 0 })
@@ -82,12 +83,14 @@ function handleDrag(event) {
   const deltaX = currentMousePosition.x1 - lastMousePosition.x1
   const deltaY = currentMousePosition.y1 - lastMousePosition.y1
 
+  const containerRect = imageContainer.value?.getBoundingClientRect()
   // only update position if it's within the bounds
   if (
+    containerRect &&
     position.value.x1 + deltaX >= 0 &&
-    position.value.x2 + deltaX <= 800 &&
+    position.value.x2 + deltaX <= containerRect.width &&
     position.value.y1 + deltaY >= 0 &&
-    position.value.y2 + deltaY <= 560
+    position.value.y2 + deltaY <= containerRect.height
   ) {
     position.value.x1 += deltaX
     position.value.x2 = position.value.x1 + CIRCLE_SIZE
@@ -125,7 +128,7 @@ function getMousePosition(event) {
       </button>
     </div>
     <div class="w-full flex py-20 justify-center">
-      <div class="max-w-[800px] h-fit w-full">
+      <div class="max-w-[800px] h-fit w-full" ref="imageContainer">
         <div
           @dragover.prevent="handleDragOver"
           @drop.prevent="handleDrop"
@@ -188,7 +191,7 @@ function getMousePosition(event) {
                   @touchmove="handleDrag"
                   @touchend="stopDrag"
                   v-if="selectCoordinates && index === 0"
-                  class="w-[70px] h-[70px] border-[4px] border-white rounded-full cursor-grab"
+                  :class="`w-[${CIRCLE_SIZE}px] h-[${CIRCLE_SIZE}px] border-[4px] border-white rounded-full cursor-grab`"
                   :style="{
                     transform: `translate(${position.x1}px, ${position.y1}px)`
                   }"
