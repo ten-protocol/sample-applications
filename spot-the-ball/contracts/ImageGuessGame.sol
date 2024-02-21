@@ -97,25 +97,27 @@ contract ImageGuessGame {
 
   /// @notice Allows the owner to create a new challenge using a struct for parameters.
   function createChallenge(ChallengeCreationParams memory params) public onlyOwner {
-    // Add the new challenge to the array
-    challenges.push(
-      Challenge({
-        publicImageURL: params.publicImageURL,
-        privateImageURL: params.privateImageURL,
-        topLeft: params.topLeft,
-        bottomRight: params.bottomRight,
-        isActive: false,
-        isRevealed: false,
-        prizePool: 0
-      })
-    );
+      // Add the new challenge to the array
+      challenges.push(
+        Challenge({
+          publicImageURL: params.publicImageURL,
+          privateImageURL: params.privateImageURL,
+          topLeft: params.topLeft,
+          bottomRight: params.bottomRight,
+          isActive: false,
+          isRevealed: false,
+          prizePool: 0
+        })
+      );
 
-    if (challenges.length == 1) {
-      challenges[0].isActive = true;
-      currentChallengeIndex = 0;
-    }
+      // Check if this is the first challenge or if the current challenge is inactive
+      if (challenges.length == 1 || !challenges[currentChallengeIndex].isActive) {
+        uint256 newChallengeIndex = challenges.length - 1;
+        challenges[newChallengeIndex].isActive = true;
+        currentChallengeIndex = newChallengeIndex;
+      }
 
-    emit ChallengeCreated(challenges.length - 1, params.publicImageURL, 0);
+      emit ChallengeCreated(challenges.length - 1, params.publicImageURL, 0);
   }
 
   /// @notice Returns public information about a challenge.
