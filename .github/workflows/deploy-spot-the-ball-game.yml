@@ -31,6 +31,8 @@ jobs:
         working-directory: ./spot-the-ball
         env: # Or as an environment variable
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          VITE_APP_MORALIS_API_KEY: ${{ secrets.VITE_APP_MORALIS_API_KEY }}
+          VITE_APP_NFT_UP_KEY: ${{ secrets.VITE_APP_NFT_UP_KEY }}
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
