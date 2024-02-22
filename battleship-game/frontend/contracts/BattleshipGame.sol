@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-contract Battleship {
+contract BattleshipGame {
   uint256 public entryFee;
   bool gameStarted = false;
   uint256 constant gridSize = 50;

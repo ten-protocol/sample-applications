@@ -15,10 +15,11 @@ const cellWidth = ref(`w-[8px]`)
 const BATTLESHIPS = battleStore.ships
 
 async function handleShootCpuShip(i: string) {
+  console.log('🚀 ~ handleShootCpuShip ~ i:', i)
   if (cpuCells.value) {
     const cells = Array.from(cpuCells.value.children) as HTMLElement[]
-    await battleStore.shootCpuShip(i, cells, BATTLESHIPS)
-    await battleStore.getSunkShips()
+    // await battleStore.shootCpuShip(i, cells, BATTLESHIPS)
+    // await battleStore.getSunkShips()
   }
 }
 

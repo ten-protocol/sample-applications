@@ -30,7 +30,7 @@ export default class Web3Service {
     messageStore.addMessage('Issuing Guess...')
 
     try {
-      const submitTx = await this.contract.guess(guessValue, { value: guessFee })
+      const submitTx = await this.contract.takeShot(guessValue)
       const receipt = await submitTx.wait()
       messageStore.addMessage('Issued Guess tx: ' + receipt.transactionHash)
       if (receipt.events[0].args.success) {
@@ -63,13 +63,14 @@ export default class Web3Service {
       const balance = await this.signer.getBalance()
       if (balance.lt(entryFee)) {
         messageStore.addMessage(
-          `Insufficient balance. You need at least ${Common.GUESS_COST} ETH to submit a guess.`
+          `Insufficient balance. You need at least ${Common.ENTRY_COST} ETH to join the game.`
         )
         return
       }
-      const joinTx = await this.contract.joinGame(entryFee)
-      console.log('🚀 ~ Web3Service ~ joinGame ~ joinTx:', joinTx)
-      messageStore.addMessage('Joining game...')
+      messageStore.addMessage(`Joining game...`)
+      const joinTx = await this.contract.joinGame({ value: entryFee })
+      const receipt = await joinTx.wait()
+      messageStore.addMessage('Joined game tx: ' + receipt.transactionHash)
     } catch (error) {
       console.error('Failed to join game - ', error)
       messageStore.addMessage('Failed to join game - ' + error.reason + ' ...')
