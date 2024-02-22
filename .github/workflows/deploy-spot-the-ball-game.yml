@@ -22,6 +22,12 @@ jobs:
         run: npm install
         working-directory: ./spot-the-ball
 
+      - name: create env file
+        run: |
+          touch .env
+          echo VITE_APP_MORALIS_API_KEY=${{ secrets.VITE_APP_MORALIS_API_KEY }} >> .env
+          echo VITE_APP_NFT_UP_KEY=${{ secrets.VITE_APP_NFT_UP_KEY }} >> .env
+
       - name: Write Address to JSON
         run: |
           echo '{"address": "${{ github.event.inputs.address }}"}' > ./spot-the-ball/src/assets/contract/address.json
@@ -29,10 +35,8 @@ jobs:
       - name: Build application
         run: npm run build
         working-directory: ./spot-the-ball
-        env: # Or as an environment variable
+        env:
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-          VITE_APP_MORALIS_API_KEY: ${{ secrets.VITE_APP_MORALIS_API_KEY }}
-          VITE_APP_NFT_UP_KEY: ${{ secrets.VITE_APP_NFT_UP_KEY }}
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3

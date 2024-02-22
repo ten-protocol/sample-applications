@@ -33,7 +33,7 @@
   </div>
 </template>
   
-  <script setup>
+<script setup>
 import { ref } from 'vue'
 import { useGameStore } from '../stores/gameStore'
 import Challenge from '../components/Challenge.vue'
