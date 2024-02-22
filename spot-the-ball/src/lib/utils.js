@@ -61,3 +61,5 @@ export function handleMetaMaskError(error) {
 export const CIRCLE_SIZE = 70
 
 export const MORALIS_API_KEY = import.meta.env.VITE_APP_MORALIS_API_KEY
+
+export const NFT_UP_API_KEY = import.meta.env.VITE_APP_NFT_UP_API_KEY

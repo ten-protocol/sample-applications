@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia'
 import Moralis from 'moralis'
+import { NFTStorage, File } from 'nft.storage'
 import Web3Service from '../lib/web3service.js'
 import { useWalletStore } from '../stores/walletStore'
 import { useMessageStore } from '../stores/messageStore'
 import { Challenge, FormattedChallenge, Game } from '../types.js'
-import { MORALIS_API_KEY } from '../lib/utils.js'
+import { MORALIS_API_KEY, NFT_UP_API_KEY } from '../lib/utils.js'
 
 export const useGameStore = defineStore('gameStore', {
   state: () => ({
@@ -52,7 +53,25 @@ export const useGameStore = defineStore('gameStore', {
       }
     },
 
-    async uploadToIpfs(uploadArray: any) {
+    async uploadToNFTStorage(uploadContent) {
+      if (!NFT_UP_API_KEY) {
+        console.error('NFT_UP_API_KEY not found')
+        return
+      }
+      const client = new NFTStorage({ token: NFT_UP_API_KEY })
+      if (!client) {
+        console.error('NFTStorage not found')
+        return
+      }
+      try {
+        const metadata = await client.store(uploadContent)
+        return metadata
+      } catch (error) {
+        console.error('Error uploading to IPFS', error)
+      }
+    },
+
+    async uploadToMoralis(uploadArray: any) {
       if (!MORALIS_API_KEY) {
         console.error('MORALIS_API_KEY not found')
         return
@@ -67,13 +86,12 @@ export const useGameStore = defineStore('gameStore', {
             apiKey: MORALIS_API_KEY
           })
         }
-
         const response = await Moralis.EvmApi.ipfs.uploadFolder({
           abi: uploadArray
         })
         return response.result
       } catch (error) {
-        console.error(error)
+        console.error('Error uploading to IPFS', error)
       }
     },
 
@@ -88,21 +106,31 @@ export const useGameStore = defineStore('gameStore', {
         const web3service = new Web3Service(walletStore.signer)
 
         const challengeArray = challenges.map(async (challenge) => {
+          // For Moralis
           const uploadArray = challenge.selectedFiles.map(async (file: any) => {
             return {
               path: file.name,
               content: file.contents
             }
           })
+
+          // For NFTStorage
+          //   const uploadArray = challenge.selectedFiles.map(async (file: any) => {
+          //     const fileObj = new File([file.contents], file.name, { type: file.type })
+          //     return {
+          //       name: file.name,
+          //       description: 'Spot the ball game',
+          //       image: fileObj
+          //     }
+          //   })
           return await Promise.all(uploadArray)
         })
 
         const challengeArrayRes = await Promise.all(challengeArray)
-
         // Upload the challenges to IPFS
         const uploadToIpfsRes = await Promise.all(
           challengeArrayRes.map(async (challenge) => {
-            return await this.uploadToIpfs(challenge)
+            return await this.uploadToMoralis(challenge)
           })
         )
 

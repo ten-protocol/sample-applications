@@ -2,6 +2,7 @@
   <div>
     <AdminHeader />
     <div class="flex flex-col gap-4 p-4">
+      <button class="hidden" @click="addAdmin">Add admin</button>
       <Challenge
         v-for="(challenge, index) in challenges"
         :key="index"
@@ -37,6 +38,8 @@ import { ref } from 'vue'
 import { useGameStore } from '../stores/gameStore'
 import Challenge from '../components/Challenge.vue'
 import AdminHeader from '../components/AdminHeader.vue'
+import Web3Service from '../lib/web3service'
+import { useWalletStore } from '../stores/walletStore'
 
 const challenges = ref([
   {
@@ -68,6 +71,14 @@ const addFilessToChallenge = (files, index) => {
 
 const addPositionToChallenge = (position, index) => {
   challenges.value[index].position = position
+}
+
+const addAdmin = async () => {
+  const walletStore = useWalletStore()
+  const web3Service = new Web3Service(walletStore.signer)
+  const address = ''
+  const res = await web3Service.addAdmin(address)
+  console.log('res', res)
 }
 
 async function handleUpload() {

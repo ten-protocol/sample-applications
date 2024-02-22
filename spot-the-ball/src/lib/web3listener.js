@@ -2,7 +2,7 @@ import { ethers } from 'ethers'
 import { useMessageStore } from '@/stores/messageStore'
 import ImageGuessGameJson from '@/assets/contract/artifacts/contracts/ImageGuessGame.sol/ImageGuessGame.json'
 import ContractAddress from '@/assets/contract/address.json'
-import { formatTimeAgo, handleMetaMaskError, bigNumberToNumber } from './utils'
+import { handleMetaMaskError, bigNumberToNumber } from './utils'
 import { useGameStore } from '../stores/gameStore'
 
 export default class Web3listener {
@@ -15,6 +15,7 @@ export default class Web3listener {
     )
 
     this.startCheckingPublicChallenge()
+    this.startCheckingHistory()
   }
 
   async startCheckingGuesses(receipt) {
@@ -55,6 +56,22 @@ export default class Web3listener {
         await gameStore.getGame()
       } catch (err) {
         console.error('Error fetching challenge:', err)
+        const errorMessage = handleMetaMaskError(err)
+        if (errorMessage) {
+          return messageStore.addErrorMessage(errorMessage)
+        }
+      }
+    }, 1000) // Run every second
+  }
+
+  startCheckingHistory() {
+    setInterval(async () => {
+      const gameStore = useGameStore()
+      const messageStore = useMessageStore()
+      try {
+        await gameStore.getHistory()
+      } catch (err) {
+        console.error('Error fetching history:', err)
         const errorMessage = handleMetaMaskError(err)
         if (errorMessage) {
           return messageStore.addErrorMessage(errorMessage)
