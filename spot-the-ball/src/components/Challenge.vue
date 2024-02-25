@@ -22,6 +22,7 @@ const imageContainer = ref<HTMLDivElement>()
 const selectCoordinates = ref(false)
 const selectedFiles = ref<FileWithPreview[]>([])
 const position = ref({ x1: 0, x2: 0, y1: 0, y2: 0 })
+const center = ref({ x: 0, y: 0 })
 let isDragging = false
 let lastMousePosition = { x1: 0, y1: 0 }
 
@@ -97,9 +98,14 @@ function handleDrag(event) {
     position.value.y1 += deltaY
     position.value.y2 = position.value.y1 + CIRCLE_SIZE
 
+    //Center of the Bounding box
+    center.value.x = position.value.x1 + CIRCLE_SIZE / 2;
+    center.value.y = position.value.y1 + CIRCLE_SIZE / 2;
+
     lastMousePosition = currentMousePosition
 
     emit('positionChange', position.value)
+    emit('centerChange', center.value)
   }
 }
 
@@ -206,4 +212,3 @@ function getMousePosition(event) {
     </div>
   </details>
 </template>
-
