@@ -14,12 +14,9 @@ const gridWidth = ref(`w-[800px]`)
 const cellWidth = ref(`w-[8px]`)
 const BATTLESHIPS = battleStore.ships
 
-async function handleShootCpuShip(i: string) {
-  console.log('🚀 ~ handleShootCpuShip ~ i:', i)
+async function handleShootCpuShip(cellName: string) {
   if (cpuCells.value) {
-    const cells = Array.from(cpuCells.value.children) as HTMLElement[]
-    // await battleStore.shootCpuShip(i, cells, BATTLESHIPS)
-    // await battleStore.getSunkShips()
+    await battleStore.shootCpuShip(cellName)
   }
 }
 
@@ -53,7 +50,7 @@ onMounted(async () => {
         :key="cellName"
         :id="String(i + 1)"
         :class="`${cellName} ${cellWidth} aspect-square flex items-center justify-center relative border border-white`"
-        @click="handleShootCpuShip(String(i + 1))"
+        @click="handleShootCpuShip(cellName)"
       ></div>
     </div>
   </div>

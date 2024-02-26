@@ -11,7 +11,7 @@ export default class Web3Service {
     this.contract = new ethers.Contract(ContractAddress.address, BattleshipGameJson.abi, signer)
     this.signer = signer
 
-    this.preload()
+    // this.preload()
   }
 
   async preload() {
@@ -24,25 +24,28 @@ export default class Web3Service {
     }
   }
 
-  async submitGuess(guessValue) {
+  async submitGuess(x, y) {
     const messageStore = useMessageStore()
 
     messageStore.addMessage('Issuing Guess...')
 
     try {
-      const submitTx = await this.contract.takeShot(guessValue)
+      const submitTx = await this.contract.takeShot(x, y)
+      console.log('🚀 ~ Web3Service ~ submitGuess ~ submitTx:', submitTx)
       const receipt = await submitTx.wait()
+      console.log('🚀 ~ Web3Service ~ submitGuess ~ receipt:', receipt)
       messageStore.addMessage('Issued Guess tx: ' + receipt.transactionHash)
-      if (receipt.events[0].args.success) {
-        trackEvent('guess_success', { value: guessValue })
-        messageStore.addMessage(
-          `[BattleshipGame Contract] ${guessValue} was the right answer ! You won!`
-        )
-      } else {
-        messageStore.addMessage(
-          `[BattleshipGame Contract] ${guessValue} was not the right answer. Try again...`
-        )
-      }
+      // if (receipt.events[0].args.success) {
+      //   trackEvent('guess_success', { value: guessValue })
+      //   messageStore.addMessage(
+      //     `[BattleshipGame Contract] ${guessValue} was the right answer ! You won!`
+      //   )
+      // } else {
+      //   messageStore.addMessage(
+      //     `[BattleshipGame Contract] ${guessValue} was not the right answer. Try again...`
+      //   )
+      // }
+      return receipt
     } catch (e) {
       if (e.reason) {
         messageStore.addMessage('Failed to issue Guess - ' + e.reason + ' ...')

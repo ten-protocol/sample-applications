@@ -36,54 +36,53 @@ export const useBattleStore = defineStore('battleStore', {
       }
     },
 
-    async shootCpuShip(i: string, cells: HTMLElement[], ships: Ship[]) {
-      const cell = cells.find((cell) => cell.id === String(i))
+    async shootCpuShip(cellName: string) {
+      const x = Number(cellName?.split('-')[0])
+      const y = Number(cellName?.split('-')[1])
 
-      if (cell?.classList.contains('boom')) {
+      const walletStore = useWalletStore()
+      if (!walletStore.signer) {
         return
       }
-      if (cell?.classList.contains('taken')) {
-        cell?.classList.add('boom')
-        const shipPart = Array.from(cell.classList)
-          .map((x) => ships.filter((ship) => ship.shipType === x))
-          .filter((subArr) => subArr.length > 0)
-          .map((subArray) => subArray[0].shipType)[0]
-
-        const cellName = cell.classList[0]
-        // const message = `Player ${this.playerId} hit a ship on cell ${cellName}`
-        const hitCell = { hit: true, cell: cell!.id }
-
-        await battleship.saveHitCell(hitCell)
-
-        // const res = await battleship.saveMessage({ message })
-
-        // this.addMessage(res)
-
-        await battleship.saveHitShip({ ship: shipPart })
-
-        this.cpuHitShips.push(shipPart)
-
-        ships.forEach(async (ship) => {
-          const count = this.cpuHitShips.filter((shipType) => shipType === ship.shipType).length
-          if (count === ship.length) {
-            if (this.cpuSunkShips.some((x) => x.shipType === ship.shipType)) {
-              return
-            }
-            const newShip = {
-              shipType: ship.shipType,
-              name: ship.name,
-              length: ship.length
-            }
-            await battleship.saveSunkShip(newShip)
-            this.cpuSunkShips.push(newShip)
-          }
-        })
-      } else {
-        cell?.classList.add('miss')
-        const hitCell = { hit: false, cell: cell!.id }
-
-        await battleship.saveHitCell(hitCell)
+      console.log('🚀 ~ shootCpuShip ~ cellName:', cellName)
+      const web3service = new Web3Service(walletStore.signer)
+      try {
+        const res = await web3service.submitGuess(x, y)
+        console.log('🚀 ~ shootCpuShip ~ res:', res)
+      } catch (error) {
+        console.error(error)
       }
+      // await battleship.saveHitCell(hitCell)
+
+      // const res = await battleship.saveMessage({ message })
+
+      // this.addMessage(res)
+
+      //   await battleship.saveHitShip({ ship: shipPart })
+
+      //   this.cpuHitShips.push(shipPart)
+
+      //   ships.forEach(async (ship) => {
+      //     const count = this.cpuHitShips.filter((shipType) => shipType === ship.shipType).length
+      //     if (count === ship.length) {
+      //       if (this.cpuSunkShips.some((x) => x.shipType === ship.shipType)) {
+      //         return
+      //       }
+      //       const newShip = {
+      //         shipType: ship.shipType,
+      //         name: ship.name,
+      //         length: ship.length
+      //       }
+      //       await battleship.saveSunkShip(newShip)
+      //       this.cpuSunkShips.push(newShip)
+      //     }
+      //   })
+      // } else {
+      //   cell?.classList.add('miss')
+      //   const hitCell = { hit: false, cell: cell!.id }
+
+      //   await battleship.saveHitCell(hitCell)
+      // }
     },
 
     async getHitCells() {
