@@ -134,14 +134,18 @@ export const useGameStore = defineStore('gameStore', {
           })
         )
 
-        let uploadedChallenges = [] as FormattedChallenge[]
+        let uploadedChallenges = [] as FormattedChallenge[];
         for (let i = 0; i < uploadToIpfsRes.length; i++) {
           uploadedChallenges.push({
             privateImageURL: uploadToIpfsRes[i][0].path,
             publicImageURL: uploadToIpfsRes[i][1].path,
             topLeft: [challenges[i].position.x1, challenges[i].position.y1],
-            bottomRight: [challenges[i].position.x2, challenges[i].position.y2]
-          })
+            bottomRight: [challenges[i].position.x2, challenges[i].position.y2],
+            center: [
+              challenges[i].position.center.x, 
+              challenges[i].position.center.y
+            ]            
+          });
         }
 
         const res = await web3service.createChallenge(uploadedChallenges)

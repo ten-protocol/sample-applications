@@ -33,7 +33,7 @@
   </div>
 </template>
   
-  <script setup>
+<script setup>
 import { ref } from 'vue'
 import { useGameStore } from '../stores/gameStore'
 import Challenge from '../components/Challenge.vue'
@@ -44,14 +44,14 @@ import { useWalletStore } from '../stores/walletStore'
 const challenges = ref([
   {
     selectedFiles: [],
-    position: { x1: 0, x2: 0, y1: 0, y2: 0 }
+    position: { x1: 0, x2: 0, y1: 0, y2: 0, center: { x: 0, y: 0 } }
   }
 ])
 
 const addChallenge = () => {
   challenges.value.push({
     selectedFiles: [],
-    position: { x1: 0, x2: 0, y1: 0, y2: 0 }
+    position: { x1: 0, x2: 0, y1: 0, y2: 0, center: { x: 0, y: 0 } }
   })
 }
 
@@ -61,7 +61,7 @@ const removeChallenge = (index) => {
   }
   return (challenges.value[0] = {
     selectedFiles: [],
-    position: { x1: 0, x2: 0, y1: 0, y2: 0 }
+    position: { x1: 0, x2: 0, y1: 0, y2: 0, center: { x: 0, y: 0 } }
   })
 }
 
@@ -70,7 +70,13 @@ const addFilessToChallenge = (files, index) => {
 }
 
 const addPositionToChallenge = (position, index) => {
-  challenges.value[index].position = position
+  const centerX = (position.x1 + position.x2) / 2;
+  const centerY = (position.y1 + position.y2) / 2;
+  
+  challenges.value[index].position = {
+    ...position,
+    center: { x: centerX, y: centerY }
+  };
 }
 
 const addAdmin = async () => {
@@ -92,11 +98,10 @@ async function handleUpload() {
         createChallengeResp.map((c) => c.transactionHash).join(', ')
     )
 
-    // resets the form
     challenges.value = [
       {
         selectedFiles: [],
-        position: { x1: 0, x2: 0, y1: 0, y2: 0 }
+        position: { x1: 0, x2: 0, y1: 0, y2: 0, center: { x: 0, y: 0 } }
       }
     ]
   } catch (error) {

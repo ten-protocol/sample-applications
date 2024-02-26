@@ -105,7 +105,6 @@ export default class Web3Service {
       // create each challenge with each object in the array
       const createChallengeRes = await Promise.all(
         payload.map(async (challenge) => {
-          console.log('🚀 ~ Web3Service ~ payload.map ~ challenge:', challenge)
           const createChallengeTx = await this.contract.createChallenge(challenge)
 
           const receipt = await createChallengeTx.wait()

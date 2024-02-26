@@ -4,15 +4,22 @@ pragma solidity ^0.8.18;
 /// @title Image Guessing Game
 /// @notice This contract allows players to guess the location of an item in an image for a chance to win a prize.
 contract ImageGuessGame {
-  /// @dev Structure to store each challenge's details.
   struct Challenge {
-    string publicImageURL; // URL of the image that is publicly visible
-    string privateImageURL; // URL of the image that is revealed upon winning
-    uint256[2] topLeft; // Top left coordinates of the hidden item
-    uint256[2] bottomRight; // Bottom right coordinates of the hidden item
-    bool isActive; // Whether the challenge is currently active
-    bool isRevealed; // Whether the hidden image has been revealed
-    uint256 prizePool; // Total prize pool for the challenge
+    string publicImageURL;
+    string privateImageURL;
+    uint256[2] topLeft;
+    uint256[2] bottomRight;
+    uint256[2] centerPoint;
+    bool isActive;
+    bool isRevealed;
+    uint256 prizePool;
+    uint256 activationTime;
+    uint256 expirationTime; // New field to track when the challenge expires
+  }
+
+  struct GuessDetails {
+    address guesser;
+    uint256 distance;
   }
 
   Challenge[] private challenges;
@@ -23,59 +30,25 @@ contract ImageGuessGame {
   mapping(address => uint256) private winningGuessCount;
   mapping(address => bool) private admins;
   mapping(uint256 => address[]) public challengeWinners;
+  mapping(uint256 => GuessDetails[3]) private topGuesses;
 
-  /// @dev Structure for challenge creation parameters.
   struct ChallengeCreationParams {
     string publicImageURL;
     string privateImageURL;
     uint256[2] topLeft;
     uint256[2] bottomRight;
+    uint256[2] centerPoint;
   }
 
-  /// @dev Mapping from challenge ID to a nested mapping of player addresses to their guess coordinates.
-  /// The nested mapping stores an array of 2-element uint256 arrays representing the x and y coordinates guessed by each player for the challenge.
   mapping(uint256 => mapping(address => uint256[2][])) private guessCoordinates;
-
-  /// @dev Mapping from challenge ID to a nested mapping of player addresses to their guess timestamps.
-  /// The nested mapping stores an array of timestamps representing when each guess was made by the player for the challenge.
   mapping(uint256 => mapping(address => uint256[])) private guessTimestamps;
 
-  /// @notice Event emitted when a new challenge is created.
-  /// @param challengeId The index of the challenge in the array
-  /// @param imageURL URL of the publicly visible image
-  /// @param prizePool The initial prize pool for the challenge
   event ChallengeCreated(uint256 indexed challengeId, string imageURL, uint256 prizePool);
-
-  /// @notice Event emitted when a guess is submitted.
-  /// @param challengeId The index of the challenge
-  /// @param user The address of the user who made the guess
-  /// @param isCorrect Boolean indicating if the guess was correct
-  /// @param guessCoordinates The coordinates guessed by the user
-  /// @param timestamp The timestamp when the guess was submitted
-  event GuessSubmitted(
-    uint256 indexed challengeId,
-    address indexed user,
-    bool isCorrect,
-    uint256[2] guessCoordinates,
-    uint256 timestamp
-  );
-
-  /// @notice Event emitted when a challenge is won.
-  /// @param challengeId The index of the challenge
-  /// @param winner The address of the winner
-  /// @param prizeAmount The amount of the prize won
-  event ChallengeWinner(uint256 indexed challengeId, address indexed winner, uint256 prizeAmount);
-
-  /// @notice Event emitted when the hidden image is revealed.
-  /// @param challengeId The index of the challenge
-  /// @param hiddenImageURL URL of the hidden image
+  event GuessSubmitted(uint256 indexed challengeId, address indexed user, uint256[2] guessCoordinates, uint256 timestamp);
+  event ChallengeWinner(uint256 indexed challengeId, address indexed winner, uint256 prizeAmount, uint8 position);
   event ImageRevealed(uint256 indexed challengeId, string hiddenImageURL);
-
-  /// @notice Event indicating no more challenges are available.
   event NoMoreChallengesFound();
 
-  /// @notice Creates a new game with an entry fee.
-  /// @param _entryFee The entry fee required to submit a guess.
   constructor(uint256 _entryFee) {
     owner = msg.sender;
     admins[owner] = true;
@@ -83,116 +56,127 @@ contract ImageGuessGame {
     currentChallengeIndex = 0;
   }
 
-  /// @dev Ensures only the owner can call a function.
   modifier onlyOwner() {
     require(msg.sender == owner, 'Only owner can call this function.');
     _;
   }
 
-  /// @notice Ensures that only an admin can call the modified function.
   modifier onlyAdmin() {
     require(admins[msg.sender], 'Only admins can call this function');
     _;
   }
 
-  /// @notice Allows the owner to create a new challenge using a struct for parameters.
   function createChallenge(ChallengeCreationParams memory params) public onlyOwner {
-      // Add the new challenge to the array
-      challenges.push(
-        Challenge({
-          publicImageURL: params.publicImageURL,
-          privateImageURL: params.privateImageURL,
-          topLeft: params.topLeft,
-          bottomRight: params.bottomRight,
-          isActive: false,
-          isRevealed: false,
-          prizePool: 0
-        })
-      );
-
-      // Check if this is the first challenge or if the current challenge is inactive
-      if (challenges.length == 1 || !challenges[currentChallengeIndex].isActive) {
-        uint256 newChallengeIndex = challenges.length - 1;
-        challenges[newChallengeIndex].isActive = true;
-        currentChallengeIndex = newChallengeIndex;
-      }
-
-      emit ChallengeCreated(challenges.length - 1, params.publicImageURL, 0);
-  }
-
-  /// @notice Returns public information about a challenge.
-  /// @param challengeId The index of the challenge
-  /// @return publicImageURL URL of the publicly visible image
-  /// @return isActive Whether the challenge is currently active
-  /// @return isRevealed Whether the hidden image has been revealed
-  /// @return prizePool The current prize pool for the challenge
-  function getChallengePublicInfo(
-    uint256 challengeId
-  ) public view returns (string memory, bool, bool, uint256) {
-    Challenge storage challenge = challenges[challengeId];
-    return (
-      challenge.publicImageURL,
-      challenge.isActive,
-      challenge.isRevealed,
-      challenge.prizePool
+    challenges.push(
+      Challenge({
+        publicImageURL: params.publicImageURL,
+        privateImageURL: params.privateImageURL,
+        topLeft: params.topLeft,
+        bottomRight: params.bottomRight,
+        centerPoint: params.centerPoint,
+        isActive: false,
+        isRevealed: false,
+        prizePool: 0,
+        activationTime: 0,
+        expirationTime: 0
+      })
     );
+
+    if (challenges.length == 1 || !challenges[currentChallengeIndex].isActive) {
+      uint256 newChallengeIndex = challenges.length - 1;
+      challenges[newChallengeIndex].isActive = true;
+      challenges[newChallengeIndex].activationTime = block.timestamp;
+      challenges[newChallengeIndex].expirationTime = block.timestamp + 24 hours;
+      currentChallengeIndex = newChallengeIndex;
+    }
+
+    emit ChallengeCreated(challenges.length - 1, params.publicImageURL, 0);
   }
 
-  /// @notice Allows a user to submit a guess for the current challenge.
-  /// @dev Transfers the prize pool to the winner if the guess is correct.
-  /// @param _challengeId The index of the challenge being guessed
-  /// @param _guessCoordinates The coordinates guessed by the user
   function submitGuess(uint256 _challengeId, uint256[2] memory _guessCoordinates) public payable {
     require(msg.value == entryFee, 'Incorrect entry fee.');
     require(_challengeId == currentChallengeIndex, 'This challenge is not active.');
     Challenge storage challenge = challenges[_challengeId];
-    require(challenge.isActive, 'Challenge has ended & no more challenges are available');
 
-    guessCoordinates[_challengeId][msg.sender].push(_guessCoordinates);
-    guessTimestamps[_challengeId][msg.sender].push(block.timestamp);
-    guessCount[msg.sender] += 1;
-
-    challenge.prizePool += msg.value;
-
-    bool isCorrect = isInside(challenge.topLeft, challenge.bottomRight, _guessCoordinates);
-    if (isCorrect) {
-      payable(msg.sender).transfer(challenge.prizePool); // Send the prize pool to the winner
-      challengeWinners[_challengeId].push(msg.sender);
-      winningGuessCount[msg.sender] += 1;
-
-      emit ChallengeWinner(_challengeId, msg.sender, challenge.prizePool);
-      emit ImageRevealed(_challengeId, challenge.privateImageURL);
-
+    if (block.timestamp > challenge.expirationTime) {
+      declareWinnersAndDistributePrizes(_challengeId); 
       challenge.isActive = false;
       challenge.isRevealed = true;
       challenge.prizePool = 0;
 
+      emit ImageRevealed(_challengeId, challenge.privateImageURL);
+
       if (_challengeId + 1 < challenges.length) {
         currentChallengeIndex += 1;
-        challenges[currentChallengeIndex].isActive = true;
+        Challenge storage nextChallenge = challenges[currentChallengeIndex];
+        nextChallenge.isActive = true;
+        nextChallenge.activationTime = block.timestamp;
+        nextChallenge.expirationTime = block.timestamp + 24 hours;
       } else {
         emit NoMoreChallengesFound();
+        return;
       }
     } else {
-      emit GuessSubmitted(_challengeId, msg.sender, isCorrect, _guessCoordinates, block.timestamp);
+      guessCoordinates[_challengeId][msg.sender].push(_guessCoordinates);
+      guessTimestamps[_challengeId][msg.sender].push(block.timestamp);
+      guessCount[msg.sender] += 1;
+
+      uint256 distance = calculateEuclideanDistanceSquared(_guessCoordinates, challenge.centerPoint);
+      GuessDetails memory newGuess = GuessDetails(msg.sender, distance);
+      updateTopGuesses(_challengeId, newGuess);
+
+    challenge.prizePool += msg.value;
+
+    emit GuessSubmitted(_challengeId, msg.sender, _guessCoordinates, block.timestamp);
+  }
+}
+
+    function declareWinnersAndDistributePrizes(uint256 _challengeId) private {
+        uint256 totalPrizePool = challenges[_challengeId].prizePool;
+        uint256[3] memory prizeDistribution = [totalPrizePool * 60 / 100, totalPrizePool * 30 / 100, totalPrizePool * 10 / 100];
+
+        for (uint8 i = 0; i < topGuesses[_challengeId].length; i++) {
+            if (topGuesses[_challengeId][i].guesser != address(0)) {
+                payable(topGuesses[_challengeId][i].guesser).transfer(prizeDistribution[i]);
+                emit ChallengeWinner(_challengeId, topGuesses[_challengeId][i].guesser, prizeDistribution[i], i + 1);
+            }
+        }
+
+        // Reset the prize pool after distribution
+        challenges[_challengeId].prizePool = 0;
     }
+
+  function updateTopGuesses(uint256 _challengeId, GuessDetails memory newGuess) private {
+      GuessDetails[3] storage currentTopGuesses = topGuesses[_challengeId];
+      bool shouldInsertNewGuess = true;
+
+      for (uint256 i = 0; i < currentTopGuesses.length; i++) {
+          if (currentTopGuesses[i].guesser == newGuess.guesser) {
+              if (newGuess.distance < currentTopGuesses[i].distance) {
+                  currentTopGuesses[i] = newGuess;
+              }
+              shouldInsertNewGuess = false;
+              break;
+          }
+      }
+
+      if (shouldInsertNewGuess) {
+          for (uint256 i = 0; i < currentTopGuesses.length; i++) {
+              if (currentTopGuesses[i].guesser == address(0) || newGuess.distance < currentTopGuesses[i].distance) {
+                  for (uint256 j = currentTopGuesses.length - 1; j > i; j--) {
+                      currentTopGuesses[j] = currentTopGuesses[j - 1];
+                  }
+                  currentTopGuesses[i] = newGuess;
+                  break;
+              }
+          }
+      }
   }
 
-  /// @dev Checks if a given point is within the specified coordinates.
-  /// @param topLeft Top left coordinates of the hidden item
-  /// @param bottomRight Bottom right coordinates of the hidden item
-  /// @param point The point to check
-  /// @return bool True if the point is within the coordinates, otherwise false
-  function isInside(
-    uint256[2] memory topLeft,
-    uint256[2] memory bottomRight,
-    uint256[2] memory point
-  ) private pure returns (bool) {
-    return
-      point[0] >= topLeft[0] &&
-      point[0] <= bottomRight[0] &&
-      point[1] >= topLeft[1] &&
-      point[1] <= bottomRight[1];
+  function calculateEuclideanDistanceSquared(uint256[2] memory point1, uint256[2] memory point2) private pure returns (uint256) {
+    uint256 dx = (point1[0] > point2[0]) ? point1[0] - point2[0] : point2[0] - point1[0];
+    uint256 dy = (point1[1] > point2[1]) ? point1[1] - point2[1] : point2[1] - point1[1];
+    return (dx * dx) + (dy * dy);
   }
 
   /// @notice Allows a user to view their guess coordinates and the time elapsed since each guess was made for a specific challenge.
