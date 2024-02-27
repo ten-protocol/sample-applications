@@ -93,6 +93,24 @@ contract ImageGuessGame {
     emit ChallengeCreated(challenges.length - 1, params.publicImageURL, 0);
   }
 
+  /// @notice Returns public information about a challenge.
+  /// @param challengeId The index of the challenge
+  /// @return publicImageURL URL of the publicly visible image
+  /// @return isActive Whether the challenge is currently active
+  /// @return isRevealed Whether the hidden image has been revealed
+  /// @return prizePool The current prize pool for the challenge
+  function getChallengePublicInfo(
+    uint256 challengeId
+  ) public view returns (string memory, bool, bool, uint256) {
+    Challenge storage challenge = challenges[challengeId];
+    return (
+      challenge.publicImageURL,
+      challenge.isActive,
+      challenge.isRevealed,
+      challenge.prizePool
+    );
+  }
+
   function submitGuess(uint256 _challengeId, uint256[2] memory _guessCoordinates) public payable {
     require(msg.value == entryFee, 'Incorrect entry fee.');
     require(_challengeId == currentChallengeIndex, 'This challenge is not active.');
