@@ -23,10 +23,11 @@ jobs:
         working-directory: ./spot-the-ball
 
       - name: create env file
+        working-directory: ./spot-the-ball
         run: |
           touch .env
-          echo VITE_APP_MORALIS_API_KEY=${{ secrets.VITE_APP_MORALIS_API_KEY }} >> .env
-          echo VITE_APP_NFT_UP_KEY=${{ secrets.VITE_APP_NFT_UP_KEY }} >> .env
+          echo VITE_APP_MORALIS_API_KEY='${{ secrets.VITE_APP_MORALIS_API_KEY }}' >> .env
+          echo VITE_APP_NFT_UP_KEY='${{ secrets.VITE_APP_NFT_UP_KEY }}' >> .env
 
       - name: Write Address to JSON
         run: |
