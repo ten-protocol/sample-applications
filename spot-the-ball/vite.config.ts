@@ -11,5 +11,11 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
+  define: {
+    'import.meta.env.VITE_APP_MORALIS_API_KEY': JSON.stringify(
+      process.env.VITE_APP_MORALIS_API_KEY
+    ),
+    'import.meta.env.VITE_APP_NFT_UP_KEY': JSON.stringify(process.env.VITE_APP_NFT_UP_KEY)
+  },
   base: '/sample-applications/spot-the-ball/'
 })
