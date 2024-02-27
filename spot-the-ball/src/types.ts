@@ -5,6 +5,10 @@ export type Challenge = {
     x2: number
     y1: number
     y2: number
+    center: {
+      x: number
+      y: number
+    }
   }
 }
 
@@ -13,6 +17,7 @@ export type FormattedChallenge = {
   privateImageURL: string
   topLeft: number[]
   bottomRight: number[]
+  centerPoint: number[]
 }
 
 export type Message = {
