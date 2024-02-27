@@ -25,11 +25,7 @@ jobs:
       - name: create env file
         run: |
           touch .env
-          echo 'VITE_APP_DEBUG=${{ secrets.VITE_APP_DEBUG }}' >> .env
-
-      - name: leak debug env
-        run: |
-          cat .env
+          echo VITE_APP_MORALIS_API_KEY='${{ secrets.VITE_APP_MORALIS_API_KEY }}' >> .env
 
       - name: Write Address to JSON
         run: |
