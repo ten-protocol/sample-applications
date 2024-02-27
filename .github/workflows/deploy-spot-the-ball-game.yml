@@ -23,6 +23,7 @@ jobs:
         working-directory: ./spot-the-ball
 
       - name: create env file
+        working-directory: ./spot-the-ball
         run: |
           touch .env
           echo VITE_APP_MORALIS_API_KEY='${{ secrets.VITE_APP_MORALIS_API_KEY }}' >> .env
