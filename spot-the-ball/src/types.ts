@@ -32,3 +32,12 @@ export type Game = {
   y: number
   timestamp: string
 }
+
+export type PreviousWins = {
+  name: string
+  topGuessesArray: {
+    guesser: string
+    distance: number
+  }[]
+  privateImageURL: string
+}

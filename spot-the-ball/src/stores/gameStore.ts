@@ -4,8 +4,8 @@ import { NFTStorage, File } from 'nft.storage'
 import Web3Service from '../lib/web3service.js'
 import { useWalletStore } from '../stores/walletStore'
 import { useMessageStore } from '../stores/messageStore'
-import { Challenge, FormattedChallenge, Game } from '../types.js'
-import { MORALIS_API_KEY, NFT_UP_API_KEY } from '../lib/utils.js'
+import { Challenge, FormattedChallenge, Game, PreviousWins } from '../types.js'
+import { MORALIS_API_KEY, NFT_UP_API_KEY, bigNumberToNumber, formatTimeAgo } from '../lib/utils.js'
 
 export const useGameStore = defineStore('gameStore', {
   state: () => ({
@@ -17,7 +17,9 @@ export const useGameStore = defineStore('gameStore', {
     modalVisible: false,
     showPreviousMoves: false,
     isGameActive: false,
-    isGameRevealed: false
+    isGameRevealed: false,
+    timeLeft: 0,
+    previousWins: [] as PreviousWins[]
   }),
 
   getters: {},
@@ -163,8 +165,26 @@ export const useGameStore = defineStore('gameStore', {
         const web3service = new Web3Service(walletStore.signer)
         const res = await web3service.getChallengePublicInfo()
         this.game = res
+        this.timeLeft = formatTimeAgo(bigNumberToNumber(res?.[4] || 0), false)
         this.isGameActive = res?.[1]
         this.isGameRevealed = res?.[2]
+      } catch (error) {
+        console.error(error)
+      }
+    },
+
+    async getPreviousWins() {
+      try {
+        const walletStore = useWalletStore()
+        const messageStore = useMessageStore()
+        if (!walletStore.signer) {
+          messageStore.addMessage('Not connected with Metamask...')
+          return
+        }
+        const web3service = new Web3Service(walletStore.signer)
+        const res = await web3service.getPreviousWins()
+        this.previousWins = res
+        return res
       } catch (error) {
         console.error(error)
       }

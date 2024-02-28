@@ -6,6 +6,7 @@ import { useGameStore } from '../stores/gameStore'
 
 const gameStore = useGameStore()
 const prizePool = ref('')
+const timeLeft = ref()
 const gameActive = ref(false)
 
 const showPreviousMoves = (event: Event) => {
@@ -14,6 +15,7 @@ const showPreviousMoves = (event: Event) => {
 
 watchEffect(() => {
   prizePool.value = formatEther(gameStore.game?.[3] || 0)
+  timeLeft.value = gameStore.timeLeft
   gameActive.value = gameStore.isGameActive
 })
 </script>
@@ -35,6 +37,8 @@ watchEffect(() => {
         >
           <p>Total Pool:</p>
           <p>{{ prizePool }} ETH</p>
+          <p>Time Remaining:</p>
+          <p>{{ timeLeft }}</p>
         </div>
 
         <div class="flex items-center gap-2 text-sm">

@@ -5,6 +5,7 @@ import ContractAddress from '@/assets/contract/address.json'
 import { formatTimeAgo, trackEvent, bigNumberToNumber } from './utils'
 import Common from '@/lib/common'
 import Web3listener from './web3listener'
+import { useGameStore } from '../stores/gameStore'
 
 export default class Web3Service {
   constructor(signer) {
@@ -62,17 +63,10 @@ export default class Web3Service {
       const web3listener = new Web3listener(this.signer)
       web3listener.startCheckingGuesses(receipt)
 
-      if (receipt.events[0].args[2]) {
-        const message = 'Congratulations! You are the winner!'
-        messageStore.addMessage(message)
+      const message = `Your guess has been submitted successfully! Wait for the result in ${formatTimeAgo(bigNumberToNumber(receipt.events[0].args[4] || 0), false)}...`
+      messageStore.addMessage(message)
 
-        return message
-      } else {
-        const message = 'You are not the winner, try again!'
-        messageStore.addMessage(message)
-
-        return message
-      }
+      return message
     } catch (e) {
       if (e.reason) {
         messageStore.addMessage('Failed to issue Guess - ' + e.reason + ' ...')
@@ -105,13 +99,15 @@ export default class Web3Service {
       // create each challenge with each object in the array
       const createChallengeRes = await Promise.all(
         payload.map(async (challenge) => {
-        // Estimate gas for the createChallenge transaction
-        const estimatedGas = await this.contract.estimateGas.createChallenge(challenge);
-        
-        // Adding 10% buffer Gas
-        const gasLimit = estimatedGas.add(estimatedGas.mul(10).div(100)); 
+          // Estimate gas for the createChallenge transaction
+          const estimatedGas = await this.contract.estimateGas.createChallenge(challenge)
 
-        const createChallengeTx = await this.contract.createChallenge(challenge, { gasLimit: gasLimit.toString() });
+          // Adding 10% buffer Gas
+          const gasLimit = estimatedGas.add(estimatedGas.mul(10).div(100))
+
+          const createChallengeTx = await this.contract.createChallenge(challenge, {
+            gasLimit: gasLimit.toString()
+          })
 
           const receipt = await createChallengeTx.wait()
           trackEvent('Challenge Created', {
@@ -151,6 +147,27 @@ export default class Web3Service {
     } catch (error) {
       console.error('Failed to add admin - ', error)
       messageStore.addMessage('Failed to add admin - ' + error.reason + ' ...')
+    }
+  }
+
+  async getPreviousWins() {
+    try {
+      const gameStore = useGameStore()
+      const challengeId = await this.getChallengeId()
+      let previousChallenges = []
+      for (let id = gameStore.isGameActive ? challengeId - 1 : challengeId; id > 0; id--) {
+        const historyTx = await this.contract.getRevealedChallengeDetails(id)
+
+        previousChallenges.push({
+          name: 'Challenge ' + id,
+          topGuessesArray: historyTx[0],
+          privateImageURL: historyTx[1]
+        })
+      }
+
+      return previousChallenges
+    } catch (error) {
+      console.error('Failed to preload guess history - ', error)
     }
   }
 }

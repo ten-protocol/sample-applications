@@ -70,13 +70,13 @@ const addFilessToChallenge = (files, index) => {
 }
 
 const addPositionToChallenge = (position, index) => {
-  const centerX = (position.x1 + position.x2) / 2;
-  const centerY = (position.y1 + position.y2) / 2;
-  
+  const centerX = (position.x1 + position.x2) / 2
+  const centerY = (position.y1 + position.y2) / 2
+
   challenges.value[index].position = {
     ...position,
     center: { x: centerX, y: centerY }
-  };
+  }
 }
 
 const addAdmin = async () => {
@@ -84,7 +84,7 @@ const addAdmin = async () => {
   const web3Service = new Web3Service(walletStore.signer)
   const address = ''
   const res = await web3Service.addAdmin(address)
-  console.log('res', res)
+  return res
 }
 
 async function handleUpload() {
