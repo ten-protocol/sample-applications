@@ -99,15 +99,21 @@ contract ImageGuessGame {
   /// @return isActive Whether the challenge is currently active
   /// @return isRevealed Whether the hidden image has been revealed
   /// @return prizePool The current prize pool for the challenge
+  /// @return timeLeft The time left in seconds until the challenge expires, or 0 if expired or not active
   function getChallengePublicInfo(
     uint256 challengeId
-  ) public view returns (string memory, bool, bool, uint256) {
+  ) public view returns (string memory, bool, bool, uint256, uint256) {
     Challenge storage challenge = challenges[challengeId];
+    uint256 timeLeft = 0;
+    if (challenge.isActive && block.timestamp < challenge.expirationTime) {
+      timeLeft = challenge.expirationTime - block.timestamp;
+    }
     return (
       challenge.publicImageURL,
       challenge.isActive,
       challenge.isRevealed,
-      challenge.prizePool
+      challenge.prizePool,
+      timeLeft
     );
   }
 
