@@ -134,7 +134,7 @@ contract ImageGuessGame {
                 Challenge storage nextChallenge = challenges[currentChallengeIndex];
                 nextChallenge.isActive = true;
                 nextChallenge.activationTime = block.timestamp;
-                nextChallenge.expirationTime = block.timestamp + 5 minutes;
+                nextChallenge.expirationTime = block.timestamp + 24 hours;
             } else {
                 emit NoMoreChallengesFound();
             }
