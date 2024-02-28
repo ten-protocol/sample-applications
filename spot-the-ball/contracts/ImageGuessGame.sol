@@ -44,9 +44,9 @@ contract ImageGuessGame {
   mapping(uint256 => mapping(address => uint256[])) private guessTimestamps;
 
   event ChallengeCreated(uint256 indexed challengeId, string imageURL, uint256 prizePool);
-  event GuessSubmitted(uint256 indexed challengeId, address indexed user, uint256[2] guessCoordinates, uint256 timestamp);
+  event GuessSubmitted(uint256 indexed challengeId, address indexed user, uint256[2] guessCoordinates, uint256 timestamp, uint256 timeLeft);
   event ChallengeWinner(uint256 indexed challengeId, address indexed winner, uint256 prizeAmount, uint8 position);
-  event ImageRevealed(uint256 indexed challengeId, string hiddenImageURL);
+  event ImageRevealed(uint256 indexed challengeId, string privateImageURL);
   event NoMoreChallengesFound();
 
   constructor(uint256 _entryFee) {
@@ -145,7 +145,9 @@ contract ImageGuessGame {
 
     challenge.prizePool += msg.value;
 
-    emit GuessSubmitted(_challengeId, msg.sender, _guessCoordinates, block.timestamp);
+    uint256 timeLeft = challenge.expirationTime - block.timestamp;
+
+    emit GuessSubmitted(_challengeId, msg.sender, _guessCoordinates, block.timestamp, timeLeft);
   }
 }
 
@@ -215,6 +217,18 @@ contract ImageGuessGame {
     }
 
     return (guessCoordinates[_challengeId][msg.sender], elapsedTimes);
+  }
+
+  /// @notice Retrieves the top guesses and private image URL for a revealed challenge.
+  /// @param challengeId The index of the challenge.
+  /// @return topGuessesArray An array of the top 3 guesses for the challenge.
+  /// @return privateImageUrl The private image URL of the challenge.
+  function getRevealedChallengeDetails(uint256 challengeId) public view returns (GuessDetails[3] memory topGuessesArray, string memory privateImageUrl) {
+      require(challengeId < challenges.length, "Challenge does not exist.");
+      Challenge storage challenge = challenges[challengeId];
+      require(challenge.isRevealed, "Challenge has not started or has not ended yet");
+
+      return (topGuesses[challengeId], challenge.privateImageURL);
   }
 
   /// @notice Adds an admin to the game.
