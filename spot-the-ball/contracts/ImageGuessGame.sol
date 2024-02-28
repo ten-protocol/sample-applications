@@ -96,7 +96,7 @@ contract ImageGuessGame {
             uint256 newChallengeIndex = challenges.length - 1;
             challenges[newChallengeIndex].isActive = true;
             challenges[newChallengeIndex].activationTime = block.timestamp;
-            challenges[newChallengeIndex].expirationTime = block.timestamp + 5 minutes;
+            challenges[newChallengeIndex].expirationTime = block.timestamp + 24 hours;
             currentChallengeIndex = newChallengeIndex;
         }
 
