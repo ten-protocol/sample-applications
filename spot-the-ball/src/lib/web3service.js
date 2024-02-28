@@ -105,7 +105,13 @@ export default class Web3Service {
       // create each challenge with each object in the array
       const createChallengeRes = await Promise.all(
         payload.map(async (challenge) => {
-          const createChallengeTx = await this.contract.createChallenge(challenge)
+        // Estimate gas for the createChallenge transaction
+        const estimatedGas = await this.contract.estimateGas.createChallenge(challenge);
+        
+        // Adding 10% buffer Gas
+        const gasLimit = estimatedGas.add(estimatedGas.mul(10).div(100)); 
+
+        const createChallengeTx = await this.contract.createChallenge(challenge, { gasLimit: gasLimit.toString() });
 
           const receipt = await createChallengeTx.wait()
           trackEvent('Challenge Created', {
