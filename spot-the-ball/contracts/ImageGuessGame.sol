@@ -66,7 +66,7 @@ contract ImageGuessGame {
     _;
   }
 
-  function createChallenge(ChallengeCreationParams memory params) public onlyOwner {
+  function createChallenge(ChallengeCreationParams memory params) public onlyAdmin {
     challenges.push(
       Challenge({
         publicImageURL: params.publicImageURL,
