@@ -33,13 +33,12 @@
                 </p>
               </td>
               <td>
-                <a
-                  :href="win.privateImageURL"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="underline text-blue-500"
-                  >View Image</a
+                <button
+                  class="py-2 px-4 bg-slate-900 text-white rounded-lg"
+                  @click="convertImageToBase64(win.privateImageURL)"
                 >
+                  Preview
+                </button>
               </td>
             </tr>
           </template>
@@ -76,6 +75,24 @@
         </tbody>
       </table>
     </div>
+    <!-- // modal image`` -->
+    <div
+      id="imagePreview"
+      class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center"
+      v-if="imageToPreview"
+    >
+      <div class="bg-white p-8 rounded-lg">
+        <img :src="imageToPreview" alt="winning image" />
+        <div class="flex justify-end">
+          <button
+            class="mt-4 py-2 px-4 bg-slate-900 text-white rounded-lg"
+            @click="closeImageModal"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -90,10 +107,17 @@ const previousWins = ref(gameStore.previousWins)
 const showPreviousWins = ref(false)
 const showHistory = ref(true)
 
+const imageToPreview = ref('')
+
 watchEffect(() => {
   HISTORY.value = gameStore.history
   previousWins.value = gameStore.previousWins
 })
+
+const closeImageModal = () => {
+  location.href = '#'
+  imageToPreview.value = ''
+}
 
 const getPreviousWins = async () => {
   try {
@@ -101,6 +125,24 @@ const getPreviousWins = async () => {
     showHistory.value = !showHistory.value
     if (showPreviousWins.value) {
       await gameStore.getPreviousWins()
+    }
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+// to prevent the user from knowing the image url, we will use the image url from the server
+// by converting the image to base64 and sending it to the server
+const convertImageToBase64 = async (imageURL) => {
+  try {
+    const response = await fetch(imageURL)
+    const blob = await response.blob()
+    const reader = new FileReader()
+    reader.readAsDataURL(blob)
+    reader.onloadend = () => {
+      console.log(reader.result)
+      imageToPreview.value = reader.result
+      location.href = '#imagePreview'
     }
   } catch (error) {
     console.error(error)
