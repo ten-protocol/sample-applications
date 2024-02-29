@@ -103,6 +103,30 @@ contract ImageGuessGame {
         emit ChallengeCreated(challenges.length - 1, params.publicImageURL, 0);
     }
 
+  /// @notice Returns public information about a challenge.
+  /// @param challengeId The index of the challenge
+  /// @return publicImageURL URL of the publicly visible image
+  /// @return isActive Whether the challenge is currently active
+  /// @return isRevealed Whether the hidden image has been revealed
+  /// @return prizePool The current prize pool for the challenge
+  /// @return timeLeft The time left in seconds until the challenge expires, or 0 if expired or not active
+  function getChallengePublicInfo(
+    uint256 challengeId
+  ) public view returns (string memory, bool, bool, uint256, uint256) {
+    Challenge storage challenge = challenges[challengeId];
+    uint256 timeLeft = 0;
+    if (challenge.isActive && block.timestamp < challenge.expirationTime) {
+      timeLeft = challenge.expirationTime - block.timestamp;
+    }
+    return (
+      challenge.publicImageURL,
+      challenge.isActive,
+      challenge.isRevealed,
+      challenge.prizePool,
+      timeLeft
+    );
+  }
+
     /// @notice Allows a player to submit a guess for the current challenge.
     /// @dev Players must pay the entry fee to submit their guess.
     /// @param _challengeId The ID of the challenge to guess for.
