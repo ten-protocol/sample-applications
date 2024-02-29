@@ -12,26 +12,26 @@ export function bigNumberToNumber(bigNumber) {
   return ethers.BigNumber.from(bigNumber).toNumber()
 }
 
-export function formatTimeAgo(seconds) {
+export function formatTimeAgo(seconds, addSuffix = true) {
   if (isNaN(seconds)) {
     return 'Unknown'
   }
   if (seconds <= 0) {
-    return 'Just now'
+    return addSuffix ? 'Just now' : '0 seconds'
   }
   if (seconds < 60) {
-    return `${seconds} second${seconds > 1 ? 's' : ''} ago`
+    return `${seconds} second${seconds > 1 ? 's' : ''} ${addSuffix ? 'ago' : ''}`
   }
   if (seconds < 3600) {
     const min = Math.floor(seconds / 60)
-    return `${min} minute${min > 1 ? 's' : ''} ago`
+    return `${min} minute${min > 1 ? 's' : ''} ${addSuffix ? 'ago' : ''}`
   }
   if (seconds < 86400) {
     const hours = Math.floor(seconds / 3600)
-    return `${hours} hour${hours > 1 ? 's' : ''} ago`
+    return `${hours} hour${hours > 1 ? 's' : ''} ${addSuffix ? 'ago' : ''}`
   }
   const days = Math.floor(seconds / 86400)
-  return `${days} day${days > 1 ? 's' : ''} ago`
+  return `${days} day${days > 1 ? 's' : ''} ${addSuffix ? 'ago' : ''}`
 }
 
 export function handleMetaMaskError(error) {

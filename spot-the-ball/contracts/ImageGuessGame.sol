@@ -44,9 +44,9 @@ contract ImageGuessGame {
   mapping(uint256 => mapping(address => uint256[])) private guessTimestamps;
 
   event ChallengeCreated(uint256 indexed challengeId, string imageURL, uint256 prizePool);
-  event GuessSubmitted(uint256 indexed challengeId, address indexed user, uint256[2] guessCoordinates, uint256 timestamp);
+  event GuessSubmitted(uint256 indexed challengeId, address indexed user, uint256[2] guessCoordinates, uint256 timestamp, uint256 timeLeft);
   event ChallengeWinner(uint256 indexed challengeId, address indexed winner, uint256 prizeAmount, uint8 position);
-  event ImageRevealed(uint256 indexed challengeId, string hiddenImageURL);
+  event ImageRevealed(uint256 indexed challengeId, string privateImageURL);
   event NoMoreChallengesFound();
 
   constructor(uint256 _entryFee) {
@@ -66,7 +66,7 @@ contract ImageGuessGame {
     _;
   }
 
-  function createChallenge(ChallengeCreationParams memory params) public onlyOwner {
+  function createChallenge(ChallengeCreationParams memory params) public onlyAdmin {
     challenges.push(
       Challenge({
         publicImageURL: params.publicImageURL,
@@ -91,6 +91,30 @@ contract ImageGuessGame {
     }
 
     emit ChallengeCreated(challenges.length - 1, params.publicImageURL, 0);
+  }
+
+  /// @notice Returns public information about a challenge.
+  /// @param challengeId The index of the challenge
+  /// @return publicImageURL URL of the publicly visible image
+  /// @return isActive Whether the challenge is currently active
+  /// @return isRevealed Whether the hidden image has been revealed
+  /// @return prizePool The current prize pool for the challenge
+  /// @return timeLeft The time left in seconds until the challenge expires, or 0 if expired or not active
+  function getChallengePublicInfo(
+    uint256 challengeId
+  ) public view returns (string memory, bool, bool, uint256, uint256) {
+    Challenge storage challenge = challenges[challengeId];
+    uint256 timeLeft = 0;
+    if (challenge.isActive && block.timestamp < challenge.expirationTime) {
+      timeLeft = challenge.expirationTime - block.timestamp;
+    }
+    return (
+      challenge.publicImageURL,
+      challenge.isActive,
+      challenge.isRevealed,
+      challenge.prizePool,
+      timeLeft
+    );
   }
 
   function submitGuess(uint256 _challengeId, uint256[2] memory _guessCoordinates) public payable {
@@ -127,7 +151,9 @@ contract ImageGuessGame {
 
     challenge.prizePool += msg.value;
 
-    emit GuessSubmitted(_challengeId, msg.sender, _guessCoordinates, block.timestamp);
+    uint256 timeLeft = challenge.expirationTime - block.timestamp;
+
+    emit GuessSubmitted(_challengeId, msg.sender, _guessCoordinates, block.timestamp, timeLeft);
   }
 }
 
@@ -197,6 +223,18 @@ contract ImageGuessGame {
     }
 
     return (guessCoordinates[_challengeId][msg.sender], elapsedTimes);
+  }
+
+  /// @notice Retrieves the top guesses and private image URL for a revealed challenge.
+  /// @param challengeId The index of the challenge.
+  /// @return topGuessesArray An array of the top 3 guesses for the challenge.
+  /// @return privateImageUrl The private image URL of the challenge.
+  function getRevealedChallengeDetails(uint256 challengeId) public view returns (GuessDetails[3] memory topGuessesArray, string memory privateImageUrl) {
+      require(challengeId < challenges.length, "Challenge does not exist.");
+      Challenge storage challenge = challenges[challengeId];
+      require(challenge.isRevealed, "Challenge has not started or has not ended yet");
+
+      return (topGuesses[challengeId], challenge.privateImageURL);
   }
 
   /// @notice Adds an admin to the game.
