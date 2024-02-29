@@ -80,7 +80,7 @@ export default {
       messageStore.addMessage(
         'Not connected to Ten ! Connect at <a href="https://testnet.ten.xyz/" target="_blank" rel="noopener noreferrer">https://testnet.ten.xyz/</a> '
       )
-      buttonText.value = 'Wrong Network, Switch to Ten' // This should be the correct way to update it
+      buttonText.value = 'Wrong Network, Switch to Ten'
       return
     }
 
