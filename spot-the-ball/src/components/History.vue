@@ -29,7 +29,8 @@
               <td>{{ win.name }}</td>
               <td>
                 <p v-for="(guess, index) in win.topGuessesArray" :key="index">
-                  {{ guess[0] }}, {{ guess[1] }}
+                  <span> {{ guess[0].slice(0, 6) }}...{{ guess[0].slice(-4) }} </span>,
+                  <span> {{ guess[1] }} </span>
                 </p>
               </td>
               <td>
