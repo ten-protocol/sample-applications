@@ -155,7 +155,7 @@ export default class Web3Service {
       const gameStore = useGameStore()
       const challengeId = await this.getChallengeId()
       let previousChallenges = []
-      for (let id = gameStore.isGameActive ? challengeId - 1 : challengeId; id > 0; id--) {
+      for (let id = gameStore.isGameActive ? challengeId - 1 : challengeId; id >= 0; id--) {
         const historyTx = await this.contract.getRevealedChallengeDetails(id)
 
         previousChallenges.push({
