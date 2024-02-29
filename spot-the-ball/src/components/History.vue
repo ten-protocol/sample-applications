@@ -115,7 +115,7 @@ watchEffect(() => {
 })
 
 const closeImageModal = () => {
-  location.href = '#'
+  history.pushState('', document.title, window.location.pathname + window.location.search)
   imageToPreview.value = ''
 }
 
