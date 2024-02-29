@@ -86,7 +86,7 @@ contract ImageGuessGame {
       uint256 newChallengeIndex = challenges.length - 1;
       challenges[newChallengeIndex].isActive = true;
       challenges[newChallengeIndex].activationTime = block.timestamp;
-      challenges[newChallengeIndex].expirationTime = block.timestamp + 24 hours;
+      challenges[newChallengeIndex].expirationTime = block.timestamp + 20 minutes;
       currentChallengeIndex = newChallengeIndex;
     }
 
@@ -135,7 +135,7 @@ contract ImageGuessGame {
         Challenge storage nextChallenge = challenges[currentChallengeIndex];
         nextChallenge.isActive = true;
         nextChallenge.activationTime = block.timestamp;
-        nextChallenge.expirationTime = block.timestamp + 24 hours;
+        nextChallenge.expirationTime = block.timestamp + 20 minutes;
       } else {
         emit NoMoreChallengesFound();
         return;
