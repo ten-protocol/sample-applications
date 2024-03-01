@@ -130,7 +130,6 @@ export default class Web3Service {
     try {
       const challengeId = await this.getChallengeId()
       const challenge = await this.contract.getChallengePublicInfo(challengeId)
-      console.log('🚀 ~ Web3Service ~ getChallengePublicInfo ~ challenge:', challenge)
       return challenge
     } catch (error) {
       console.error('Failed to get challenge properties - ', error)
