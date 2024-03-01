@@ -5,7 +5,7 @@
         <div
           class="w-fit px-4 py-2 thick-shadow bg-white border-2 border-black text-sm border-r-8 border-b-8"
         >
-          Hitory
+          History
         </div>
         <div class="flex items-center gap-2 text-sm">
           <input type="checkbox" @change="getPreviousWins" :checked="showPreviousWins" />
@@ -29,7 +29,8 @@
               <td>{{ win.name }}</td>
               <td>
                 <p v-for="(guess, index) in win.topGuessesArray" :key="index">
-                  {{ guess[0] }}, {{ guess[1] }}
+                  <span> {{ guess[0].slice(0, 6) }}...{{ guess[0].slice(-4) }} </span>,
+                  <span> {{ guess[1] }} </span>
                 </p>
               </td>
               <td>

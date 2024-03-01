@@ -63,7 +63,7 @@ export default class Web3Service {
       const web3listener = new Web3listener(this.signer)
       web3listener.startCheckingGuesses(receipt)
 
-      const message = `Your guess has been submitted successfully! Wait for the result in ${formatTimeAgo(bigNumberToNumber(receipt.events[0].args[4] || 0), false)}...`
+      const message = `Your guess has been submitted successfully! The winners will be announced in ${formatTimeAgo(bigNumberToNumber(receipt.events[0].args[4] || 0), false)}...`
       messageStore.addMessage(message)
 
       return message
@@ -155,7 +155,7 @@ export default class Web3Service {
       const gameStore = useGameStore()
       const challengeId = await this.getChallengeId()
       let previousChallenges = []
-      for (let id = gameStore.isGameActive ? challengeId - 1 : challengeId; id > 0; id--) {
+      for (let id = gameStore.isGameActive ? challengeId - 1 : challengeId; id >= 0; id--) {
         const historyTx = await this.contract.getRevealedChallengeDetails(id)
 
         previousChallenges.push({
