@@ -96,7 +96,7 @@ contract ImageGuessGame {
             uint256 newChallengeIndex = challenges.length - 1;
             challenges[newChallengeIndex].isActive = true;
             challenges[newChallengeIndex].activationTime = block.timestamp;
-            challenges[newChallengeIndex].expirationTime = block.timestamp + 24 minutes;
+            challenges[newChallengeIndex].expirationTime = block.timestamp + 24 hours;
             currentChallengeIndex = newChallengeIndex;
         }
 
@@ -135,7 +135,8 @@ contract ImageGuessGame {
         require(msg.value == entryFee, "Incorrect entry fee.");
         require(_challengeId == currentChallengeIndex, "This challenge is not active.");
         Challenge storage challenge = challenges[_challengeId];
-
+        require(challenge.isActive, "Challenge is not active.");
+        
         guessCoordinates[_challengeId][msg.sender].push(_guessCoordinates);
         guessTimestamps[_challengeId][msg.sender].push(block.timestamp);
         guessCount[msg.sender] += 1;
@@ -158,7 +159,7 @@ contract ImageGuessGame {
                 Challenge storage nextChallenge = challenges[currentChallengeIndex];
                 nextChallenge.isActive = true;
                 nextChallenge.activationTime = block.timestamp;
-                nextChallenge.expirationTime = block.timestamp + 24 minutes;
+                nextChallenge.expirationTime = block.timestamp + 24 hours;
             } else {
                 emit NoMoreChallengesFound();
             }
