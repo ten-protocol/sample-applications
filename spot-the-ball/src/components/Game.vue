@@ -20,6 +20,7 @@ const game = ref()
 const gameActive = ref(gameStore.isGameActive)
 const gameRevealed = ref(gameStore.isGameRevealed)
 const submitDisabled = ref(false)
+const isUserConnected = ref(gameStore.isUserConnected)
 const HISTORY = ref(gameStore.history)
 const showPreviousMoves = ref(gameStore.showPreviousMoves)
 
@@ -29,6 +30,7 @@ watchEffect(() => {
   showPreviousMoves.value = gameStore.showPreviousMoves
   gameRevealed.value = gameStore.isGameRevealed
   gameActive.value = gameStore.isGameActive
+  isUserConnected.value = gameStore.isUserConnected
 })
 
 const handleClick = async () => {
@@ -125,6 +127,23 @@ const submit = async () => {
         <div class="w-full h-[500px] bg-gray-200 cursor-not-allowed relative">
           <div class="flex items-center justify-center h-full">
             <p class="text-2xl">No challenge available</p>
+            <div
+              v-if="!isUserConnected"
+              class="absolute top-0 left-0 w-full h-full flex items-center justify-center"
+            >
+              <div class="bg-white p-8 rounded-lg">
+                <p>
+                  You are not connected to Ten! Connect at
+                  <a
+                    href="https://testnet.ten.xyz/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-blue-500 underline"
+                    >https://testnet.ten.xyz/</a
+                  >
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </template>

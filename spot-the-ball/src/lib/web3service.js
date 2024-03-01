@@ -63,7 +63,7 @@ export default class Web3Service {
       const web3listener = new Web3listener(this.signer)
       web3listener.startCheckingGuesses(receipt)
 
-      const message = `Your guess has been submitted successfully! Wait for the result in ${formatTimeAgo(bigNumberToNumber(receipt.events[0].args[4] || 0), false)}...`
+      const message = `Your guess has been submitted successfully! The winners will be announced in ${formatTimeAgo(bigNumberToNumber(receipt.events[0].args[4] || 0), false)}...`
       messageStore.addMessage(message)
 
       return message

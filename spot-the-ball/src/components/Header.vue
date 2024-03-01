@@ -8,6 +8,7 @@ const gameStore = useGameStore()
 const prizePool = ref('')
 const timeLeft = ref()
 const gameActive = ref(false)
+const isUserConnected = ref(gameStore.isUserConnected)
 
 const showPreviousMoves = (event: Event) => {
   gameStore.showPreviousMoves = (event.target as HTMLInputElement).checked
@@ -17,6 +18,7 @@ watchEffect(() => {
   prizePool.value = formatEther(gameStore.game?.[3] || 0)
   timeLeft.value = gameStore.timeLeft
   gameActive.value = gameStore.isGameActive
+  isUserConnected.value = gameStore.isUserConnected
 })
 </script>
 
@@ -31,7 +33,7 @@ watchEffect(() => {
         </div>
         <MetaMaskConnectButton />
       </div>
-      <div class="flex flex-col gap-4">
+      <div class="flex flex-col gap-4" v-if="isUserConnected">
         <div
           class="w-fit grid grid-cols-2 gap-4 border-2 border-black p-4 text-sm border-r-8 border-b-8"
         >
