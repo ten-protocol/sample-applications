@@ -21,6 +21,7 @@ import { useGameStore } from '../stores/gameStore'
 
 export default {
   name: 'MetaMaskConnectButton',
+
   setup() {
     const walletStore = useWalletStore()
     const messageStore = useMessageStore()
@@ -33,12 +34,15 @@ export default {
       if (provider) {
         const chainId = await provider.request({ method: 'eth_chainId' })
         if (chainId !== '0x1bb') {
+          gameStore.isUserConnected = false
           messageStore.addMessage(
             'Not connected to Ten ! Connect at <a href="https://testnet.ten.xyz/" target="_blank" rel="noopener noreferrer">https://testnet.ten.xyz/</a> '
           )
           buttonText.value = 'Wrong Network, Switch to Ten'
           return
         }
+
+        gameStore.isUserConnected = true
 
         // Request account access if needed
         const accounts = await provider.request({ method: 'eth_requestAccounts' })
@@ -77,12 +81,15 @@ export default {
 
     const chainId = await provider.request({ method: 'eth_chainId' })
     if (chainId !== '0x1bb') {
+      gameStore.isUserConnected = false
       messageStore.addMessage(
         'Not connected to Ten ! Connect at <a href="https://testnet.ten.xyz/" target="_blank" rel="noopener noreferrer">https://testnet.ten.xyz/</a> '
       )
       buttonText.value = 'Wrong Network, Switch to Ten'
       return
     }
+
+    gameStore.isUserConnected = true
 
     await provider
       .request({ method: 'eth_accounts' })

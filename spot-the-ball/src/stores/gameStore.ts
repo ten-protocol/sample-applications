@@ -13,6 +13,7 @@ export const useGameStore = defineStore('gameStore', {
     game: {},
     loading: false,
     modalMessage: '',
+    isUserConnected: false,
     modalTitle: '',
     modalVisible: false,
     showPreviousMoves: false,
