@@ -20,7 +20,7 @@
       label="Guess"
       :disabled="submitDisabled"
       v-model="guess"
-      placeholder="Enter your guess 1-1000"
+      placeholder="Enter your guess 1-100,000,000"
       :input-style="{ color: '#00FF00', borderColor: '#00FF00', backgroundColor: '#2E2E2E' }"
     >
     </el-input>
