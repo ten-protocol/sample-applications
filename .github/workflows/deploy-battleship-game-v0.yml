@@ -47,14 +47,14 @@ jobs:
         uses: "azure/aci-deploy@v1"
         with:
           resource-group: ${{ secrets.RESOURCE_GROUP }}
-          dns-name-label: battleship-game
+          dns-name-label: battleship-game-fe
           image: ${{ vars.DOCKER_BUILD_TAG_BATTLESHIP_FE }}
           name: battleship-game-fe
           location: "uksouth"
           restart-policy: "Never"
-          environment-variables: NEXT_PUBLIC_API_HOST=https://battleship-game-api.obscuroscan.io NEXT_PUBLIC_FE_VERSION=${{ GITHUB.RUN_NUMBER }}-${{ GITHUB.SHA }}
+          environment-variables: VITE_APP_API_HOST=${{ secrets.VITE_APP_API_HOST }}
           command-line: npm run start-prod
-          ports: ${{ secrets.BATTLESHIP_PORT }}
+          ports: 80
           cpu: 2
           memory: 2
 
@@ -67,7 +67,7 @@ jobs:
           name: battleship-game-api
           location: "uksouth"
           restart-policy: "Never"
-          command-line: ./battleship-game/backend --PORT ${{ secrets.BATTLESHIP_PORT }} --MONGO_URI ${{secrets.BATTLESHIP_MONGO_URI}}
+          environment-variables: BATTLESHIP_PORT=${{ secrets.BATTLESHIP_PORT }} BATTLESHIP_MONGO_URI=${{secrets.BATTLESHIP_MONGO_URI}}
           ports: ${{ secrets.BATTLESHIP_PORT }}
           cpu: 2
           memory: 2
