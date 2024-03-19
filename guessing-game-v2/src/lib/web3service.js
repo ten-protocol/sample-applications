@@ -4,7 +4,7 @@ import GuessingGameJson from '@/assets/contract/artifacts/contracts/GuessingGame
 import GuessingGameCompetitionJson from '@/assets/contract/artifacts/contracts/GuessingGameCompetition.sol/GuessingGameCompetition.json'
 import ContractAddress from '@/assets/contract/address.json'
 import Common from './common'
-import { trackEvent } from './utils'
+import { Scope, trackEvent } from './utils'
 
 const discordInfo = [
   'Check out the Discord FAQ to see how the answers can help you, wayfarer.',
@@ -28,113 +28,135 @@ export default class Web3Service {
   }
 
   async submitGuess(guessValue, scope) {
+    try {
+      if (scope === Scope.Competition) {
+        await this.submitCompetitionGuess(guessValue)
+      } else {
+        await this.submitGlobalGuess(guessValue)
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  async submitGlobalGuess(guessValue) {
     const guessFee = ethers.utils.parseEther(Common.GUESS_COST)
 
     const minimumBalance = ethers.utils.parseEther(Common.GUESS_COST)
-    const messageStore = useMessageStore()
 
     const hbolval = 'cemmocc'
-
+    const messageStore = useMessageStore()
     try {
-      if (scope === 'competition') {
-        messageStore.addMessage('Issuing Guess...', 'competition')
-        const maxGuess = await this.competitionContract.MAX_GUESS()
-        if (+guessValue > +(await maxGuess.toString())) {
-          messageStore.addMessage(
-            `Guess value is too high. You can only guess up to ${maxGuess}.`,
-            'competition'
-          )
-          return
+      messageStore.addMessage('Issuing Guess...')
+      const maxGuess = await this.contract.MAX_GUESS()
+      if (+guessValue > +(await maxGuess.toString())) {
+        messageStore.addMessage(`Guess value is too high. You can only guess up to ${maxGuess}.`)
+        return
+      }
+      if (guessValue == hbolval) {
+        for (let i = 0; i < discordInfo.length; i++) {
+          messageStore.addMessage(discordInfo[i])
         }
-        if (guessValue == hbolval) {
-          for (let i = 0; i < discordInfo.length; i++) {
-            messageStore.addMessage(discordInfo[i], 'competition')
-          }
-          return
-        }
-        // Check balance
-        const balance = await this.signer.getBalance()
-        if (balance.lt(minimumBalance)) {
-          messageStore.addMessage(
-            `Insufficient balance. You need at least ${Common.GUESS_COST} ETH to submit a guess.`,
-            'competition'
-          )
-          return
-        }
-        const submitTx = await this.competitionContract.guess(guessValue, { value: guessFee })
-        const receipt = await submitTx.wait()
-        messageStore.addMessage('Issued Guess tx: ' + receipt.transactionHash)
-        if (receipt.events[0].args.success) {
-          trackEvent('guess_success', { value: guessValue })
-          messageStore.addMessage(
-            `[GuessingGame Competition Contract] ${guessValue} was the right answer ! You won!`,
-            'competition'
-          )
-        } else {
-          const feedback = receipt.events[0].args.feedback
-          messageStore.addMessage(`[GuessingGame Competition Contract] ${feedback}`, 'competition')
-          messageStore.addMessage(
-            `[GuessingGame Competition Contract] ${guessValue} was not the right answer. Try again...`,
-            'competition'
-          )
-        }
+        return
+      }
+      // Check balance
+      const balance = await this.signer.getBalance()
+      if (balance.lt(minimumBalance)) {
+        messageStore.addMessage(
+          `Insufficient balance. You need at least ${Common.GUESS_COST} ETH to submit a guess.`
+        )
+        return
+      }
+      const submitTx = await this.contract.guess(guessValue, { value: guessFee })
+      const receipt = await submitTx.wait()
+      messageStore.addMessage('Issued Guess tx: ' + receipt.transactionHash)
+      if (receipt.events[0].args.success) {
+        trackEvent('guess_success', { value: guessValue })
+        messageStore.addMessage(
+          `[GuessingGame Contract] ${guessValue} was the right answer ! You won!`
+        )
       } else {
-        messageStore.addMessage('Issuing Guess...')
-        const maxGuess = await this.contract.MAX_GUESS()
-        if (+guessValue > +(await maxGuess.toString())) {
-          messageStore.addMessage(`Guess value is too high. You can only guess up to ${maxGuess}.`)
-          return
-        }
-        if (guessValue == hbolval) {
-          for (let i = 0; i < discordInfo.length; i++) {
-            messageStore.addMessage(discordInfo[i])
-          }
-          return
-        }
-        // Check balance
-        const balance = await this.signer.getBalance()
-        if (balance.lt(minimumBalance)) {
-          messageStore.addMessage(
-            `Insufficient balance. You need at least ${Common.GUESS_COST} ETH to submit a guess.`
-          )
-          return
-        }
-        const submitTx = await this.contract.guess(guessValue, { value: guessFee })
-        const receipt = await submitTx.wait()
-        messageStore.addMessage('Issued Guess tx: ' + receipt.transactionHash)
-        if (receipt.events[0].args.success) {
-          trackEvent('guess_success', { value: guessValue })
-          messageStore.addMessage(
-            `[GuessingGame Contract] ${guessValue} was the right answer ! You won!`
-          )
-        } else {
-          const feedback = receipt.events[0].args.feedback
-          messageStore.addMessage(`[GuessingGame Contract] ${feedback}`)
-          messageStore.addMessage(
-            `[GuessingGame Contract] ${guessValue} was not the right answer. Try again...`
-          )
-        }
+        const feedback = receipt.events[0].args.feedback
+        messageStore.addMessage(`[GuessingGame Contract] ${feedback}`)
+        messageStore.addMessage(
+          `[GuessingGame Contract] ${guessValue} was not the right answer. Try again...`
+        )
       }
     } catch (e) {
-      if (scope === 'competition') {
-        if (e.reason) {
-          messageStore.addMessage('Failed to issue Guess - ' + e.reason + ' ...', 'competition')
-          return
-        }
+      if (e.reason) {
+        messageStore.addMessage('Failed to issue Guess - ' + e.reason + ' ...')
+        return
+      }
+      messageStore.addMessage(
+        'Failed to issue Guess - unexpected error occurred, check the console logs...'
+      )
+    }
+  }
+
+  async submitCompetitionGuess(guessValue) {
+    const guessFee = ethers.utils.parseEther(Common.GUESS_COST)
+
+    const minimumBalance = ethers.utils.parseEther(Common.GUESS_COST)
+
+    const hbolval = 'cemmocc'
+    const messageStore = useMessageStore()
+    try {
+      messageStore.addMessage('Issuing Guess...', Scope.Competition)
+      const maxGuess = await this.competitionContract.MAX_GUESS()
+      if (+guessValue > +(await maxGuess.toString())) {
         messageStore.addMessage(
-          'Failed to issue Guess - unexpected error occurred, check the console logs...',
-          'competition'
+          `Guess value is too high. You can only guess up to ${maxGuess}.`,
+          Scope.Competition
+        )
+        return
+      }
+      if (guessValue == hbolval) {
+        for (let i = 0; i < discordInfo.length; i++) {
+          messageStore.addMessage(discordInfo[i], Scope.Competition)
+        }
+        return
+      }
+      // Check balance
+      const balance = await this.signer.getBalance()
+      if (balance.lt(minimumBalance)) {
+        messageStore.addMessage(
+          `Insufficient balance. You need at least ${Common.GUESS_COST} ETH to submit a guess.`,
+          Scope.Competition
+        )
+        return
+      }
+      const submitTx = await this.competitionContract.guess(guessValue, { value: guessFee })
+      const receipt = await submitTx.wait()
+      messageStore.addMessage('Issued Guess tx: ' + receipt.transactionHash)
+      if (receipt.events[0].args.success) {
+        trackEvent('guess_success', { value: guessValue })
+        messageStore.addMessage(
+          `[GuessingGame Competition Contract] ${guessValue} was the right answer ! You won!`,
+          Scope.Competition
         )
       } else {
-        if (e.reason) {
-          messageStore.addMessage('Failed to issue Guess - ' + e.reason + ' ...')
-          return
-        }
+        const feedback = receipt.events[0].args.feedback
         messageStore.addMessage(
-          'Failed to issue Guess - unexpected error occurred, check the console logs...'
+          `[GuessingGame Competition Contract] ${feedback}`,
+          Scope.Competition
+        )
+        messageStore.addMessage(
+          `[GuessingGame Competition Contract] ${guessValue} was not the right answer. Try again...`,
+          Scope.Competition
         )
       }
-      console.error(e)
+    } catch (error) {
+      if (error.reason) {
+        messageStore.addMessage(
+          'Failed to issue Guess - ' + error.reason + ' ...',
+          Scope.Competition
+        )
+        return
+      }
+      messageStore.addMessage(
+        'Failed to issue Guess - unexpected error occurred, check the console logs...',
+        Scope.Competition
+      )
     }
   }
 }

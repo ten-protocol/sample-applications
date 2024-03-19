@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { Scope } from '../lib/utils'
 
 export const useMessageStore = defineStore({
   id: 'messageStore',
@@ -10,7 +11,7 @@ export const useMessageStore = defineStore({
   }),
   actions: {
     addMessage(text, scope) {
-      if (scope === 'competition') {
+      if (scope === Scope.Competition) {
         return this.competitionMessages.push({
           id: Date.now(),
           text: text
@@ -22,13 +23,13 @@ export const useMessageStore = defineStore({
       })
     },
     addErrorMessage(text, scope) {
-      if (scope === 'competition') {
+      if (scope === Scope.Competition) {
         return (this.competitionErrorMessage = text)
       }
       this.errorMessage = text
     },
     clearErrorMessage(scope) {
-      if (scope === 'competition') {
+      if (scope === Scope.Competition) {
         return (this.competitionErrorMessage = '')
       }
       this.errorMessage = ''

@@ -3,14 +3,14 @@ import { useMessageStore } from '@/stores/messageStore'
 import GuessingGameJson from '@/assets/contract/artifacts/contracts/GuessingGame.sol/GuessingGame.json'
 import GuessingGameCompetitionJson from '@/assets/contract/artifacts/contracts/GuessingGameCompetition.sol/GuessingGameCompetition.json'
 import ContractAddress from '@/assets/contract/address.json'
-import { handleMetaMaskError } from './utils'
+import { Scope, handleMetaMaskError } from './utils'
 
 export default class Web3listener {
   constructor(signer, scope) {
     const messageStore = useMessageStore()
     this.lastGuessCount = ethers.BigNumber.from(0)
 
-    if (scope === 'competition') {
+    if (scope === Scope.Competition) {
       this.competitionContract = new ethers.Contract(
         ContractAddress.competition_address,
         GuessingGameCompetitionJson.abi,
@@ -57,7 +57,7 @@ export default class Web3listener {
           (await this.competitionContract.getLastSecretNumber())
         : ''
     }`,
-      'competition'
+      Scope.Competition
     )
   }
 
@@ -95,19 +95,19 @@ export default class Web3listener {
       try {
         const currentGuesses = await this.competitionContract.totalGuesses()
         if (currentGuesses) {
-          messageStore.clearErrorMessage('competition')
+          messageStore.clearErrorMessage(Scope.Competition)
         }
         if (!this.lastGuessCount.eq(currentGuesses)) {
           messageStore.addMessage(
             `[GuessingGame Competition Contract] Current number of guesses: ${currentGuesses}`,
-            'competition'
+            Scope.Competition
           )
           const balance = await this.competitionContract.getContractBalance()
           messageStore.addMessage(
             `[GuessingGame Competition Contract] Prize pool at: ${ethers.utils.formatEther(
               balance
             )} ETH`,
-            'competition'
+            Scope.Competition
           )
           this.lastGuessCount = currentGuesses
         }
@@ -115,7 +115,7 @@ export default class Web3listener {
         console.error('Error fetching number of guesses:', err)
         const errorMessage = handleMetaMaskError(err)
         if (errorMessage) {
-          return messageStore.addErrorMessage(errorMessage, 'competition')
+          return messageStore.addErrorMessage(errorMessage, Scope.Competition)
         }
       }
     }, 1000) // Run every 1 second
