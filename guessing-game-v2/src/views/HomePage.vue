@@ -1,14 +1,16 @@
 <template>
   <main class="center-content">
-    <router-link to="/join-competition" class="">
+    <router-link to="/competition" class="">
       <el-button class="btn btn-primary">
         Join Guessing Game Competition
         <el-icon><Promotion /></el-icon>
       </el-button>
     </router-link>
-    <meta-mask-connect-button class="metamask-button">Connect To Metamask</meta-mask-connect-button>
-    <GuessingInput />
-    <MessageLog />
+    <meta-mask-connect-button class="metamask-button" :scope="'home'"
+      >Connect To Metamask</meta-mask-connect-button
+    >
+    <GuessingInput :scope="'home'" />
+    <MessageLog :scope="'home'" />
   </main>
 </template>
 

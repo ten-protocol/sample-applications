@@ -1,8 +1,10 @@
 <template>
   <main class="center-content">
-    <meta-mask-connect-button class="metamask-button">Connect To Metamask</meta-mask-connect-button>
-    <GuessingInput />
-    <MessageLog />
+    <meta-mask-connect-button class="metamask-button" :scope="'competition'"
+      >Connect To Metamask</meta-mask-connect-button
+    >
+    <GuessingInput :scope="'competition'" />
+    <MessageLog :scope="'competition'" />
   </main>
 </template>
   
