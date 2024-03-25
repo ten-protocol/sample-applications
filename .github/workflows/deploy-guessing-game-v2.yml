@@ -6,6 +6,9 @@ on:
       address:
         description: "Contract Address"
         required: true
+      competition_address:
+        description: "Competition Contract Address"
+        required: true
 
 jobs:
   deploy:
@@ -25,7 +28,7 @@ jobs:
       - name: Write Address to JSON
         run: |
           echo '{"address": "${{ github.event.inputs.address }}"}' > ./guessing-game-v2/src/assets/contract/address.json
-          echo '{"competition_address": "${{ github.event.inputs.address }}"}' > ./guessing-game-v2/src/assets/contract/address.json
+          echo '{"competition_address": "${{ github.event.inputs.competition_address }}"}' > ./guessing-game-v2/src/assets/contract/address.json
 
       - name: Build application
         run: npm run build
