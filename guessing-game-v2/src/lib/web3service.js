@@ -95,9 +95,9 @@ export default class Web3Service {
   }
 
   async submitCompetitionGuess(guessValue) {
-    const guessFee = ethers.utils.parseEther(Common.GUESS_COST)
+    const guessFee = ethers.utils.parseEther(Common.COMPETITION_GUESS_COST)
 
-    const minimumBalance = ethers.utils.parseEther(Common.GUESS_COST)
+    const minimumBalance = ethers.utils.parseEther(Common.COMPETITION_GUESS_COST)
 
     const hbolval = 'cemmocc'
     const messageStore = useMessageStore()
