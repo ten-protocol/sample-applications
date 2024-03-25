@@ -63,11 +63,16 @@ contract GuessingGameCompetition {
   }
 
   /// @dev Sets the deploying address as the owner and initializes the game.
-  constructor() {
+  /// @param _admins An array of addresses to be added as admins.
+  constructor(address[] memory _admins) {
     owner = msg.sender;
     admins[owner] = true;
     resetCount = 0;
     _resetSecretNumber();
+
+    for (uint256 i = 0; i < _admins.length; i++) {
+      admins[_admins[i]] = true;
+    }
   }
 
   /// @notice Allows a user to make a guess at the secret number.
