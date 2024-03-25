@@ -30,3 +30,8 @@ export function handleMetaMaskError(error) {
 
   return errorMessage
 }
+
+export const Scope = {
+  Global: 'global',
+  Competition: 'competition'
+}
