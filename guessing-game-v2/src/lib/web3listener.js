@@ -3,6 +3,7 @@ import { useMessageStore } from '@/stores/messageStore'
 import GuessingGameJson from '@/assets/contract/artifacts/contracts/GuessingGame.sol/GuessingGame.json'
 import GuessingGameCompetitionJson from '@/assets/contract/artifacts/contracts/GuessingGameCompetition.sol/GuessingGameCompetition.json'
 import ContractAddress from '@/assets/contract/address.json'
+import CompetitionContractAddress from '@/assets/contract/competition_address.json'
 import { Scope, handleMetaMaskError } from './utils'
 
 export default class Web3listener {
@@ -12,13 +13,13 @@ export default class Web3listener {
 
     if (scope === Scope.Competition) {
       this.competitionContract = new ethers.Contract(
-        ContractAddress.competition_address,
+        CompetitionContractAddress.competition_address,
         GuessingGameCompetitionJson.abi,
         signer
       )
       messageStore.addMessage(
         '[GuessingGame Competition Contract] Contract Address: ' +
-          ContractAddress.competition_address,
+          CompetitionContractAddress.competition_address,
         scope
       )
       this.displayCompetitionContractInfo()

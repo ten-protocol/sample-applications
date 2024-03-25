@@ -3,6 +3,7 @@ import { useMessageStore } from '@/stores/messageStore'
 import GuessingGameJson from '@/assets/contract/artifacts/contracts/GuessingGame.sol/GuessingGame.json'
 import GuessingGameCompetitionJson from '@/assets/contract/artifacts/contracts/GuessingGameCompetition.sol/GuessingGameCompetition.json'
 import ContractAddress from '@/assets/contract/address.json'
+import CompetitionContractAddress from '@/assets/contract/competition_address.json'
 import Common from './common'
 import { Scope, trackEvent } from './utils'
 
@@ -20,7 +21,7 @@ export default class Web3Service {
   constructor(signer) {
     this.contract = new ethers.Contract(ContractAddress.address, GuessingGameJson.abi, signer)
     this.competitionContract = new ethers.Contract(
-      ContractAddress.competition_address,
+      CompetitionContractAddress.competition_address,
       GuessingGameCompetitionJson.abi,
       signer
     )
