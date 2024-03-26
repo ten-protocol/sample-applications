@@ -1,7 +1,7 @@
 name: Deploy Image Guessing Game
 
 on:
-  push:
+  workflow_dispatch:
 
 jobs:
   deploy:
