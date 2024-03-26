@@ -20,7 +20,7 @@
       label="Guess"
       :disabled="submitDisabled"
       v-model="guess"
-      placeholder="Enter your guess 1-1000"
+      placeholder="Enter your guess 1-100,000,000"
       :input-style="{ color: '#00FF00', borderColor: '#00FF00', backgroundColor: '#2E2E2E' }"
     >
     </el-input>
@@ -35,6 +35,14 @@ import { useMessageStore } from '@/stores/messageStore'
 
 export default {
   name: 'MainPage',
+
+  props: {
+    scope: {
+      type: String,
+      required: true
+    }
+  },
+
   data() {
     return {
       guess: '',
@@ -45,7 +53,9 @@ export default {
   computed: {
     errorMessage() {
       const messageStore = useMessageStore()
-      return messageStore.errorMessage
+      return this.scope === 'home'
+        ? messageStore.errorMessage
+        : messageStore.competitionErrorMessage
     }
   },
 
@@ -57,12 +67,12 @@ export default {
         const walletStore = useWalletStore()
 
         if (!walletStore.signer) {
-          messageStore.addMessage('Not connected with Metamask...')
+          messageStore.addMessage('Not connected with Metamask...', this.scope)
           this.submitDisabled = false
           return
         }
         const web3Service = new Web3Service(walletStore.signer)
-        await web3Service.submitGuess(this.guess)
+        await web3Service.submitGuess(this.guess, this.scope)
       } catch (err) {
         console.error('Error:', err.message)
       }
@@ -71,7 +81,7 @@ export default {
 
     clearErrorMessage() {
       const messageStore = useMessageStore()
-      messageStore.clearErrorMessage()
+      messageStore.clearErrorMessage(this.scope)
     }
   }
 }
