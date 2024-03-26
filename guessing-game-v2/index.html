@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <link rel="icon" href="/src/assets/icons/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- the meta tag below is for the redirect; the content value is the number of seconds before the redirect -->
+    <meta http-equiv="refresh" content="0; URL='https://guessing-game.ten.xyz'" />
     <title>Ten's Guessing Game</title>
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-EX2QB90X3C"></script>
@@ -20,7 +22,8 @@
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
     <script>
-      window.global = window
+      // redirect to the guessing game
+      window.location.href = 'https://guessing-game.ten.xyz'
     </script>
   </body>
 </html>
