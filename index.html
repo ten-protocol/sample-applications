@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -8,17 +8,25 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <link rel="icon" href="/sample-applications/spot-the-ball/favicon.ico" />
+    <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Spot the ball</title>
-    <script type="module" crossorigin src="/sample-applications/spot-the-ball/assets/index-ccc39b1f.js"></script>
-    <link rel="stylesheet" href="/sample-applications/spot-the-ball/assets/index-32b4d0c9.css">
+    <!-- the meta tag below is for the redirect; the content value is the number of seconds before the redirect -->
+    <meta http-equiv="refresh" content="0; URL='https://spot-the-ball.ten.xyz'" />
+    <title>Ten's Spot the ball</title>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-57PNPNX9N9"></script>
+    <script>
+      window.dataLayer = window.dataLayer || []
+      function gtag() {
+        dataLayer.push(arguments)
+      }
+      gtag('js', new Date())
+      gtag('config', 'G-57PNPNX9N9')
+    </script>
   </head>
   <body>
-    <div id="app"></div>
-    
     <script>
-      window.global = window
+      window.location.href = 'https://spot-the-ball.ten.xyz'
     </script>
   </body>
 </html>
