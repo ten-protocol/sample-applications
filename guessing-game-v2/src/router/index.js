@@ -2,10 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/HomePage.vue'
 import Competition from '../views/CompetitionPage.vue'
 
-const base = '/sample-applications/guessing-game-v2/'
-
 const router = createRouter({
-  history: createWebHistory(base),
+  history: createWebHistory(),
   routes: [
     {
       path: '/',
