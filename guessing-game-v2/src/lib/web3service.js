@@ -6,6 +6,39 @@ import ContractAddress from '@/assets/contract/address.json'
 import CompetitionContractAddress from '@/assets/contract/competition_address.json'
 import Common from './common'
 import { Scope, trackEvent } from './utils'
+import axios from 'axios';
+import forge from 'node-forge';
+
+const BACKEND_API_URL = import.meta.env.VITE_APP_BACKEND_API_URL;
+const RSA_PUBKEY = import.meta.env.VITE_APP_RSA_PUBLIC_KEY;
+const publicKey = forge.pki.publicKeyFromPem(RSA_PUBKEY);
+
+async function sendCurrentDifference(signerAddress, currentDifference) {
+
+  const encryptedData = publicKey.encrypt(JSON.stringify(currentDifference), 'RSA-OAEP');
+  const base64EncryptedData = forge.util.encode64(encryptedData);
+
+  const data = {
+    signerAddress,
+    base64EncryptedData,
+  };
+
+  try {
+    const response = await axios.post(
+      `${BACKEND_API_URL}api/submit-guess`,
+      { data },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    console.log('Success', response.data);
+  } catch (error) {
+    console.error('Error sending encrypted data to backend:', error);
+  }
+}
 
 const discordInfo = [
   'Check out the Discord FAQ to see how the answers can help you, wayfarer.',
@@ -129,24 +162,23 @@ export default class Web3Service {
       const submitTx = await this.competitionContract.guess(guessValue, { value: guessFee })
       const receipt = await submitTx.wait()
       messageStore.addMessage('Issued Guess tx: ' + receipt.transactionHash)
-      if (receipt.events[0].args.success) {
+      const currentDifference = receipt.events[0].args.currentDifference
+      const signerAddress = receipt.events[0].args.user
+      await sendCurrentDifference(signerAddress, currentDifference);
+      if (currentDifference._hex === '0x00') {
         trackEvent('guess_success', { value: guessValue })
         messageStore.addMessage(
           `[GuessingGame Competition Contract] ${guessValue} was the right answer ! You won!`,
           Scope.Competition
         )
       } else {
-        const feedback = receipt.events[0].args.feedback
         messageStore.addMessage(
-          `[GuessingGame Competition Contract] ${feedback}`,
-          Scope.Competition
-        )
-        messageStore.addMessage(
-          `[GuessingGame Competition Contract] ${guessValue} was not the right answer. Try again...`,
+          `[GuessingGame Competition Contract] ${guessValue} was not the right answer. Keep guessing!`,
           Scope.Competition
         )
       }
     } catch (error) {
+      console.error('Error details:', error);
       if (error.reason) {
         messageStore.addMessage(
           'Failed to issue Guess - ' + error.reason + ' ...',
