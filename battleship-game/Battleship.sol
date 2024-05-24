@@ -2,284 +2,170 @@
 pragma solidity ^0.8.18;
 
 contract Battleship {
-    uint256 public entryFee;
-    bool gameStarted = false;
-    uint256 constant gridSize = 50;
-    uint256 constant shipSize = 3;
-    uint256 constant totalShips = 3;
+    uint8 constant gridSize = 100;
+    uint8 constant totalShips = 249;
+    uint8 constant shipLength = 3;
+
+    struct Position {
+        uint8 x;
+        uint8 y;
+    }
+
     struct Ship {
-        uint256 startX;
-        uint256 startY;
-        bool horizontal;
-        bool sunk;
-        bool[shipSize] hitParts;
+        Position start;
+        bool[shipLength] hits;
     }
+
     Ship[totalShips] public ships;
-    int256[gridSize][gridSize] public board;
+    mapping(uint16 => uint8) private positionToShipIndex;
+    mapping(uint16 => bool) public hits;
+    uint256 private seed;
+    uint256 private nonce = 0;
+    uint256 public prizePool;
+    bool[totalShips] public graveyard;
+    uint8 public sunkShipsCount;
+    bool public gameOver;
 
-    uint256 public hitRewardPercentage = 1;
-    uint256 public sinkRewardPercentage = 5;
-
-    mapping(address => uint256) public playerHits;
-    mapping(address => uint256) public playerSinks;
-
-    address[] public players;
-
-    uint256 public rewardPool = 0;
-
-    struct Winner {
-        address playerAddress;
-        uint256 hits;
-        uint256 sinks;
+    /// @notice Initializes the contract by setting the initial seed and generating ship positions.
+    constructor() {
+        seed = uint256(keccak256(abi.encodePacked(block.difficulty)));
+        generatePositions();
     }
 
-    Winner[] public winners;
+    /// @notice Generates unique positions for ships on the grid.
+    function generatePositions() private {
+        uint8 index = 0;
+        while (index < totalShips) {
+            uint256 hash = uint256(keccak256(abi.encodePacked(seed, nonce)));
+            for (uint8 i = 0; i < 36 && index < totalShips; i++) {
+                uint8 x = uint8(hash & 0x7F) % gridSize;
+                uint8 y = uint8((hash >> 7) & 0x7F) % gridSize;
 
-    event ShipHit(uint256 x, uint256 y);
-    event ShipMiss(uint256 x, uint256 y);
-    event ShipSunk(uint256 shipIndex);
-    event GameWon(address winner);
-
-    constructor(uint256 _entryFee) {
-        entryFee = _entryFee;
-        for (uint256 i = 0; i < gridSize; i++) {
-            for (uint256 j = 0; j < gridSize; j++) {
-                board[i][j] = -1;
-            }
-        }
-        placeShips();
-    }
-
-    function joinGame() public payable {
-        require(msg.value == entryFee, "Incorrect entry fee");
-        require(!gameStarted, "Game already in progress");
-
-        players.push(msg.sender);
-        rewardPool += msg.value;
-    }
-
-    function placeShips() internal {
-        uint256 attempts;
-        uint256 maxAttempts = 100;
-        for (uint256 i = 0; i < totalShips; i++) {
-            bool placed = false;
-            attempts = 0;
-            while (!placed && attempts < maxAttempts) {
-                attempts++;
-                uint256 x = uint256(
-                    keccak256(
-                        abi.encodePacked(
-                            block.timestamp,
-                            block.difficulty,
-                            attempts
-                        )
-                    )
-                ) % (gridSize - shipSize + 1);
-                uint256 y = uint256(
-                    keccak256(
-                        abi.encodePacked(
-                            blockhash(block.number - 1),
-                            block.timestamp,
-                            attempts
-                        )
-                    )
-                ) % (gridSize);
-                bool horizontal = uint256(
-                    keccak256(
-                        abi.encodePacked(
-                            block.difficulty,
-                            block.timestamp,
-                            attempts
-                        )
-                    )
-                ) %
-                    2 ==
-                    0;
-
-                bool[shipSize] memory hitParts;
-                for (uint256 j = 0; j < shipSize; j++) {
-                    hitParts[j] = false;
+                if (isPositionUniqueAndFits(x, y)) {
+                    ships[index].start = Position(x, y);
+                    for (uint8 j = 0; j < shipLength; j++) {
+                        uint16 positionKey = packCoordinates(x + j, y);
+                        positionToShipIndex[positionKey] = index;
+                    }
+                    index++;
                 }
-
-                if (canPlaceShip(x, y, horizontal)) {
-                    ships[i] = Ship(x, y, horizontal, false, hitParts);
-                    markShipOnBoard(i, x, y, horizontal);
-                    placed = true;
-                }
+                hash >>= 14;
             }
-            require(placed, "Failed to place all ships");
+            nonce++;
         }
     }
 
-    function canPlaceShip(
-        uint256 x,
-        uint256 y,
-        bool horizontal
-    ) internal view returns (bool) {
-        for (uint256 i = 0; i < shipSize; i++) {
-            uint256 checkX = x + (horizontal ? i : 0);
-            uint256 checkY = y + (horizontal ? 0 : i);
-
-            if (
-                checkX >= gridSize ||
-                checkY >= gridSize ||
-                board[checkX][checkY] != -1
-            ) {
+    /// @notice Checks if the ship position is unique and fits within the grid.
+    /// @param x The x-coordinate of the ship's start position.
+    /// @param y The y-coordinate of the ship's start position.
+    /// @return bool indicating whether the position is unique and fits within the grid.
+    function isPositionUniqueAndFits(uint8 x, uint8 y) private view returns (bool) {
+        if (x + shipLength > gridSize) return false;
+        for (uint8 j = 0; j < shipLength; j++) {
+            uint16 positionKey = packCoordinates(x + j, y);
+            if (positionToShipIndex[positionKey] != 0) {
                 return false;
             }
         }
         return true;
     }
 
-    function markShipOnBoard(
-        uint256 shipIndex,
-        uint256 x,
-        uint256 y,
-        bool horizontal
-    ) internal {
-        for (uint256 i = 0; i < shipSize; i++) {
-            uint256 markX = x + (horizontal ? i : 0);
-            uint256 markY = y + (horizontal ? 0 : i);
-            board[markX][markY] = int256(shipIndex);
-        }
+    /// @notice Packs x and y coordinates into a single uint16 value.
+    /// @param x The x-coordinate.
+    /// @param y The y-coordinate.
+    /// @return uint16 representing the packed coordinates.
+    function packCoordinates(uint8 x, uint8 y) private pure returns (uint16) {
+        return uint16(x) << 8 | uint16(y);
     }
 
-    function takeShot(uint256 x, uint256 y) public {
-        require(gameStarted, "Game has not started");
-        require(x < gridSize && y < gridSize, "Coordinates out of bounds");
+    /// @notice Gets the position of a specific ship by its index.
+    /// @param shipIndex The index of the ship.
+    /// @return Position of the ship.
+    function getShipPosition(uint8 shipIndex) public view returns (Position memory) {
+        require(shipIndex < totalShips, "Ship index out of bounds");
+        return ships[shipIndex].start;
+    }
 
-        if (board[x][y] >= 0) {
-            uint256 shipIndex = uint256(board[x][y]);
+    /// @notice Gets positions of all ships.
+    /// @return Array of all ships.
+    function getAllShipPositions() public view returns (Ship[totalShips] memory) {
+        return ships;
+    }
+
+    /// @notice Gets the index of the ship at a specific grid position.
+    /// @param x The x-coordinate of the position.
+    /// @param y The y-coordinate of the position.
+    /// @return The index of the ship at the specified position.
+    function getShipAtPosition(uint8 x, uint8 y) public view returns (uint8) {
+        uint16 positionKey = packCoordinates(x, y);
+        uint8 shipIndex = positionToShipIndex[positionKey];
+        require(shipIndex != 0, "No ship at given position");
+        return shipIndex;
+    }
+
+    /// @notice Hits a position on the grid and checks if a ship is hit.
+    /// @param x The x-coordinate of the position to hit.
+    /// @param y The y-coordinate of the position to hit.
+    function hit(uint8 x, uint8 y) public payable {
+        require(!gameOver, "Game is over, no more hits accepted");
+        require(msg.value == 0.0443 ether, "Incorrect fee amount");
+        uint16 positionKey = packCoordinates(x, y);
+        require(!hits[positionKey], "Cell already hit");
+
+        prizePool += msg.value;
+        hits[positionKey] = true;
+
+        uint8 shipIndex = positionToShipIndex[positionKey];
+        if (shipIndex != 0) {
             Ship storage ship = ships[shipIndex];
-            uint256 hitPart = ship.horizontal
-                ? (x - ship.startX)
-                : (y - ship.startY);
+            uint8 hitIndex = x - ship.start.x;
+            ship.hits[hitIndex] = true;
 
-            require(!ship.hitParts[hitPart], "Part already hit");
-
-            ship.hitParts[hitPart] = true;
-            playerHits[msg.sender] += 1;
-
-            emit ShipHit(x, y);
-
-            if (isShipSunk(ship)) {
-                ship.sunk = true;
-                playerSinks[msg.sender] += 1;
-                emit ShipSunk(shipIndex);
+            bool allHit = true;
+            for (uint8 i = 0; i < shipLength; i++) {
+                if (!ship.hits[i]) {
+                    allHit = false;
+                    break;
+                }
             }
-        } else {
-            emit ShipMiss(x, y);
-        }
-
-        checkGameCompletion();
-    }
-
-    function updateWinner(
-        address playerAddress,
-        bool isHit,
-        bool isSink
-    ) internal {
-        for (uint256 i = 0; i < winners.length; i++) {
-            if (winners[i].playerAddress == playerAddress) {
-                if (isHit) winners[i].hits += 1;
-                if (isSink) winners[i].sinks += 1;
-                return;
+            if (allHit) {
+                graveyard[shipIndex] = true;
+                sunkShipsCount++;
+                if (sunkShipsCount == totalShips) {
+                    gameOver = true;
+                }
             }
-        }
-        winners.push(Winner(playerAddress, isHit ? 1 : 0, isSink ? 1 : 0));
-    }
-
-    function isShipSunk(Ship memory ship) internal pure returns (bool) {
-        for (uint256 i = 0; i < shipSize; i++) {
-            if (!ship.hitParts[i]) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    function checkGameCompletion() internal {
-        uint256 sunkShips = 0;
-        for (uint256 i = 0; i < totalShips; i++) {
-            if (ships[i].sunk) {
-                sunkShips += 1;
-            }
-        }
-        if (sunkShips == totalShips) {
-            gameStarted = false;
-            distributePrizes();
         }
     }
 
-    function distributePrizes() internal {
-        uint256 totalHits = 0;
-        uint256 totalSinks = 0;
-
-        for (uint256 i = 0; i < players.length; i++) {
-            totalHits += playerHits[players[i]];
-            totalSinks += playerSinks[players[i]];
-        }
-
-        uint256 totalDistributed = 0;
-
-        for (uint256 i = 0; i < players.length; i++) {
-            uint256 playerReward = 0;
-            if (totalHits > 0) {
-                playerReward +=
-                    (playerHits[players[i]] *
-                        rewardPool *
-                        hitRewardPercentage) /
-                    (100 * totalHits);
-            }
-            if (totalSinks > 0) {
-                playerReward +=
-                    (playerSinks[players[i]] *
-                        rewardPool *
-                        sinkRewardPercentage) /
-                    (100 * totalSinks);
-            }
-
-            playerReward = playerReward > address(this).balance
-                ? address(this).balance
-                : playerReward;
-            totalDistributed += playerReward;
-
-            if (playerReward > 0) {
-                payable(players[i]).transfer(playerReward);
-            }
-        }
-
-        if (totalDistributed > rewardPool) {
-            rewardPool = 0;
-        } else {
-            rewardPool -= totalDistributed;
-        }
-
-        resetGame();
+    /// @notice Checks if a specific position on the grid is hit.
+    /// @param x The x-coordinate of the position.
+    /// @param y The y-coordinate of the position.
+    /// @return bool indicating whether the position is hit.
+    function isHit(uint8 x, uint8 y) public view returns (bool) {
+        uint16 positionKey = packCoordinates(x, y);
+        return hits[positionKey];
     }
 
-    function resetGame() internal {
-        for (uint256 i = 0; i < players.length; i++) {
-            delete playerHits[players[i]];
-            delete playerSinks[players[i]];
-        }
+    /// @notice Checks if a specific ship is sunk.
+    /// @param shipIndex The index of the ship.
+    /// @return bool indicating whether the ship is sunk.
+    function isSunk(uint8 shipIndex) public view returns (bool) {
+        require(shipIndex < totalShips, "Ship index out of bounds");
+        return graveyard[shipIndex];
+    }
 
-        delete players;
+    /// @notice Gets the hit status of each part of a specific ship.
+    /// @param shipIndex The index of the ship.
+    /// @return Array indicating which parts of the ship are hit.
+    function getHitsOnShip(uint8 shipIndex) public view returns (bool[shipLength] memory) {
+        require(shipIndex < totalShips, "Ship index out of bounds");
+        return ships[shipIndex].hits;
+    }
 
-        for (uint256 i = 0; i < gridSize; i++) {
-            for (uint256 j = 0; j < gridSize; j++) {
-                board[i][j] = -1;
-            }
-        }
-
-        for (uint256 i = 0; i < totalShips; i++) {
-            ships[i].sunk = false;
-            for (uint256 j = 0; j < shipSize; j++) {
-                ships[i].hitParts[j] = false;
-            }
-        }
-        placeShips();
-
-        gameStarted = true;
+    /// @notice Gets the status of all ships in the graveyard.
+    /// @return Array indicating which ships are sunk.
+    function getGraveyard() public view returns (bool[totalShips] memory) {
+        return graveyard;
     }
 }
