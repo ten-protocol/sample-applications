@@ -16,11 +16,20 @@ import { useMessageStore } from '@/stores/messageStore'
 
 export default {
   name: 'MessageLog',
-  setup() {
+  props: {
+    scope: {
+      type: String,
+      required: true
+    }
+  },
+  setup(props) {
     const messageStore = useMessageStore()
 
     const reversedMessages = computed(() => {
-      return [...messageStore.messages].reverse()
+      if (props.scope === 'home') {
+        return messageStore.messages.slice().reverse()
+      }
+      return messageStore.competitionMessages.slice().reverse()
     })
 
     const getMessageClass = (index) => {

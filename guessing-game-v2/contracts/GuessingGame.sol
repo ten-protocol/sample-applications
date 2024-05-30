@@ -17,7 +17,7 @@ contract GuessingGame {
     mapping(address => uint256) private winningGuessCount;
 
     uint256 public constant GUESS_FEE = 443e14;
-    uint256 public constant MAX_GUESS = 1000;
+    uint256 public constant MAX_GUESS = 100000000;
     uint256 private lastResetTime;
 
     /// @notice Emitted when a guess is made.

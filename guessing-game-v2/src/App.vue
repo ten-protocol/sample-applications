@@ -1,15 +1,9 @@
 <script setup>
-import MainPage from "@/components/GuessingInput.vue";
-import MetaMaskConnectButton from "@/components/MetaMaskConnectButton.vue";
-import MessageLog from "@/components/MessageLog.vue";
+import { RouterView } from 'vue-router'
 </script>
 
 <template>
-  <main class="center-content">
-    <meta-mask-connect-button class="metamask-button">Connect To Metamask</meta-mask-connect-button>
-    <MainPage />
-    <MessageLog />
-  </main>
+  <RouterView />
 </template>
 
 <style scoped>

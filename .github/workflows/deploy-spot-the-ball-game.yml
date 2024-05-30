@@ -2,10 +2,6 @@ name: Deploy Image Guessing Game
 
 on:
   workflow_dispatch:
-    inputs:
-      address:
-        description: "Contract Address"
-        required: true
 
 jobs:
   deploy:
@@ -22,24 +18,11 @@ jobs:
         run: npm install
         working-directory: ./spot-the-ball
 
-      - name: create env file
-        working-directory: ./spot-the-ball
-        run: |
-          touch .env
-          echo VITE_APP_MORALIS_API_KEY='${{ secrets.VITE_APP_MORALIS_API_KEY }}' >> .env
-          echo VITE_APP_NFT_UP_KEY='${{ secrets.VITE_APP_NFT_UP_KEY }}' >> .env
-
-      - name: Write Address to JSON
-        run: |
-          echo '{"address": "${{ github.event.inputs.address }}"}' > ./spot-the-ball/src/assets/contract/address.json
-
-      - name: Build application
+      - name: Build
         run: npm run build
         working-directory: ./spot-the-ball
-        env:
-          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
 
-      - name: Deploy
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
