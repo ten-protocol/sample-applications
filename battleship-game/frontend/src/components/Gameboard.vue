@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { CELLS } from '../lib/constants'
+import { onMounted, ref, watchEffect } from 'vue'
 import { useBattleStore } from '../stores/battleStore'
 
 defineProps<{
@@ -8,11 +7,11 @@ defineProps<{
 }>()
 
 const battleStore = useBattleStore()
-const gridCells = ref<string[]>([])
-const cpuCells = ref<HTMLElement | null>(null)
 const gridWidth = ref(`w-[800px]`)
 const cellWidth = ref(`w-[8px]`)
-const BATTLESHIPS = battleStore.ships
+const cpuCells = ref<HTMLDivElement | null>(null)
+
+const ships = ref(battleStore.ships)
 
 async function handleShootCpuShip(cellName: string) {
   if (cpuCells.value) {
@@ -20,37 +19,38 @@ async function handleShootCpuShip(cellName: string) {
   }
 }
 
-async function renderGridCells() {
-  return new Promise<void>((resolve) => {
-    gridCells.value = CELLS
-
-    resolve()
-  })
+function getShipCells(ship) {
+  const [x, y] = ship.position
+  // Assuming ship orientation is horizontal; adjust logic for vertical ships if needed
+  return [
+    { x, y },
+    { x: x + 1, y },
+    { x: x + 2, y }
+  ]
 }
 
-onMounted(async () => {
-  await renderGridCells()
+// 0: [19, 0, x: 19, y: 0]
+// 1: [false, false, false]
+// hits: [false, false, false]
+// start: [19, 0, x: 19, y: 0]
 
-  if (cpuCells.value) {
-    battleStore.getHitCells()
-    battleStore.getHitShips()
-    battleStore.getSunkShips()
-  }
+watchEffect(() => {
+  ships.value = battleStore.ships
 })
 </script>
 
 <template>
   <div class="border border-blue-300 w-fit h-fit mx-auto">
-    <div
-      :class="`${gridWidth} flex flex-wrap bg-aqua`"
-      :ref="user === 'player' ? 'playerCells' : 'cpuCells'"
-    >
+    <div v-for="(ship, shipIndex) in ships" :key="shipIndex" class="ship">
       <div
-        v-for="(cellName, i) in gridCells"
-        :key="cellName"
-        :id="String(i + 1)"
-        :class="`${cellName} ${cellWidth} aspect-square flex items-center justify-center relative border border-white`"
-        @click="handleShootCpuShip(cellName)"
+        v-for="(cell, cellIndex) in getShipCells(ship)"
+        :key="cellIndex"
+        class="aspect-square flex items-center justify-center relative border border-white w-8 h-8 bg-blue-300"
+        :class="{
+          hit: battleStore.isCellHit(cell.x, cell.y),
+          sunk: battleStore.isShipSunk(shipIndex)
+        }"
+        @click="handleShootCpuShip(`${cell.x},${cell.y}`)"
       ></div>
     </div>
   </div>

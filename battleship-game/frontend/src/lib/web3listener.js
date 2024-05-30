@@ -8,7 +8,6 @@ export default class Web3listener {
   constructor(signer) {
     const messageStore = useMessageStore()
     this.contract = new ethers.Contract(ContractAddress.address, BattleshipGameJson.abi, signer)
-    this.lastGuessCount = ethers.BigNumber.from(0)
     messageStore.addMessage(
       `[BattleshipGame Contract] Contract Address: ${ContractAddress.address}`
     )
@@ -19,9 +18,13 @@ export default class Web3listener {
     setInterval(async () => {
       const messageStore = useMessageStore()
       try {
-        const balance = await this.contract.rewardPool()
+        const prizePool = await this.contract.prizePool()
+        const sunkShipsCount = await this.contract.sunkShipsCount()
         messageStore.addMessage(
-          `[BattleshipGame Contract] Prize pool at: ${ethers.utils.formatEther(balance)} ETH`
+          `[BattleshipGame Contract] Prize pool at: ${ethers.utils.formatEther(prizePool)} ETH`
+        )
+        messageStore.addMessage(
+          `[BattleshipGame Contract] Sunk ships count: ${sunkShipsCount.toString()}`
         )
       } catch (err) {
         console.error('Error fetching number of guesses:', err)

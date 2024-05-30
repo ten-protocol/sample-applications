@@ -10,27 +10,17 @@ export default class Web3Service {
   constructor(signer) {
     this.contract = new ethers.Contract(ContractAddress.address, BattleshipGameJson.abi, signer)
     this.signer = signer
-
-    // this.preload()
-  }
-
-  async preload() {
-    try {
-      console.log('Preloading ship properties...')
-      const battleStore = useBattleStore()
-      await battleStore.getShipProperties()
-    } catch (error) {
-      console.error('Failed to preload ship properties - ', error)
-    }
   }
 
   async submitGuess(x, y) {
     const messageStore = useMessageStore()
-
     messageStore.addMessage('Issuing Guess...')
+    const moveFee = ethers.utils.parseEther(Common.MOVE_FEE)
 
     try {
-      const submitTx = await this.contract.takeShot(x, y)
+      const submitTx = await this.contract.hit(x, y, {
+        value: moveFee
+      })
       console.log('🚀 ~ Web3Service ~ submitGuess ~ submitTx:', submitTx)
       const receipt = await submitTx.wait()
       console.log('🚀 ~ Web3Service ~ submitGuess ~ receipt:', receipt)
@@ -58,36 +48,41 @@ export default class Web3Service {
     }
   }
 
-  async joinGame() {
+  async getAllShipPositions() {
     const messageStore = useMessageStore()
-    const entryFee = ethers.utils.parseEther(Common.ENTRY_COST)
+    const battleStore = useBattleStore()
     try {
-      // Check balance
-      const balance = await this.signer.getBalance()
-      if (balance.lt(entryFee)) {
-        messageStore.addMessage(
-          `Insufficient balance. You need at least ${Common.ENTRY_COST} ETH to join the game.`
-        )
-        return
-      }
-      messageStore.addMessage(`Joining game...`)
-      const joinTx = await this.contract.joinGame({ value: entryFee })
-      const receipt = await joinTx.wait()
-      messageStore.addMessage('Joined game tx: ' + receipt.transactionHash)
-    } catch (error) {
-      console.error('Failed to join game - ', error)
-      messageStore.addMessage('Failed to join game - ' + error.reason + ' ...')
-    }
-  }
-
-  async getShipProperties(shipType) {
-    const messageStore = useMessageStore()
-    try {
-      const ship = await this.contract.ships(shipType)
-      return ship
+      const ships = await this.contract.getAllShipPositions()
+      console.log('🚀 ~ Web3Service ~ getAllShipPositions ~ ship:', ships)
+      battleStore.setShips(ships)
+      return ships
     } catch (error) {
       console.error('Failed to get ship properties - ', error)
       messageStore.addMessage('Failed to get ship properties - ' + error.reason + ' ...')
+    }
+  }
+
+  async isCellHit(x, y) {
+    const messageStore = useMessageStore()
+    try {
+      const isHit = await this.contract.isHit(x, y)
+      console.log('🚀 ~ Web3Service ~ isCellHit ~ isHit:', isHit)
+      return isHit
+    } catch (error) {
+      console.error('Failed to get cell hit status - ', error)
+      messageStore.addMessage('Failed to get cell hit status - ' + error.reason + ' ...')
+    }
+  }
+
+  async isShipSunk(shipIndex) {
+    const messageStore = useMessageStore()
+    try {
+      const isSunk = await this.contract.isShipSunk(shipIndex)
+      console.log('🚀 ~ Web3Service ~ isShipSunk ~ isSunk:', isSunk)
+      return isSunk
+    } catch (error) {
+      console.error('Failed to get ship sunk status - ', error)
+      messageStore.addMessage('Failed to get ship sunk status - ' + error.reason + ' ...')
     }
   }
 }

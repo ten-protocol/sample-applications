@@ -1,3 +1,3 @@
 export default class Common {
-  static ENTRY_COST = '0.0443'
+  static MOVE_FEE = '0.0443'
 }
