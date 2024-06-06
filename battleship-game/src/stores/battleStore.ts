@@ -48,11 +48,9 @@ export const useBattleStore = defineStore('battleStore', {
       if (!walletStore.signer) {
         return
       }
-      console.log('🚀 ~ shootCpuShip ~ cellName:', x, y)
       const web3service = new Web3Service(walletStore.signer)
       try {
         const res = await web3service.submitGuess(x, y)
-        console.log('🚀 ~ shootCpuShip ~ res:', res)
         return res
       } catch (error) {
         console.error(error)
