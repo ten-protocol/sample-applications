@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useBattleStore } from '../stores/battleStore'
 
 const battleStore = useBattleStore()
@@ -15,17 +15,25 @@ for (let y = 0; y < gridSize; y++) {
   }
 }
 
-const hitMap: boolean[][] = Array(gridSize)
-  .fill(false)
-  .map(() => new Array(gridSize).fill(false))
-
-watchEffect(() => {
-  const newHits = battleStore.hits
-
-  newHits.forEach((hit) => {
-    hitMap[hit.y][hit.x] = true
-  })
+const getCellClass = computed(() => {
+  return (cell: { x: number; y: number }) => {
+    if (hitMap.value[cell.y][cell.x]) {
+      return 'hit'
+    }
+  }
 })
+
+const hitMap = ref<boolean[][]>(Array.from({ length: gridSize }, () => Array(gridSize).fill(false)))
+
+watch(
+  () => battleStore.hitsMap,
+  (newHits) => {
+    newHits.forEach((hit) => {
+      hitMap.value[hit[1]][hit[0]] = true
+    })
+  },
+  { immediate: true, deep: true }
+)
 
 function handleShootCpuShip(x: number, y: number) {
   battleStore.shootCpuShip(x, y)
@@ -38,10 +46,7 @@ function handleShootCpuShip(x: number, y: number) {
       v-for="cell in gridCells"
       :key="`${cell.x}-${cell.y}`"
       class="cell"
-      :class="{
-        hit: hitMap[cell.y][cell.x]
-        // sunk: /* Logic to determine sunk based on ships and hitMap */
-      }"
+      :class="getCellClass(cell)"
       @click="handleShootCpuShip(cell.x, cell.y)"
     ></div>
   </div>

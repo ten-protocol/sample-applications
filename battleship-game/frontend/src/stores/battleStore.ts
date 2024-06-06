@@ -14,16 +14,11 @@ export const useBattleStore = defineStore('battleStore', {
     zoom: 1 as number,
     gridSize: 100,
     ships: [],
-    hits: [],
+    hitsMap: [],
     graveyard: new Array(totalShips).fill(false),
     sunkShipsCount: 0,
     gameOver: false
   }),
-
-  // getters: {
-  //   isCellHit: (state) => (x: number, y: number) => !!state.hits[`${x},${y}`],
-  //   isShipSunk: (state) => (shipIndex: number) => state.graveyard[shipIndex]
-  // },
 
   actions: {
     async getAllShipPositions() {
@@ -74,20 +69,12 @@ export const useBattleStore = defineStore('battleStore', {
       return res
     },
 
-    async getHits() {
-      const walletStore = useWalletStore()
-      if (!walletStore.signer) {
-        return
-      }
-      const web3service = new Web3Service(walletStore.signer)
-      try {
-        setInterval(async () => {
-          const hits = await web3service.getHits()
-          this.hits = hits
-        }, 5000)
-      } catch (error) {
-        throw error
-      }
+    setHits(hits: any) {
+      this.hitsMap = hits
+    },
+
+    setGraveyard(graveyard: any) {
+      this.graveyard = graveyard
     },
 
     async isShipSunk(shipIndex: number) {

@@ -47,16 +47,6 @@ export default class Web3Service {
     }
   }
 
-  async getHits() {
-    try {
-      const hits = await this.contract.getAllHits()
-      console.log('🚀 ~ Web3Service ~ getHits ~ hits:', hits)
-      return hits
-    } catch (error) {
-      throw error
-    }
-  }
-
   async getAllShipPositions() {
     const messageStore = useMessageStore()
     try {

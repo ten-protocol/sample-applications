@@ -3,6 +3,7 @@ import { useMessageStore } from '@/stores/messageStore'
 import BattleshipGameJson from '@/assets/contract/artifacts/contracts/BattleshipGame.sol/BattleshipGame.json'
 import ContractAddress from '@/assets/contract/address.json'
 import { handleMetaMaskError } from './utils'
+import { useBattleStore } from '../stores/battleStore'
 
 export default class Web3listener {
   constructor(signer) {
@@ -12,6 +13,7 @@ export default class Web3listener {
       `[BattleshipGame Contract] Contract Address: ${ContractAddress.address}`
     )
     this.startCheckingGuesses()
+    this.startGettingHits()
   }
 
   async startCheckingGuesses() {
@@ -28,6 +30,25 @@ export default class Web3listener {
         )
       } catch (err) {
         console.error('Error fetching number of guesses:', err)
+        const errorMessage = handleMetaMaskError(err)
+        if (errorMessage) {
+          return messageStore.addErrorMessage(errorMessage)
+        }
+      }
+    }, 5000) // Run every 5 seconds
+  }
+
+  async startGettingHits() {
+    setInterval(async () => {
+      const battleStore = useBattleStore()
+      const messageStore = useMessageStore()
+      try {
+        const hits = await this.contract.getAllHits()
+        const graveyard = await this.contract.getGraveyard()
+        battleStore.setHits(hits)
+        battleStore.setGraveyard(graveyard)
+      } catch (err) {
+        console.error('Error fetching hits:', err)
         const errorMessage = handleMetaMaskError(err)
         if (errorMessage) {
           return messageStore.addErrorMessage(errorMessage)

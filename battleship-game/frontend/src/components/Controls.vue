@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { useBattleStore } from '../stores/battleStore'
 import { useMessageStore } from '../stores/messageStore'
-import { computed } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 
 const battleStore = useBattleStore()
 const messageStore = useMessageStore()
+
+const sunkShipsCount = ref(battleStore.sunkShipsCount)
 
 const reversedMessages = computed(() => {
   return [...messageStore.messages].reverse()
@@ -15,6 +17,10 @@ const getMessageClass = (index) => {
   if (index === 1) return 'second-message'
   return 'other-messages'
 }
+
+watchEffect(() => {
+  sunkShipsCount.value = battleStore.sunkShipsCount
+})
 </script>
 
 <template>
@@ -22,12 +28,8 @@ const getMessageClass = (index) => {
     <div class="h-[150px] w-full bg-slate-950 rounded-lg p-4">
       <h2 class="text-white text-[12px] font-semibold mb-3">GRAVEYARD</h2>
       <div class="flex flex-wrap gap-3">
-        <p
-          v-for="ship in battleStore.cpuSunkShips"
-          :key="ship.shipType"
-          class="text-white text-[12px] font-thin"
-        >
-          {{ ship.name }} ({{ ship.length }})
+        <p class="text-white text-3xl font-bold">
+          {{ sunkShipsCount }}/249 <span class="text-sm">ships sunk</span>
         </p>
       </div>
     </div>

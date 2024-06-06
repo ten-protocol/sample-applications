@@ -51,7 +51,6 @@ export default {
 
           new Web3listener(walletStore.signer)
           new Web3Service(walletStore.signer)
-          await battleStore.getHits()
         } else {
           messageStore.addMessage('Please install MetaMask!')
         }
