@@ -26,13 +26,13 @@ contract BattleshipGame {
   uint8 public sunkShipsCount;
   bool public gameOver;
 
-  /// @notice Initializes the contract by setting the initial seed and generating ship positions.
+  Position[] public hitPositions;
+
   constructor() {
     seed = uint256(keccak256(abi.encodePacked(block.difficulty)));
     generatePositions();
   }
 
-  /// @notice Generates unique positions for ships on the grid.
   function generatePositions() private {
     uint8 index = 0;
     while (index < totalShips) {
@@ -55,10 +55,6 @@ contract BattleshipGame {
     }
   }
 
-  /// @notice Checks if the ship position is unique and fits within the grid.
-  /// @param x The x-coordinate of the ship's start position.
-  /// @param y The y-coordinate of the ship's start position.
-  /// @return bool indicating whether the position is unique and fits within the grid.
   function isPositionUniqueAndFits(uint8 x, uint8 y) private view returns (bool) {
     if (x + shipLength > gridSize) return false;
     for (uint8 j = 0; j < shipLength; j++) {
@@ -70,32 +66,19 @@ contract BattleshipGame {
     return true;
   }
 
-  /// @notice Packs x and y coordinates into a single uint16 value.
-  /// @param x The x-coordinate.
-  /// @param y The y-coordinate.
-  /// @return uint16 representing the packed coordinates.
   function packCoordinates(uint8 x, uint8 y) private pure returns (uint16) {
     return (uint16(x) << 8) | uint16(y);
   }
 
-  /// @notice Gets the position of a specific ship by its index.
-  /// @param shipIndex The index of the ship.
-  /// @return Position of the ship.
   function getShipPosition(uint8 shipIndex) public view returns (Position memory) {
     require(shipIndex < totalShips, 'Ship index out of bounds');
     return ships[shipIndex].start;
   }
 
-  /// @notice Gets positions of all ships.
-  /// @return Array of all ships.
   function getAllShipPositions() public view returns (Ship[totalShips] memory) {
     return ships;
   }
 
-  /// @notice Gets the index of the ship at a specific grid position.
-  /// @param x The x-coordinate of the position.
-  /// @param y The y-coordinate of the position.
-  /// @return The index of the ship at the specified position.
   function getShipAtPosition(uint8 x, uint8 y) public view returns (uint8) {
     uint16 positionKey = packCoordinates(x, y);
     uint8 shipIndex = positionToShipIndex[positionKey];
@@ -103,9 +86,6 @@ contract BattleshipGame {
     return shipIndex;
   }
 
-  /// @notice Hits a position on the grid and checks if a ship is hit.
-  /// @param x The x-coordinate of the position to hit.
-  /// @param y The y-coordinate of the position to hit.
   function hit(uint8 x, uint8 y) public payable {
     require(!gameOver, 'Game is over, no more hits accepted');
     require(msg.value == 0.0443 ether, 'Incorrect fee amount');
@@ -114,6 +94,7 @@ contract BattleshipGame {
 
     prizePool += msg.value;
     hits[positionKey] = true;
+    hitPositions.push(Position(x, y));
 
     uint8 shipIndex = positionToShipIndex[positionKey];
     if (shipIndex != 0) {
@@ -138,34 +119,28 @@ contract BattleshipGame {
     }
   }
 
-  /// @notice Checks if a specific position on the grid is hit.
-  /// @param x The x-coordinate of the position.
-  /// @param y The y-coordinate of the position.
-  /// @return bool indicating whether the position is hit.
   function isHit(uint8 x, uint8 y) public view returns (bool) {
     uint16 positionKey = packCoordinates(x, y);
     return hits[positionKey];
   }
 
-  /// @notice Checks if a specific ship is sunk.
-  /// @param shipIndex The index of the ship.
-  /// @return bool indicating whether the ship is sunk.
   function isSunk(uint8 shipIndex) public view returns (bool) {
     require(shipIndex < totalShips, 'Ship index out of bounds');
     return graveyard[shipIndex];
   }
 
-  /// @notice Gets the hit status of each part of a specific ship.
-  /// @param shipIndex The index of the ship.
-  /// @return Array indicating which parts of the ship are hit.
   function getHitsOnShip(uint8 shipIndex) public view returns (bool[shipLength] memory) {
     require(shipIndex < totalShips, 'Ship index out of bounds');
     return ships[shipIndex].hits;
   }
 
-  /// @notice Gets the status of all ships in the graveyard.
-  /// @return Array indicating which ships are sunk.
   function getGraveyard() public view returns (bool[totalShips] memory) {
     return graveyard;
+  }
+
+  /// @notice Gets all hit positions on the grid.
+  /// @return An array of Position structs representing the hit positions.
+  function getAllHits() public view returns (Position[] memory) {
+    return hitPositions;
   }
 }

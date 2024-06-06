@@ -65,7 +65,7 @@ function getMousePosition(event) {
             transform: `scale(${scale}) translate(${position.x}px, ${position.y}px)`
           }"
         >
-          <Gameboard user="cpu" />
+          <Gameboard />
         </div>
       </div>
 

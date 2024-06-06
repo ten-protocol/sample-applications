@@ -1,57 +1,71 @@
 <script setup lang="ts">
-import { onMounted, ref, watchEffect } from 'vue'
+import { ref, watchEffect } from 'vue'
 import { useBattleStore } from '../stores/battleStore'
 
-defineProps<{
-  user: 'player' | 'cpu'
-}>()
-
 const battleStore = useBattleStore()
-const gridWidth = ref(`w-[800px]`)
-const cellWidth = ref(`w-[8px]`)
-const cpuCells = ref<HTMLDivElement | null>(null)
 
-const ships = ref(battleStore.ships)
+const ships = ref(battleStore.ships) // Might be needed for other functionalities
+const gridSize = 100
 
-async function handleShootCpuShip(cellName: string) {
-  if (cpuCells.value) {
-    await battleStore.shootCpuShip(cellName)
+// Pre-compute grid cells (assuming grid size doesn't change)
+const gridCells = [] as { x: number; y: number }[]
+for (let y = 0; y < gridSize; y++) {
+  for (let x = 0; x < gridSize; x++) {
+    gridCells.push({ x, y })
   }
 }
 
-function getShipCells(ship) {
-  const [x, y] = ship.position
-  // Assuming ship orientation is horizontal; adjust logic for vertical ships if needed
-  return [
-    { x, y },
-    { x: x + 1, y },
-    { x: x + 2, y }
-  ]
-}
-
-// 0: [19, 0, x: 19, y: 0]
-// 1: [false, false, false]
-// hits: [false, false, false]
-// start: [19, 0, x: 19, y: 0]
+const hitMap: boolean[][] = Array(gridSize)
+  .fill(false)
+  .map(() => new Array(gridSize).fill(false))
 
 watchEffect(() => {
-  ships.value = battleStore.ships
+  const newHits = battleStore.hits
+
+  newHits.forEach((hit) => {
+    hitMap[hit.y][hit.x] = true
+  })
 })
+
+function handleShootCpuShip(x: number, y: number) {
+  battleStore.shootCpuShip(x, y)
+}
 </script>
 
 <template>
-  <div class="border border-blue-300 w-fit h-fit mx-auto">
-    <div v-for="(ship, shipIndex) in ships" :key="shipIndex" class="ship">
-      <div
-        v-for="(cell, cellIndex) in getShipCells(ship)"
-        :key="cellIndex"
-        class="aspect-square flex items-center justify-center relative border border-white w-8 h-8 bg-blue-300"
-        :class="{
-          hit: battleStore.isCellHit(cell.x, cell.y),
-          sunk: battleStore.isShipSunk(shipIndex)
-        }"
-        @click="handleShootCpuShip(`${cell.x},${cell.y}`)"
-      ></div>
-    </div>
+  <div class="grid">
+    <div
+      v-for="cell in gridCells"
+      :key="`${cell.x}-${cell.y}`"
+      class="cell"
+      :class="{
+        hit: hitMap[cell.y][cell.x]
+        // sunk: /* Logic to determine sunk based on ships and hitMap */
+      }"
+      @click="handleShootCpuShip(cell.x, cell.y)"
+    ></div>
   </div>
 </template>
+
+<style scoped>
+.grid {
+  display: grid;
+  grid-template-columns: repeat(100, 1fr);
+  gap: 1px;
+}
+.cell {
+  width: 10px;
+  height: 10px;
+  background-color: lightblue;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid white;
+}
+.cell.hit {
+  background-color: red;
+}
+.cell.sunk {
+  background-color: darkred;
+}
+</style>

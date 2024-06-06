@@ -19,7 +19,6 @@ async function joinGame() {
   const web3service = new Web3Service(walletStore.signer)
   try {
     const res = await web3service.joinGame()
-    console.log('🚀 ~ joinGame ~ res:', res)
   } catch (error) {
     console.error(error)
   }

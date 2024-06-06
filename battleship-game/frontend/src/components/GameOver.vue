@@ -1,34 +1,13 @@
 <script setup>
 import { useBattleStore } from '../stores/battleStore'
-import { BATTLESHIPS } from '../lib/constants'
 import { watch, ref } from 'vue'
 
 const battleStore = useBattleStore()
-const loading = ref(false)
-
-watch(
-  battleStore,
-  (newBattleStore, oldBattleStore) => {
-    if (newBattleStore.cpuSunkShips.length === 5) {
-      loading.value = true
-
-      setTimeout(async () => {
-        try {
-          await battleStore.resetGame()
-          loading.value = false
-        } catch (error) {
-          console.log(error)
-        }
-      }, 3000)
-    }
-  },
-  { deep: true }
-)
 </script>
 
 <template>
   <div
-    v-if="battleStore.cpuSunkShips.length === BATTLESHIPS.length"
+    v-if="battleStore.gameOver"
     class="w-full h-full bg-black absolute top-0 left-0 text-[80px] text-white flex flex-col items-center gap-12 justify-center text-center"
   >
     <p>GAME OVER</p>

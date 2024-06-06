@@ -5,18 +5,25 @@ import battleship from '../services/battleship'
 import { useWalletStore } from '../stores/walletStore'
 import Web3Service from '../lib/web3service.js'
 
+const shipLength = 3
+const totalShips = 249
+
 export const useBattleStore = defineStore('battleStore', {
   state: () => ({
     playerId: PLAYER_ID as string,
-    angle: 0 as number,
-    cpuShipPositions: [] as ShipPosition[],
-    cpuHitShips: [] as string[],
-    cpuSunkShips: [] as Ship[],
     zoom: 1 as number,
-    ships: [] as Ship[]
+    gridSize: 100,
+    ships: [],
+    hits: [],
+    graveyard: new Array(totalShips).fill(false),
+    sunkShipsCount: 0,
+    gameOver: false
   }),
 
-  getters: {},
+  // getters: {
+  //   isCellHit: (state) => (x: number, y: number) => !!state.hits[`${x},${y}`],
+  //   isShipSunk: (state) => (shipIndex: number) => state.graveyard[shipIndex]
+  // },
 
   actions: {
     async getAllShipPositions() {
@@ -24,21 +31,32 @@ export const useBattleStore = defineStore('battleStore', {
       const web3service = new Web3Service(walletStore.signer)
       try {
         const res = await web3service.getAllShipPositions()
-        this.cpuShipPositions = res
+        this.ships = res
       } catch (error) {
         console.error(error)
       }
     },
 
-    async shootCpuShip(cellName: string) {
+    async getGraveyard() {
+      const walletStore = useWalletStore()
+      const web3service = new Web3Service(walletStore.signer)
+      try {
+        const res = await web3service.getGraveyard()
+        this.ships = res
+      } catch (error) {
+        console.error(error)
+      }
+    },
+
+    async shootCpuShip(x: number, y: number) {
       const walletStore = useWalletStore()
       if (!walletStore.signer) {
         return
       }
-      console.log('🚀 ~ shootCpuShip ~ cellName:', cellName)
+      console.log('🚀 ~ shootCpuShip ~ cellName:', x, y)
       const web3service = new Web3Service(walletStore.signer)
       try {
-        const res = await web3service.submitGuess(cellName[0], cellName[1])
+        const res = await web3service.submitGuess(x, y)
         console.log('🚀 ~ shootCpuShip ~ res:', res)
         return res
       } catch (error) {
@@ -46,7 +64,7 @@ export const useBattleStore = defineStore('battleStore', {
       }
     },
 
-    async isCellHit(x: string, y: string) {
+    async isCellHit(x: number, y: number) {
       const walletStore = useWalletStore()
       if (!walletStore.signer) {
         return
@@ -54,6 +72,22 @@ export const useBattleStore = defineStore('battleStore', {
       const web3service = new Web3Service(walletStore.signer)
       const res = await web3service.isCellHit(x, y)
       return res
+    },
+
+    async getHits() {
+      const walletStore = useWalletStore()
+      if (!walletStore.signer) {
+        return
+      }
+      const web3service = new Web3Service(walletStore.signer)
+      try {
+        setInterval(async () => {
+          const hits = await web3service.getHits()
+          this.hits = hits
+        }, 5000)
+      } catch (error) {
+        throw error
+      }
     },
 
     async isShipSunk(shipIndex: number) {

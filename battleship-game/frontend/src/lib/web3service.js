@@ -44,17 +44,34 @@ export default class Web3Service {
       messageStore.addMessage(
         'Failed to issue Guess - unexpected error occurred, check the console logs...'
       )
-      console.log(e)
+    }
+  }
+
+  async getHits() {
+    try {
+      const hits = await this.contract.getAllHits()
+      console.log('🚀 ~ Web3Service ~ getHits ~ hits:', hits)
+      return hits
+    } catch (error) {
+      throw error
     }
   }
 
   async getAllShipPositions() {
     const messageStore = useMessageStore()
-    const battleStore = useBattleStore()
     try {
       const ships = await this.contract.getAllShipPositions()
-      console.log('🚀 ~ Web3Service ~ getAllShipPositions ~ ship:', ships)
-      battleStore.setShips(ships)
+      return ships
+    } catch (error) {
+      console.error('Failed to get ship properties - ', error)
+      messageStore.addMessage('Failed to get ship properties - ' + error.reason + ' ...')
+    }
+  }
+
+  async getGraveyard() {
+    const messageStore = useMessageStore()
+    try {
+      const ships = await this.contract.getGraveyard()
       return ships
     } catch (error) {
       console.error('Failed to get ship properties - ', error)
@@ -66,7 +83,6 @@ export default class Web3Service {
     const messageStore = useMessageStore()
     try {
       const isHit = await this.contract.isHit(x, y)
-      console.log('🚀 ~ Web3Service ~ isCellHit ~ isHit:', isHit)
       return isHit
     } catch (error) {
       console.error('Failed to get cell hit status - ', error)
@@ -77,9 +93,24 @@ export default class Web3Service {
   async isShipSunk(shipIndex) {
     const messageStore = useMessageStore()
     try {
-      const isSunk = await this.contract.isShipSunk(shipIndex)
-      console.log('🚀 ~ Web3Service ~ isShipSunk ~ isSunk:', isSunk)
+      const isSunk = await this.contract.isSunk(shipIndex)
       return isSunk
+    } catch (error) {
+      console.error('Failed to get ship sunk status - ', error)
+      messageStore.addMessage('Failed to get ship sunk status - ' + error.reason + ' ...')
+    }
+  }
+
+  async isGameOver() {
+    const messageStore = useMessageStore()
+    const battleStore = useBattleStore()
+    try {
+      const isGameOver = await this.contract.gameOver()
+      if (isGameOver) {
+        messageStore.addMessage('The game is over!')
+        battleStore.gameOver = true
+      }
+      return isGameOver
     } catch (error) {
       console.error('Failed to get ship sunk status - ', error)
       messageStore.addMessage('Failed to get ship sunk status - ' + error.reason + ' ...')
