@@ -1,28 +1,25 @@
 <template>
   <el-button @click="connectMetamask" size="large">
     <img src="@/assets/icons/icon_metamask.png" alt="Connect with wallet" class="metamask-icon" />
-    Connect Wallet
+    {{ buttonText }}
   </el-button>
 </template>
 
 <script>
+import { ref } from 'vue'
 import detectEthereumProvider from '@metamask/detect-provider'
 import { useWalletStore } from '@/stores/walletStore'
 import { useMessageStore } from '@/stores/messageStore'
-import { ref } from 'vue'
 import Web3listener from '@/lib/web3listener'
 import { trackEvent } from '../lib/utils'
+import Web3Service from '../lib/web3service'
+import { useBattleStore } from '../stores/battleStore'
 
 export default {
   name: 'MetaMaskConnectButton',
-  props: {
-    scope: {
-      type: String,
-      required: true
-    }
-  },
-  setup(props) {
+  setup() {
     const walletStore = useWalletStore()
+    const battleStore = useBattleStore()
     const messageStore = useMessageStore()
     const buttonText = ref('Connect with MetaMask')
 
@@ -33,11 +30,9 @@ export default {
         if (provider) {
           const chainId = await provider.request({ method: 'eth_chainId' })
           if (chainId !== '0x1bb') {
-            messageStore.addMessage(
-              'Not connected to Ten ! Connect at <a href="https://testnet.ten.xyz/" target="_blank" rel="noopener noreferrer">https://testnet.ten.xyz/</a> ',
-              props.scope
+            return messageStore.addMessage(
+              'Not connected to Ten! Connect at <a href="https://testnet.ten.xyz/" target="_blank" rel="noopener noreferrer">https://testnet.ten.xyz/</a> '
             )
-            return
           }
 
           // Request account access if needed
@@ -51,12 +46,13 @@ export default {
             value: accounts[0]
           })
 
-          messageStore.addMessage('Connected to wallet ! Account: ' + accounts[0], props.scope)
+          messageStore.addMessage('Connected to wallet! Account: ' + accounts[0])
           buttonText.value = 'Connected!'
 
-          new Web3listener(walletStore.signer, this.scope)
+          new Web3listener(walletStore.signer)
+          new Web3Service(walletStore.signer)
         } else {
-          messageStore.addMessage('Please install MetaMask!', props.scope)
+          messageStore.addMessage('Please install MetaMask!')
         }
       } catch (err) {
         console.error('Error:', err.message)
