@@ -54,6 +54,6 @@ export default class Web3listener {
           return messageStore.addErrorMessage(errorMessage)
         }
       }
-    }, 5000) // Run every 5 seconds
+    }, 3000) // Run every 3 seconds
   }
 }
