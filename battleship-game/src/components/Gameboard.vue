@@ -66,9 +66,14 @@ function handleShootCpuShip(x: number, y: number) {
   align-items: center;
   justify-content: center;
   border: 1px solid white;
+  cursor: pointer;
+}
+.cell:hover {
+  background-color: lightcoral;
 }
 .cell.hit {
   background-color: red;
+  cursor: not-allowed;
 }
 .cell.sunk {
   background-color: darkred;
