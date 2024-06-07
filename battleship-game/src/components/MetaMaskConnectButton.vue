@@ -13,13 +13,11 @@ import { useMessageStore } from '@/stores/messageStore'
 import Web3listener from '@/lib/web3listener'
 import { trackEvent } from '../lib/utils'
 import Web3Service from '../lib/web3service'
-import { useBattleStore } from '../stores/battleStore'
 
 export default {
   name: 'MetaMaskConnectButton',
   setup() {
     const walletStore = useWalletStore()
-    const battleStore = useBattleStore()
     const messageStore = useMessageStore()
     const buttonText = ref('Connect with MetaMask')
 
@@ -72,9 +70,9 @@ export default {
 
 <style scoped>
 .metamask-icon {
-  width: 24px; /* Set desired width */
-  height: 24px; /* Set desired height */
-  object-fit: cover; /* Ensure image content is not distorted */
-  margin-right: 8px; /* Optional space between the icon and the text */
+  width: 24px;
+  height: 24px;
+  object-fit: cover;
+  margin-right: 8px;
 }
 </style>

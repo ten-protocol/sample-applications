@@ -2,9 +2,13 @@
 import { useBattleStore } from '../stores/battleStore'
 import { useMessageStore } from '../stores/messageStore'
 import { computed, ref, watchEffect } from 'vue'
+import { useWalletStore } from '../stores/walletStore'
 
 const battleStore = useBattleStore()
 const messageStore = useMessageStore()
+const walletStore = useWalletStore()
+
+const isConnected = ref(walletStore.isConnected)
 
 const sunkShipsCount = ref(battleStore.sunkShipsCount)
 
@@ -20,6 +24,7 @@ const getMessageClass = (index) => {
 
 watchEffect(() => {
   sunkShipsCount.value = battleStore.sunkShipsCount
+  isConnected.value = walletStore.isConnected
 })
 </script>
 
@@ -28,9 +33,10 @@ watchEffect(() => {
     <div class="h-[150px] w-full bg-slate-950 rounded-lg p-4">
       <h2 class="text-white text-[12px] font-semibold mb-3">GRAVEYARD</h2>
       <div class="flex flex-wrap gap-3">
-        <p class="text-white text-3xl font-bold">
-          {{ sunkShipsCount }}/249 <span class="text-sm">ships sunk</span>
+        <p class="text-white text-3xl font-bold" v-if="isConnected">
+          {{ sunkShipsCount > 0 ? sunkShipsCount + '/249 ships sunk' : 'No ships sunk yet' }}
         </p>
+        <p class="text-white text-3xl font-bold" v-else>Connect your wallet to start playing</p>
       </div>
     </div>
     <div
