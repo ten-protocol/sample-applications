@@ -34,9 +34,10 @@ watchEffect(() => {
       <h2 class="text-white text-[12px] font-semibold mb-3">GRAVEYARD</h2>
       <div class="flex flex-wrap gap-3">
         <p class="text-white text-3xl font-bold" v-if="isConnected">
-          {{ sunkShipsCount > 0 ? sunkShipsCount + '/249 ships sunk' : 'No ships sunk yet' }}
+          {{ sunkShipsCount > 0 ? sunkShipsCount + '/249' : '' }}
+          <span class="text-sm">{{ sunkShipsCount > 0 ? 'ships sunk' : 'No ships sunk yet' }}</span>
         </p>
-        <p class="text-white text-3xl font-bold" v-else>Connect your wallet to start playing</p>
+        <p class="text-white text-sm font-bold" v-else>Connect your wallet to start playing</p>
       </div>
     </div>
     <div

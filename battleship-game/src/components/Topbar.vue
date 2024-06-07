@@ -46,9 +46,9 @@ async function joinGame() {
           -
         </button>
       </div>
-      <button class="bg-slate-700 text-white rounded-lg py-1 px-4 text-[14px]" @click="joinGame">
+      <!-- <button class="bg-slate-700 text-white rounded-lg py-1 px-4 text-[14px]" @click="joinGame">
         Join Game
-      </button>
+      </button> -->
     </div>
   </div>
 </template>
