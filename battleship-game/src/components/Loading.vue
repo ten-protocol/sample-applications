@@ -58,7 +58,7 @@ onBeforeUnmount(() => {
     </div>
     <div class="max-w-[695px] w-full flex flex-col items-center">
       <p class="text-yellow text-center text-[23.354px] font-normal tracking-[4.437px] mb-[26px]">
-        THE CLASSIC NAVAL COMBAT GAME
+        TEN BATTLESHIP GAME
       </p>
       <div>
         <img src="../assets/battleship.svg" alt="battleship" />
