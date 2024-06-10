@@ -13,12 +13,14 @@ import { useMessageStore } from '@/stores/messageStore'
 import Web3listener from '@/lib/web3listener'
 import { trackEvent } from '../lib/utils'
 import Web3Service from '../lib/web3service'
+import { useBattleStore } from '../stores/battleStore'
 
 export default {
   name: 'MetaMaskConnectButton',
   setup() {
     const walletStore = useWalletStore()
     const messageStore = useMessageStore()
+    const battleStore = useBattleStore()
     const buttonText = ref('Connect with MetaMask')
 
     async function connectMetamask() {
@@ -49,6 +51,7 @@ export default {
 
           new Web3listener(walletStore.signer)
           new Web3Service(walletStore.signer)
+          await battleStore.getAllShipPositions()
         } else {
           messageStore.addMessage('Please install MetaMask!')
         }

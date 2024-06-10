@@ -1,11 +1,8 @@
 import { defineStore } from 'pinia'
-import { Ship, ShipPosition } from '../types'
 import { PLAYER_ID } from '../lib/constants'
-import battleship from '../services/battleship'
 import { useWalletStore } from '../stores/walletStore'
 import Web3Service from '../lib/web3service.js'
 
-const shipLength = 3
 const totalShips = 249
 
 export const useBattleStore = defineStore('battleStore', {
@@ -29,6 +26,7 @@ export const useBattleStore = defineStore('battleStore', {
         this.ships = res
       } catch (error) {
         console.error(error)
+        throw new Error('Failed to get all ship positions')
       }
     },
 
@@ -40,6 +38,7 @@ export const useBattleStore = defineStore('battleStore', {
         this.ships = res
       } catch (error) {
         console.error(error)
+        throw new Error('Failed to get graveyard')
       }
     },
 
@@ -54,17 +53,8 @@ export const useBattleStore = defineStore('battleStore', {
         return res
       } catch (error) {
         console.error(error)
+        throw new Error('Failed to make a guess')
       }
-    },
-
-    async isCellHit(x: number, y: number) {
-      const walletStore = useWalletStore()
-      if (!walletStore.signer) {
-        return
-      }
-      const web3service = new Web3Service(walletStore.signer)
-      const res = await web3service.isCellHit(x, y)
-      return res
     },
 
     setHits(hits: any) {
@@ -75,14 +65,8 @@ export const useBattleStore = defineStore('battleStore', {
       this.graveyard = graveyard
     },
 
-    async isShipSunk(shipIndex: number) {
-      const walletStore = useWalletStore()
-      if (!walletStore.signer) {
-        return
-      }
-      const web3service = new Web3Service(walletStore.signer)
-      const res = await web3service.isShipSunk(shipIndex)
-      return res
+    setSunkShipsCount(count: number) {
+      this.sunkShipsCount = count
     },
 
     zoomBattleGrid(action: string) {
@@ -93,18 +77,6 @@ export const useBattleStore = defineStore('battleStore', {
         this.zoom--
         console.log(this.zoom)
       }
-    },
-
-    async resetGame() {
-      await battleship.resetGame()
-
-      this.cpuShipPositions = []
-      this.cpuHitShips = []
-      this.cpuSunkShips = []
-      this.messages = []
-      this.zoom = 1
-
-      window.location.reload()
     }
   }
 })

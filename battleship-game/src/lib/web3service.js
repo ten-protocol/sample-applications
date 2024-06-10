@@ -58,14 +58,25 @@ export default class Web3Service {
     }
   }
 
+  async getShipAtPosition(x, y) {
+    const messageStore = useMessageStore()
+    try {
+      const ship = await this.contract.getShipAtPosition(x, y)
+      return ship
+    } catch (error) {
+      console.error('Failed to get ship at position - ', error)
+      messageStore.addMessage('Failed to get ship at position - ' + error.reason + ' ...')
+    }
+  }
+
   async getGraveyard() {
     const messageStore = useMessageStore()
     try {
       const ships = await this.contract.getGraveyard()
       return ships
     } catch (error) {
-      console.error('Failed to get ship properties - ', error)
-      messageStore.addMessage('Failed to get ship properties - ' + error.reason + ' ...')
+      console.error('Failed to get graveyard - ', error)
+      messageStore.addMessage('Failed to get graveyard - ' + error.reason + ' ...')
     }
   }
 

@@ -5,7 +5,7 @@ import Controls from '../components/Controls.vue'
 </script>
 
 <template>
-  <!-- <Loading /> -->
+  <Loading />
 
   <div class="flex max-w-full">
     <Game />

@@ -1,13 +1,18 @@
 <script setup>
+import { ref, watchEffect } from 'vue'
 import { useBattleStore } from '../stores/battleStore'
-import { watch, ref } from 'vue'
-
 const battleStore = useBattleStore()
+
+const gameOver = ref(false)
+
+watchEffect(() => {
+  gameOver.value = battleStore.gameOver
+})
 </script>
 
 <template>
   <div
-    v-if="battleStore.gameOver"
+    v-if="gameOver"
     class="w-full h-full bg-black absolute top-0 left-0 text-[80px] text-white flex flex-col items-center gap-12 justify-center text-center"
   >
     <p>GAME OVER</p>

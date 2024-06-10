@@ -1,29 +1,57 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, watchEffect } from 'vue'
 import { useBattleStore } from '../stores/battleStore'
 
 const battleStore = useBattleStore()
 
-const ships = ref(battleStore.ships) // Might be needed for other functionalities
-const gridSize = 100
+const ships = ref(battleStore.ships)
+const gridSize = ref(battleStore.gridSize)
 
-// Pre-compute grid cells (assuming grid size doesn't change)
 const gridCells = [] as { x: number; y: number }[]
-for (let y = 0; y < gridSize; y++) {
-  for (let x = 0; x < gridSize; x++) {
+for (let y = 0; y < gridSize.value; y++) {
+  for (let x = 0; x < gridSize.value; x++) {
     gridCells.push({ x, y })
   }
 }
 
 const getCellClass = computed(() => {
   return (cell: { x: number; y: number }) => {
+    let className = ''
     if (hitMap.value[cell.y][cell.x]) {
-      return 'hit'
+      className += 'hit '
     }
+    if (sunkShipMap.value[cell.y][cell.x]) {
+      className += 'sunk '
+    }
+    return className.trim()
   }
 })
 
-const hitMap = ref<boolean[][]>(Array.from({ length: gridSize }, () => Array(gridSize).fill(false)))
+function getShipCells(ship: { hits: boolean[]; start: [number, number] }) {
+  const [startX, startY] = ship.start
+  return ship.hits.map((_, i) => ({ x: startX + i, y: startY }))
+}
+
+const hitMap = ref<boolean[][]>(
+  Array.from({ length: gridSize.value }, () => Array(gridSize.value).fill(false))
+)
+const sunkShipMap = ref<boolean[][]>(
+  Array.from({ length: gridSize.value }, () => Array(gridSize.value).fill(false))
+)
+
+async function handleShootCpuShip(x: number, y: number) {
+  try {
+    hitMap.value[y][x] = true
+    await battleStore.shootCpuShip(x, y)
+  } catch (error) {
+    console.error('Error:', error.message)
+    hitMap.value[y][x] = false
+  }
+}
+
+watchEffect(() => {
+  ships.value = battleStore.ships
+})
 
 watch(
   () => battleStore.hitsMap,
@@ -35,9 +63,20 @@ watch(
   { immediate: true, deep: true }
 )
 
-function handleShootCpuShip(x: number, y: number) {
-  battleStore.shootCpuShip(x, y)
-}
+watch(
+  () => battleStore.graveyard,
+  (newGraveyard) => {
+    newGraveyard.forEach((isSunk: boolean, index: number) => {
+      if (isSunk) {
+        const ship = ships.value[index]
+        getShipCells(ship).forEach((cell) => {
+          sunkShipMap.value[cell.y][cell.x] = true
+        })
+      }
+    })
+  },
+  { immediate: true, deep: true }
+)
 </script>
 
 <template>
@@ -45,10 +84,16 @@ function handleShootCpuShip(x: number, y: number) {
     <div
       v-for="cell in gridCells"
       :key="`${cell.x}-${cell.y}`"
-      class="cell"
+      class="cell tooltip"
       :class="getCellClass(cell)"
       @click="handleShootCpuShip(cell.x, cell.y)"
-    ></div>
+    >
+      <span class="sunk-emoji" v-if="sunkShipMap[cell.y][cell.x]">💥</span>
+      <span class="tooltiptext">
+        x: {{ cell.x }}, y: {{ cell.y }}
+        <span v-if="sunkShipMap[cell.y][cell.x]"> <br />Sunk ship </span>
+      </span>
+    </div>
   </div>
 </template>
 
@@ -77,5 +122,33 @@ function handleShootCpuShip(x: number, y: number) {
 }
 .cell.sunk {
   background-color: darkred;
+}
+
+.sunk-emoji {
+  font-size: 10px;
+}
+
+.tooltip {
+  position: relative;
+  border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  position: absolute;
+  z-index: 1;
+  bottom: 155%;
+  left: 50%;
+  margin-left: -60px;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
 }
 </style>

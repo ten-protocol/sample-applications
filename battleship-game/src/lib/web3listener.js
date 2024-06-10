@@ -21,7 +21,6 @@ export default class Web3listener {
       const messageStore = useMessageStore()
       try {
         const prizePool = await this.contract.prizePool()
-        const sunkShipsCount = await this.contract.sunkShipsCount()
         messageStore.addMessage(
           `[BattleshipGame Contract] Prize pool at: ${ethers.utils.formatEther(prizePool)} ETH`
         )
@@ -45,8 +44,10 @@ export default class Web3listener {
       try {
         const hits = await this.contract.getAllHits()
         const graveyard = await this.contract.getGraveyard()
+        const sunkShipsCount = await this.contract.sunkShipsCount()
         battleStore.setHits(hits)
         battleStore.setGraveyard(graveyard)
+        battleStore.setSunkShipsCount(sunkShipsCount)
       } catch (err) {
         console.error('Error fetching hits:', err)
         const errorMessage = handleMetaMaskError(err)
