@@ -120,7 +120,7 @@ watch(
   background-color: lightcoral;
 }
 .cell.hit {
-  background-color: red;
+  background-color: darkblue;
   cursor: not-allowed;
 }
 .cell.sunk {

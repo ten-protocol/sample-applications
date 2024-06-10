@@ -57,9 +57,9 @@ onBeforeUnmount(() => {
       <img src="../assets/Ship5.svg" alt="ship5" />
     </div>
     <div class="max-w-[695px] w-full flex flex-col items-center">
-      <p class="text-yellow text-center text-[23.354px] font-normal tracking-[4.437px] mb-[26px]">
+      <h2 class="text-yellow text-center text-[23.354px] font-normal tracking-[4.437px] mb-[26px]">
         BUILT ON TEN
-      </p>
+      </h2>
       <div>
         <img src="../assets/battleship.svg" alt="battleship" />
       </div>
@@ -69,9 +69,9 @@ onBeforeUnmount(() => {
         >
           <span class="rounded-[5px] bg-red w-0 h-full block transition-all duration-300"></span>
         </div>
-        <div class="loading__text text-white text-[23.354px] font-normal tracking-[2.335px]">
+        <h3 class="loading__text text-white text-[23.354px] font-normal tracking-[2.335px]">
           LOADING
-        </div>
+        </h3>
       </div>
     </div>
   </div>
