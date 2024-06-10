@@ -91,7 +91,6 @@ watch(
       :class="getCellClass(cell)"
       @click="handleShootCpuShip(cell.x, cell.y)"
     >
-      <!-- <span class="sunk-emoji" v-if="sunkShipMap[cell.y][cell.x]">💥</span> -->
       <span class="tooltiptext">
         x: {{ cell.x }}, y: {{ cell.y }}
         <span v-if="sunkShipMap[cell.y][cell.x]"> <br />Sunk ship </span>
@@ -103,7 +102,7 @@ watch(
 <style scoped>
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(10px, 1fr));
+  grid-template-columns: repeat(100, 10px);
   gap: 1px;
 }
 .cell {

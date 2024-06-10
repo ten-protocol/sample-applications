@@ -13,7 +13,9 @@ module.exports = {
     extend: {
       colors: {
         yellow: '#FAEC00',
-        red: '#F05',
+        lightcoral: '#F08080',
+        blue: '#00008b',
+        red: '#FF0000',
         aqua: 'rgba(97, 198, 255, 0.2)',
         'gray-light': 'rgba(157, 157, 157, 0.2)',
         'gray-dark': 'rgba(113, 124, 150, 0.7)',

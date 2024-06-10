@@ -31,6 +31,24 @@ watchEffect(() => {
 <template>
   <div class="min-w-[500px] h-screen bg-slate-900 pt-[48px] p-6 flex flex-col gap-8">
     <div class="h-[150px] w-full bg-slate-950 rounded-lg p-4">
+      <h2 class="text-white text-[12px] font-semibold mb-3">LEGEND</h2>
+      <div class="flex flex-wrap gap-3" v-if="isConnected">
+        <div class="flex items-center gap-2">
+          <div class="w-[20px] h-[20px] bg-blue rounded-lg"></div>
+          <p class="text-white text-[12px] font-bold">Hit cells/Missed shots</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="w-[20px] h-[20px] bg-red rounded-lg"></div>
+          <p class="text-white text-[12px] font-bold">Sunk ships</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="w-[20px] h-[20px] bg-lightcoral rounded-lg"></div>
+          <p class="text-white text-[12px] font-bold">Selected cell</p>
+        </div>
+      </div>
+      <p class="text-white text-sm font-bold" v-else>Connect your wallet to start playing</p>
+    </div>
+    <div class="h-[150px] w-full bg-slate-950 rounded-lg p-4">
       <h2 class="text-white text-[12px] font-semibold mb-3">GRAVEYARD</h2>
       <div class="flex flex-wrap gap-3">
         <p class="text-white text-3xl font-bold" v-if="isConnected">
