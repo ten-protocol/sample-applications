@@ -4,33 +4,18 @@ import { useBattleStore } from '../stores/battleStore'
 
 const battleStore = useBattleStore()
 
-const ships = ref(battleStore.ships)
-const gridSize = ref(battleStore.gridSize)
+const gridSize = computed(() => battleStore.gridSize)
+const ships = computed(() => battleStore.ships)
 
-const gridCells = [] as { x: number; y: number }[]
-for (let y = 0; y < gridSize.value; y++) {
-  for (let x = 0; x < gridSize.value; x++) {
-    gridCells.push({ x, y })
-  }
-}
-
-const getCellClass = computed(() => {
-  return (cell: { x: number; y: number }) => {
-    let className = ''
-    if (hitMap.value[cell.y][cell.x]) {
-      className += 'hit '
+const gridCells = computed(() => {
+  const cells = [] as { x: number; y: number }[]
+  for (let y = 0; y < gridSize.value; y++) {
+    for (let x = 0; x < gridSize.value; x++) {
+      cells.push({ x, y })
     }
-    if (sunkShipMap.value[cell.y][cell.x]) {
-      className += 'sunk '
-    }
-    return className.trim()
   }
+  return cells
 })
-
-function getShipCells(ship: { hits: boolean[]; start: [number, number] }) {
-  const [startX, startY] = ship.start
-  return ship.hits.map((_, i) => ({ x: startX + i, y: startY }))
-}
 
 const hitMap = ref<boolean[][]>(
   Array.from({ length: gridSize.value }, () => Array(gridSize.value).fill(false))
@@ -39,7 +24,25 @@ const sunkShipMap = ref<boolean[][]>(
   Array.from({ length: gridSize.value }, () => Array(gridSize.value).fill(false))
 )
 
+const getCellClass = (cell: { x: number; y: number }) => {
+  let className = ''
+  if (hitMap.value[cell.y][cell.x]) {
+    className += 'hit '
+  }
+  if (sunkShipMap.value[cell.y][cell.x]) {
+    className += 'sunk '
+  }
+  return className.trim()
+}
+
+function getShipCells(ship: { hits: boolean[]; start: [number, number] }) {
+  const [startX, startY] = ship.start
+  return ship.hits.map((_, i) => ({ x: startX + i, y: startY }))
+}
+
 async function handleShootCpuShip(x: number, y: number) {
+  if (hitMap.value[y][x]) return
+
   try {
     hitMap.value[y][x] = true
     await battleStore.shootCpuShip(x, y)
@@ -88,7 +91,7 @@ watch(
       :class="getCellClass(cell)"
       @click="handleShootCpuShip(cell.x, cell.y)"
     >
-      <span class="sunk-emoji" v-if="sunkShipMap[cell.y][cell.x]">💥</span>
+      <!-- <span class="sunk-emoji" v-if="sunkShipMap[cell.y][cell.x]">💥</span> -->
       <span class="tooltiptext">
         x: {{ cell.x }}, y: {{ cell.y }}
         <span v-if="sunkShipMap[cell.y][cell.x]"> <br />Sunk ship </span>
@@ -100,7 +103,7 @@ watch(
 <style scoped>
 .grid {
   display: grid;
-  grid-template-columns: repeat(100, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(10px, 1fr));
   gap: 1px;
 }
 .cell {
