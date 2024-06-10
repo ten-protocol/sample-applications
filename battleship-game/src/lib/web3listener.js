@@ -24,9 +24,6 @@ export default class Web3listener {
         messageStore.addMessage(
           `[BattleshipGame Contract] Prize pool at: ${ethers.utils.formatEther(prizePool)} ETH`
         )
-        messageStore.addMessage(
-          `[BattleshipGame Contract] Sunk ships count: ${sunkShipsCount.toString()}`
-        )
       } catch (err) {
         console.error('Error fetching number of guesses:', err)
         const errorMessage = handleMetaMaskError(err)
