@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch, watchEffect } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useBattleStore } from '../stores/battleStore'
 
 const battleStore = useBattleStore()
@@ -52,9 +52,18 @@ async function handleShootCpuShip(x: number, y: number) {
   }
 }
 
-watchEffect(() => {
-  ships.value = battleStore.ships
-})
+/**** TODO: REMOVE BEFORE PUBLISHING ****/
+// watch(
+//   () => battleStore.ships,
+//   (newShips) => {
+//     newShips.forEach((ship) => {
+//       getShipCells(ship).forEach((cell) => {
+//         sunkShipMap.value[cell.y][cell.x] = true
+//       })
+//     })
+//   },
+//   { immediate: true, deep: true }
+// )
 
 watch(
   () => battleStore.hitsMap,
@@ -101,7 +110,6 @@ watch(
 
 <style scoped>
 .grid {
-  display: grid;
   grid-template-columns: repeat(100, 10px);
   gap: 1px;
 }
@@ -144,10 +152,10 @@ watch(
   padding: 5px 0;
   border-radius: 6px;
   position: absolute;
-  z-index: 1;
-  bottom: 155%;
+  z-index: 10;
+  bottom: 125%;
   left: 50%;
-  margin-left: -60px;
+  transform: translateX(-50%);
 }
 
 .tooltip:hover .tooltiptext {
