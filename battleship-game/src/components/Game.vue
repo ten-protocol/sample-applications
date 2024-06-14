@@ -91,7 +91,7 @@ const handleZoomDebounced = debounce(handleZoom, 50)
           <Gameboard />
         </div>
         <div class="zoom-indicator fixed left-4 bottom-4 p-2 rounded-md bg-gray-800 text-white">
-          {{ Math.round(scale.value * 100) }}%
+          {{ Math.round(scale * 100) }}%
         </div>
       </div>
       <GameOver />
