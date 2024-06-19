@@ -1,6 +1,6 @@
 <template>
   <main class="center-content">
-    <router-link to="/competition" class="">
+    <router-link to="/competition" target="_blank">
       <el-button class="btn btn-primary">
         Join Guessing Game Competition
         <el-icon><Promotion /></el-icon>

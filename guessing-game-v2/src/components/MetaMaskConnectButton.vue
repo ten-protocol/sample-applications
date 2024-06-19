@@ -1,7 +1,7 @@
 <template>
   <el-button @click="connectMetamask" size="large">
     <img src="@/assets/icons/icon_metamask.png" alt="Connect with wallet" class="metamask-icon" />
-    Connect Wallet
+    {{ buttonText }}
   </el-button>
 </template>
 
@@ -12,6 +12,7 @@ import { useMessageStore } from '@/stores/messageStore'
 import { ref } from 'vue'
 import Web3listener from '@/lib/web3listener'
 import { trackEvent } from '../lib/utils'
+import Web3Service from '@/lib/web3service'
 
 export default {
   name: 'MetaMaskConnectButton',
@@ -54,7 +55,8 @@ export default {
           messageStore.addMessage('Connected to wallet ! Account: ' + accounts[0], props.scope)
           buttonText.value = 'Connected!'
 
-          new Web3listener(walletStore.signer, this.scope)
+          new Web3listener(walletStore.signer, props.scope)
+          new Web3Service(walletStore.signer)
         } else {
           messageStore.addMessage('Please install MetaMask!', props.scope)
         }
@@ -76,9 +78,9 @@ export default {
 
 <style scoped>
 .metamask-icon {
-  width: 24px; /* Set desired width */
-  height: 24px; /* Set desired height */
-  object-fit: cover; /* Ensure image content is not distorted */
-  margin-right: 8px; /* Optional space between the icon and the text */
+  width: 24px;
+  height: 24px;
+  object-fit: cover;
+  margin-right: 8px;
 }
 </style>

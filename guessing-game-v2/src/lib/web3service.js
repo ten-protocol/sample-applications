@@ -5,23 +5,22 @@ import GuessingGameCompetitionJson from '@/assets/contract/artifacts/contracts/G
 import ContractAddress from '@/assets/contract/address.json'
 import CompetitionContractAddress from '@/assets/contract/competition_address.json'
 import Common from './common'
-import { Scope, trackEvent } from './utils'
-import axios from 'axios';
-import forge from 'node-forge';
+import { handleMetaMaskError, Scope, trackEvent } from './utils'
+import axios from 'axios'
+import forge from 'node-forge'
 
-const BACKEND_API_URL = import.meta.env.VITE_APP_BACKEND_API_URL;
-const RSA_PUBKEY = import.meta.env.VITE_APP_RSA_PUBLIC_KEY;
-const publicKey = forge.pki.publicKeyFromPem(RSA_PUBKEY);
+const BACKEND_API_URL = import.meta.env.VITE_APP_BACKEND_API_URL
+const RSA_PUBKEY = import.meta.env.VITE_APP_RSA_PUBLIC_KEY
+const publicKey = forge.pki.publicKeyFromPem(RSA_PUBKEY)
 
 async function sendCurrentDifference(signerAddress, currentDifference) {
-
-  const encryptedData = publicKey.encrypt(JSON.stringify(currentDifference), 'RSA-OAEP');
-  const base64EncryptedData = forge.util.encode64(encryptedData);
+  const encryptedData = publicKey.encrypt(JSON.stringify(currentDifference), 'RSA-OAEP')
+  const base64EncryptedData = forge.util.encode64(encryptedData)
 
   const data = {
     signerAddress,
-    base64EncryptedData,
-  };
+    base64EncryptedData
+  }
 
   try {
     const response = await axios.post(
@@ -29,14 +28,14 @@ async function sendCurrentDifference(signerAddress, currentDifference) {
       { data },
       {
         headers: {
-          'Content-Type': 'application/json',
-        },
+          'Content-Type': 'application/json'
+        }
       }
-    );
+    )
 
-    console.log('Success', response.data);
+    console.log('Success', response.data)
   } catch (error) {
-    console.error('Error sending encrypted data to backend:', error);
+    console.error('Error sending encrypted data to backend:', error)
   }
 }
 
@@ -117,13 +116,11 @@ export default class Web3Service {
         )
       }
     } catch (e) {
-      if (e.reason) {
-        messageStore.addMessage('Failed to issue Guess - ' + e.reason + ' ...')
-        return
+      console.error(e)
+      const errorMessage = handleMetaMaskError(e)
+      if (errorMessage) {
+        return messageStore.addErrorMessage(`Failed to issue Guess - ${errorMessage}`)
       }
-      messageStore.addMessage(
-        'Failed to issue Guess - unexpected error occurred, check the console logs...'
-      )
     }
   }
 
@@ -164,7 +161,7 @@ export default class Web3Service {
       messageStore.addMessage('Issued Guess tx: ' + receipt.transactionHash)
       const currentDifference = receipt.events[0].args.currentDifference
       const signerAddress = receipt.events[0].args.user
-      await sendCurrentDifference(signerAddress, currentDifference);
+      await sendCurrentDifference(signerAddress, currentDifference)
       if (currentDifference._hex === '0x00') {
         trackEvent('guess_success', { value: guessValue })
         messageStore.addMessage(
@@ -177,19 +174,15 @@ export default class Web3Service {
           Scope.Competition
         )
       }
-    } catch (error) {
-      console.error('Error details:', error);
-      if (error.reason) {
-        messageStore.addMessage(
-          'Failed to issue Guess - ' + error.reason + ' ...',
+    } catch (e) {
+      console.error('Error details:', e)
+      const errorMessage = handleMetaMaskError(e)
+      if (errorMessage) {
+        return messageStore.addErrorMessage(
+          `Failed to issue Guess - ${errorMessage}`,
           Scope.Competition
         )
-        return
       }
-      messageStore.addMessage(
-        'Failed to issue Guess - unexpected error occurred, check the console logs...',
-        Scope.Competition
-      )
     }
   }
 }

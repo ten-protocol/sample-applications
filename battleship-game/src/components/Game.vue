@@ -10,6 +10,7 @@ const scale = ref(1)
 provide('scale', scale)
 
 const position = ref({ x: 0, y: 0 })
+
 let isDragging = false
 let lastMousePosition = { x: 0, y: 0 }
 let dragVelocity = { x: 0, y: 0 }
@@ -31,7 +32,9 @@ const handleZoom = (event) => {
 }
 
 const handleDrag = (event) => {
-  if (!isDragging) return
+  if (!isDragging) {
+    return
+  }
 
   const currentMousePosition = getMousePosition(event)
   const deltaX = currentMousePosition.x - lastMousePosition.x

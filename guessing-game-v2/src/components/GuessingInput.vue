@@ -20,8 +20,13 @@
       label="Guess"
       :disabled="submitDisabled"
       v-model="guess"
-      placeholder="Enter your guess 1-100,000,000"
-      :input-style="{ color: '#00FF00', borderColor: '#00FF00', backgroundColor: '#2E2E2E' }"
+      :placeholder="`Enter your guess 1-${maxGuess}`"
+      :input-style="{
+        color: '#00FF00',
+        borderColor: '#00FF00',
+        backgroundColor: '#2E2E2E',
+        padding: '4px'
+      }"
     >
     </el-input>
     <el-button :disabled="submitDisabled" type="primary" @click="submitGuess">Submit</el-button>
@@ -56,6 +61,10 @@ export default {
       return this.scope === 'home'
         ? messageStore.errorMessage
         : messageStore.competitionErrorMessage
+    },
+
+    maxGuess() {
+      return this.scope === 'home' ? '100,000,000' : '1,000'
     }
   },
 
@@ -66,6 +75,10 @@ export default {
         const messageStore = useMessageStore()
         const walletStore = useWalletStore()
 
+        if (this.guess > +this.maxGuess) {
+          return messageStore.addMessage(`Guess within 1 to ${this.maxGuess}`, this.scope)
+        }
+
         if (!walletStore.signer) {
           messageStore.addMessage('Not connected with Metamask...', this.scope)
           this.submitDisabled = false
@@ -73,6 +86,7 @@ export default {
         }
         const web3Service = new Web3Service(walletStore.signer)
         await web3Service.submitGuess(this.guess, this.scope)
+        this.guess = ''
       } catch (err) {
         console.error('Error:', err.message)
       }
