@@ -21,9 +21,7 @@ export default class Web3Service {
       const submitTx = await this.contract.hit(x, y, {
         value: moveFee
       })
-      console.log('🚀 ~ Web3Service ~ submitGuess ~ submitTx:', submitTx)
       const receipt = await submitTx.wait()
-      console.log('🚀 ~ Web3Service ~ submitGuess ~ receipt:', receipt)
       messageStore.addMessage('Issued Guess tx: ' + receipt.transactionHash)
       // if (receipt.events[0].args.success) {
       //   trackEvent('guess_success', { value: guessValue })
