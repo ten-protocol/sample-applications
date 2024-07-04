@@ -11,6 +11,7 @@ export const useBattleStore = defineStore('battleStore', {
     zoom: 1 as number,
     gridSize: 100,
     ships: [],
+    hits: [] as any,
     hitsMap: [],
     graveyard: new Array(totalShips).fill(false),
     sunkShipsCount: 0,
@@ -24,6 +25,18 @@ export const useBattleStore = defineStore('battleStore', {
       try {
         const res = await web3service.getAllShipPositions()
         this.ships = res
+      } catch (error) {
+        console.error(error)
+        throw new Error('Failed to get all ship positions')
+      }
+    },
+
+    async getAllHits() {
+      const walletStore = useWalletStore()
+      const web3service = new Web3Service(walletStore.signer)
+      try {
+        const res = await web3service.getAllHits()
+        this.hits = res
       } catch (error) {
         console.error(error)
         throw new Error('Failed to get all ship positions')

@@ -56,6 +56,18 @@ export default class Web3Service {
     }
   }
 
+  async getAllHits() {
+    const messageStore = useMessageStore()
+    try {
+      const hits = await this.contract.getAllHits()
+      console.log('🚀 ~ Web3Service ~ getAllHits ~ hits:', hits)
+      return hits
+    } catch (error) {
+      console.error('Failed to get ship properties - ', error)
+      messageStore.addMessage('Failed to get ship properties - ' + error.reason + ' ...')
+    }
+  }
+
   async getShipAtPosition(x, y) {
     const messageStore = useMessageStore()
     try {

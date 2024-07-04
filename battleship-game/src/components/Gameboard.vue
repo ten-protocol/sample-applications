@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useBattleStore } from '../stores/battleStore'
 
 const battleStore = useBattleStore()
@@ -15,6 +15,10 @@ const gridCells = computed(() => {
     }
   }
   return cells
+})
+
+onMounted(() => {
+  console.log(battleStore.hits)
 })
 
 const hitMap = ref<boolean[][]>(
