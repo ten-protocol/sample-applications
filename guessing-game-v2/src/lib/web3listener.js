@@ -83,9 +83,9 @@ export default class Web3listener {
       } catch (err) {
         console.error('Error fetching number of guesses:', err)
         const errorMessage = handleMetaMaskError(err)
-        if (errorMessage) {
-          return messageStore.addErrorMessage(errorMessage)
-        }
+        return messageStore.addErrorMessage(
+          errorMessage ? errorMessage : err.reason ? err.reasson : 'something occured'
+        )
       }
     }, 1000) // Run every 1 second
   }
@@ -116,7 +116,10 @@ export default class Web3listener {
         console.error('Error fetching number of guesses:', err)
         const errorMessage = handleMetaMaskError(err)
         if (errorMessage) {
-          return messageStore.addErrorMessage(errorMessage, Scope.Competition)
+          return messageStore.addErrorMessage(
+            errorMessage ? errorMessage : err.reason ? err.reasson : 'something occured',
+            Scope.Competition
+          )
         }
       }
     }, 1000) // Run every 1 second

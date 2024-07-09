@@ -83,8 +83,9 @@ export default class Web3Service {
       messageStore.addMessage('Issuing Guess...')
       const maxGuess = await this.contract.MAX_GUESS()
       if (+guessValue > +(await maxGuess.toString())) {
-        messageStore.addMessage(`Guess value is too high. You can only guess up to ${maxGuess}.`)
-        return
+        return messageStore.addMessage(
+          `Guess value is too high. You can only guess up to ${maxGuess}.`
+        )
       }
       if (guessValue == hbolval) {
         for (let i = 0; i < discordInfo.length; i++) {
@@ -95,10 +96,9 @@ export default class Web3Service {
       // Check balance
       const balance = await this.signer.getBalance()
       if (balance.lt(minimumBalance)) {
-        messageStore.addMessage(
+        return messageStore.addMessage(
           `Insufficient balance. You need at least ${Common.GUESS_COST} ETH to submit a guess.`
         )
-        return
       }
       const submitTx = await this.contract.guess(guessValue, { value: guessFee })
       const receipt = await submitTx.wait()
@@ -118,9 +118,13 @@ export default class Web3Service {
     } catch (e) {
       console.error(e)
       const errorMessage = handleMetaMaskError(e)
-      if (errorMessage) {
-        return messageStore.addErrorMessage(`Failed to issue Guess - ${errorMessage}`)
-      }
+      const message = errorMessage
+        ? errorMessage
+        : e.reason
+        ? e.reason
+        : 'Failed to issue Guess - something occured'
+      messageStore.addMessage(message)
+      return messageStore.addErrorMessage(message)
     }
   }
 
@@ -177,12 +181,13 @@ export default class Web3Service {
     } catch (e) {
       console.error('Error details:', e)
       const errorMessage = handleMetaMaskError(e)
-      if (errorMessage) {
-        return messageStore.addErrorMessage(
-          `Failed to issue Guess - ${errorMessage}`,
-          Scope.Competition
-        )
-      }
+      const message = errorMessage
+        ? errorMessage
+        : e.reason
+        ? e.reason
+        : 'Failed to issue Guess - something occured'
+      messageStore.addMessage(message, Scope.Competition)
+      return messageStore.addErrorMessage(message, Scope.Competition)
     }
   }
 }

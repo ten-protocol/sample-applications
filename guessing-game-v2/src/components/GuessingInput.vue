@@ -9,6 +9,7 @@
         :center="true"
         v-if="errorMessage"
         @click="clearErrorMessage"
+        style="word-break: break-word"
       >
         <span v-html="errorMessage"></span>
       </el-alert>
