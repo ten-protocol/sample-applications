@@ -1,0 +1,32 @@
+.line {
+  background: rgba(255, 255, 255, 0.02);
+  margin: 0 5px 5px 0;
+  padding-left: 5px;
+}
+
+.cursor {
+  display: inline-block;
+  width: .6em;
+  background: white;
+  height: 1em;
+
+  &.withFlash {
+    opacity: 0;
+    animation: CursorFlash 1s linear infinite;
+  }
+}
+
+@keyframes CursorFlash {
+  0% {
+    opacity: 0
+  }
+  25% {
+    opacity: 1
+  }
+  75% {
+    opacity: 1
+  }
+  75% {
+    opacity: 0
+  }
+}
