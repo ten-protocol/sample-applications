@@ -1,7 +1,7 @@
-import formatAddress from "@/helpers/formatAddress";
-import createHexagon from "@/utils/createHexagon";
+import formatAddress from '@/helpers/formatAddress';
+import createHexagon from '@/utils/createHexagon';
 
-export const MOVE_FEE: string = "0.0443";
+export const MOVE_FEE: string = '0.0443';
 export const TOTAL_SHIPS: number = 249;
 export const HEX_WIDTH = 32;
 export const HEX_HEIGHT = 32;

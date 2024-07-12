@@ -1,226 +1,172 @@
-import { ethers, formatUnits } from "ethers";
-import { create } from "zustand";
+import { ethers, formatUnits } from 'ethers';
+import { create } from 'zustand';
 
-import ContractAddress from "@/assets/contract/address.json";
-import BattleshipGameJson from "@/assets/contract/artifacts/contracts/BattleshipGame.sol/BattleshipGame.json";
-import { TOTAL_SHIPS } from "@/lib/constants";
-import { MOVE_FEE } from "@/lib/constants";
-import { useMessageStore } from "@/stores/messageStore";
-import { useWalletStore } from "@/stores/walletStore";
+import ContractAddress from '@/assets/contract/address.json';
+import BattleshipGameJson from '@/assets/contract/artifacts/contracts/BattleshipGame.sol/BattleshipGame.json';
+import getCellXY from '@/helpers/getCellXY';
+import { TOTAL_SHIPS } from '@/lib/constants';
+import { MOVE_FEE } from '@/lib/constants';
+import { useMessageStore } from '@/stores/messageStore';
+import { useWalletStore } from '@/stores/walletStore';
 
-import getCellXY from "../helpers/getCellXY";
-import handleMetaMaskError from "../utils/handleMetaMaskError";
-import { useBattleGridStore } from "./battleGridStore";
+import { useBattleGridStore } from './battleGridStore';
 
 export interface IContractStore {
-  hits: any[];
-  misses: any[];
-  graveyard: any[];
-  gameOver: boolean;
-  prizePool: number;
-  guessState: GuessState;
-  lastError: string;
-  submitGuess: (x: number, y: number) => Promise<void>;
-  resetGuessState: () => void;
-  getPrizePool: () => Promise<void>;
-  getAllHits: () => Promise<void>;
-  getAllMisses: () => Promise<void>;
-  getGraveyard: () => Promise<void>;
+    hits: any[];
+    misses: any[];
+    graveyard: any[];
+    gameOver: boolean;
+    prizePool: string;
+    guessState: GuessState;
+    lastError: string;
+    submitGuess: (x: number, y: number) => Promise<void>;
+    resetGuessState: () => void;
+    setPrizePool: (pp: string) => void;
+    setHits: (h: any[]) => void;
+    setMisses: (m: any[]) => void;
+    setGraveyard: (g: any[]) => void;
 }
 
 export type GuessState =
-  | "IDLE"
-  | "STARTED"
-  | "ERROR"
-  | "TRANSACTION_SUCCESS"
-  | "RECEIVED_RECEIPT"
-  | "HIT"
-  | "MISS";
+    | 'IDLE'
+    | 'STARTED'
+    | 'ERROR'
+    | 'TRANSACTION_SUCCESS'
+    | 'RECEIVED_RECEIPT'
+    | 'HIT'
+    | 'MISS';
 
 export const useContractStore = create<IContractStore>((set, get) => ({
-  hits: [],
-  misses: [],
-  graveyard: new Array(TOTAL_SHIPS).fill(false),
-  gameOver: false,
-  prizePool: 0,
-  guessState: "IDLE" as GuessState,
-  lastError: "",
+    hits: [],
+    misses: [],
+    graveyard: new Array(TOTAL_SHIPS).fill(false),
+    gameOver: false,
+    prizePool: '',
+    guessState: 'IDLE' as GuessState,
+    lastError: '',
 
-  submitGuess: async (x: number, y: number) => {
-    const signer = useWalletStore.getState().signer;
-    const addNewMessage = useMessageStore.getState().addNewMessage;
+    submitGuess: async (x: number, y: number) => {
+        const signer = useWalletStore.getState().signer;
+        const addNewMessage = useMessageStore.getState().addNewMessage;
 
-    if (!signer) {
-      throw new Error("No signer available.");
-      return;
-    }
+        if (!signer) {
+            throw new Error('No signer available.');
+            return;
+        }
 
-    set({ guessState: "STARTED" });
+        set({ guessState: 'STARTED' });
 
-    addNewMessage("Issuing Guess...");
-    const contract = new ethers.Contract(
-      ContractAddress.address,
-      BattleshipGameJson.abi,
-      signer,
-    );
-    const moveFee = ethers.parseEther(MOVE_FEE);
-    try {
-      const submitTx = await contract.hit(x, y, {
-        value: moveFee,
-      });
-      set({ guessState: "TRANSACTION_SUCCESS" });
-      const receipt = await submitTx.wait();
-      addNewMessage("Issued Guess tx: " + receipt.hash);
-
-      //Record last transaction has and make these calls from another location when the hash changes
-      useContractStore.getState().getAllHits();
-      useContractStore.getState().getAllMisses();
-    } catch (e) {
-      set({ guessState: "ERROR" });
-      if (e.reason) {
-        addNewMessage("Failed to issue Guess - " + e.reason + " ...", "ERROR");
-        set({ lastError: "Failed to issue Guess - " + e.reason });
-      } else {
-        addNewMessage(
-          "Failed to issue Guess - unexpected error occurred, check the console logs...",
-          "ERROR",
+        addNewMessage('Issuing Guess...');
+        const contract = new ethers.Contract(
+            ContractAddress.address,
+            BattleshipGameJson.abi,
+            signer
         );
-        set({ lastError: "Failed to issue Guess - unexpected error occurred" });
-        throw new Error(e);
-      }
-    }
-  },
+        const moveFee = ethers.parseEther(MOVE_FEE);
+        try {
+            const submitTx = await contract.hit(x, y, {
+                value: moveFee,
+            });
+            console.log(submitTx);
+            set({ guessState: 'TRANSACTION_SUCCESS' });
+            const receipt = await submitTx.wait();
+            addNewMessage('Issued Guess tx: ' + receipt.hash);
+            const { allHits, allMisses, graveyard, prizePool, success } =
+                receipt.logs[0].args.toObject();
+            console.log(receipt, receipt.logs[0].args.toObject());
 
-  resetGuessState: () =>
-    set({
-      guessState: "IDLE",
-    }),
+            get().setHits(allHits);
+            get().setMisses(allMisses);
+            get().setGraveyard(graveyard);
+            get().setPrizePool(prizePool);
+            set({ guessState: success ? 'HIT' : 'MISS' });
+        } catch (e) {
+            set({ guessState: 'ERROR' });
+            if (e.reason) {
+                addNewMessage('Failed to issue Guess - ' + e.reason + ' ...', 'ERROR');
+                set({ lastError: 'Failed to issue Guess - ' + e.reason });
+            } else {
+                addNewMessage(
+                    'Failed to issue Guess - unexpected error occurred, check the console logs...',
+                    'ERROR'
+                );
+                set({ lastError: 'Failed to issue Guess - unexpected error occurred' });
+                throw new Error(e);
+            }
+        }
+    },
 
-  getGraveyard: async () => {
-    const signer = useWalletStore.getState().signer;
-    const addNewMessage = useMessageStore.getState().addNewMessage;
-    const contract = new ethers.Contract(
-      ContractAddress.address,
-      BattleshipGameJson.abi,
-      signer,
-    );
+    resetGuessState: () =>
+        set({
+            guessState: 'IDLE',
+        }),
 
-    try {
-      const latestGraveyard = await contract.getGraveyard();
-      const graveyardHasUpdated = get().graveyard.some(
-        (value, index) => value !== latestGraveyard[index],
-      );
+    setGraveyard: (latestGraveyard: any[]) => {
+        const addNewMessage = useMessageStore.getState().addNewMessage;
 
-      if (graveyardHasUpdated) {
-        set({ graveyard: latestGraveyard });
-      }
-    } catch (error) {
-      console.error(error);
-      addNewMessage(
-        "Failed to get graveyard - " + error.reason + " ...",
-        "ERROR",
-      );
-    }
-  },
-
-  getAllMisses: async () => {
-    const currentMisses = useBattleGridStore.getState().missedCells;
-    const signer = useWalletStore.getState().signer;
-    const addNewMessage = useMessageStore.getState().addNewMessage;
-    const contract = new ethers.Contract(
-      ContractAddress.address,
-      BattleshipGameJson.abi,
-      signer,
-    );
-
-    try {
-      const latestMisses = await contract.getAllMisses();
-      const missesHaveUpdated = latestMisses.length !== currentMisses.length;
-
-      if (missesHaveUpdated) {
-        const a = latestMisses.map((entry) => {
-          const [x, y] = getCellXY(parseInt(entry[0]), parseInt(entry[1]));
-          return {
-            col: parseInt(entry[0]),
-            row: parseInt(entry[1]),
-            x,
-            y,
-            state: "MISSED",
-          };
-        });
-
-        set({ misses: latestMisses });
-        useBattleGridStore.setState({ missedCells: a });
-      }
-    } catch (e) {
-      console.error(e);
-      if (e.reason) {
-        addNewMessage(
-          "Failed to get graveyard - " + e.reason + " ...",
-          "ERROR",
+        const graveyardHasUpdated = get().graveyard.some(
+            (value, index) => value !== latestGraveyard[index]
         );
-      }
-    }
-  },
-  //TODO: Given the similarity of the methods here might be worth combining with the above.
-  getAllHits: async () => {
-    const currentHits = useBattleGridStore.getState().hitCells;
-    const signer = useWalletStore.getState().signer;
-    const addNewMessage = useMessageStore.getState().addNewMessage;
-    const contract = new ethers.Contract(
-      ContractAddress.address,
-      BattleshipGameJson.abi,
-      signer,
-    );
 
-    try {
-      const latestHits = await contract.getAllHits();
-      const hitsHaveUpdated = latestHits.length !== currentHits.length;
+        if (graveyardHasUpdated) {
+            set({ graveyard: latestGraveyard });
+            addNewMessage('Graveyard info updated.');
+        }
+    },
 
-      if (hitsHaveUpdated) {
-        const a = latestHits.map((entry) => {
-          const [x, y] = getCellXY(parseInt(entry[0]), parseInt(entry[1]));
-          return {
-            col: parseInt(entry[0]),
-            row: parseInt(entry[1]),
-            x,
-            y,
-            state: "MISSED",
-          };
-        });
+    setMisses: (latestMisses: any[]) => {
+        const currentMisses = useBattleGridStore.getState().missedCells;
+        const addNewMessage = useMessageStore.getState().addNewMessage;
+        const missesHaveUpdated = latestMisses.length !== currentMisses.length;
 
-        set({ hits: latestHits });
-        useBattleGridStore.setState({ hitCells: a });
-      }
-    } catch (e) {
-      console.error(e);
-      addNewMessage("Failed to get graveyard - " + e.reason + " ...", "ERROR");
-    }
-  },
+        if (missesHaveUpdated) {
+            const a = latestMisses.map((entry) => {
+                const [x, y] = getCellXY(parseInt(entry[0]), parseInt(entry[1]));
+                return {
+                    col: parseInt(entry[0]),
+                    row: parseInt(entry[1]),
+                    x,
+                    y,
+                    state: 'MISSED',
+                };
+            });
 
-  getPrizePool: async () => {
-    const signer = useWalletStore.getState().signer;
-    const addNewMessage = useMessageStore.getState().addNewMessage;
-    const contract = new ethers.Contract(
-      ContractAddress.address,
-      BattleshipGameJson.abi,
-      signer,
-    );
-    try {
-      const prizePool = await contract.prizePool();
-      addNewMessage(
-        `[BattleshipGame Contract] Prize pool at: ${formatUnits(
-          prizePool,
-          "ether",
-        )} ETH`,
-      );
-      set({ prizePool: formatUnits(prizePool, "ether") });
-    } catch (e) {
-      console.error("Error fetching prize pool:", e);
-      const errorMessage = handleMetaMaskError(e);
-      if (errorMessage) {
-        return addNewMessage(errorMessage, "ERROR");
-      }
-    }
-  },
+            set({ misses: latestMisses });
+            useBattleGridStore.setState({ missedCells: a });
+            addNewMessage('Missed. Shot failed to find target.');
+        }
+    },
+
+    //TODO: Given the similarity of the methods here might be worth combining with the above.
+    setHits: (latestHits: any[]) => {
+        const currentHits = useBattleGridStore.getState().hitCells;
+        const addNewMessage = useMessageStore.getState().addNewMessage;
+        const hitsHaveUpdated = latestHits.length !== currentHits.length;
+
+        if (hitsHaveUpdated) {
+            const a = latestHits.map((entry) => {
+                const [x, y] = getCellXY(parseInt(entry[0]), parseInt(entry[1]));
+                return {
+                    col: parseInt(entry[0]),
+                    row: parseInt(entry[1]),
+                    x,
+                    y,
+                    state: 'MISSED',
+                };
+            });
+
+            set({ hits: latestHits });
+            useBattleGridStore.setState({ hitCells: a });
+            addNewMessage('DIRECT HIT. Shot successfully found target.', 'SUCCESS');
+        }
+    },
+
+    setPrizePool: (prizePool: string) => {
+        const addNewMessage = useMessageStore.getState().addNewMessage;
+
+        addNewMessage(
+            `[BattleshipGame Contract] Prize pool at: ${formatUnits(prizePool, 'ether')} ETH`
+        );
+        set({ prizePool: formatUnits(prizePool, 'ether') });
+    },
 }));

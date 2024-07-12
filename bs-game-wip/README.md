@@ -31,3 +31,4 @@ export default {
 
 
  curl --location --request POST 'http://sepolia-testnet-faucet.uksouth.azurecontainer.io/fund/eth' --header 'Content-Type: application/json' --data-raw '{ "address":"0xc1AD6A6f2d190aFF8aE8a503887C6EAf1072149a" }'
+ { "address": "0x96dD05c4b0e517A64b4627b33673b7051f5b52f1" }

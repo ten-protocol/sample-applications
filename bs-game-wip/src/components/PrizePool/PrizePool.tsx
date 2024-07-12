@@ -1,40 +1,20 @@
-import { useEffect, useState } from "react";
-
-import HudWindow from "@/components/HudWindow/HudWindow";
-import { useContractStore } from "@/stores/contractStore";
-import { useWalletStore } from "@/stores/walletStore";
+import HudWindow from '@/components/HudWindow/HudWindow';
+import { useContractStore } from '@/stores/contractStore';
+import { useWalletStore } from '@/stores/walletStore';
 
 export default function PrizePool() {
-  const [hits, misses, prizePool, getPrizePool] = useContractStore((state) => [
-    state.hits,
-    state.misses,
-    state.prizePool,
-    state.getPrizePool,
-  ]);
-  const isConnected = useWalletStore((state) => state.isConnected);
-  const [totalGuesses, setTotalGuesses] = useState(hits.length + misses.length);
+    const [prizePool] = useContractStore((state) => [state.prizePool]);
+    const isConnected = useWalletStore((state) => state.isConnected);
 
-  useEffect(() => {
-    setTotalGuesses(hits.length + misses.length);
-  }, [hits, misses]);
-
-  useEffect(() => {
-    if (isConnected) {
-      getPrizePool();
-    }
-  }, [totalGuesses]);
-
-  const Disconnected = <p className="text-center">System Offline</p>;
-
-  return (
-    <HudWindow
-      headerTitle="Prize pool"
-      isOpen={isConnected}
-      closedContent={Disconnected}
-    >
-      <h3 className="text-3xl text-right my-2">
-        {prizePool} <span className="text-xl">ETH</span>
-      </h3>
-    </HudWindow>
-  );
+    return (
+        <HudWindow
+            headerTitle="Prize pool"
+            isOpen={isConnected}
+            closedContent={<p className="text-center">System Offline</p>}
+        >
+            <h3 className="text-3xl text-right my-2">
+                {prizePool} <span className="text-xl">ETH</span>
+            </h3>
+        </HudWindow>
+    );
 }

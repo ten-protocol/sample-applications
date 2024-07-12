@@ -7,7 +7,7 @@
 - ~~shot pending notification/overlay~~
 - ~~offset grid to make edge cells entirely visible~~
 - Make responsive for mobile?
-- Prevent shots being placed on cells which are already hit
+- Prevent shots being placed on cells which are already displayed as hit
 - minimap
 - map legend
 - look into code organization. Separate API calls from store methods.
@@ -20,8 +20,11 @@
 - ~~finish connection window~~
 - move contract address var to env var
 ~~- Fetch game data on connection~~
-- improve x,y coords.
+- improve x,y coords display
 - detect metamask disconnection
+- ~~Update contract and UI as per discussion~~
+- Persist game state on page reloads
+- empty game state
 
 
 Game  mechanics notes

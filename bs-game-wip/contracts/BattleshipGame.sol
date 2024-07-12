@@ -20,8 +20,10 @@ contract BattleshipGame {
 
     Ship[totalShips] private ships;
     mapping(uint16 => uint8) private positionToShipIndex;
-    mapping(uint16 => bool) public hits;
-    mapping(uint16 => bool) public misses;
+    mapping(uint16 => bool) private hits;
+    mapping(uint16 => bool) private misses;
+    Position[] private allHits;
+    Position[] private allMisses;
     uint256 private seed;
     uint256 private nonce = 0;
     uint256 public prizePool;
@@ -46,6 +48,13 @@ contract BattleshipGame {
         require(msg.sender == owner, "Caller is not the owner");
         _;
     }
+
+    /// @notice Emitted when a guess is made.
+    /// @param user The address of the user making the guess.
+    /// @param guessedCoords The coordinates submitted by the user.
+    /// @param success True if the guess hit a ship, false otherwise.
+    //TODO: Add comments
+    event HitFeedback(address indexed user, uint8[2] guessedCoords, bool success, Position[] allHits, Position[] allMisses, bool[totalShips] graveyard, uint256 prizePool);
 
     /// @notice Adds a new admin address. Only the owner can add new admins.
     /// @param newAdmin The address of the new admin.
@@ -135,15 +144,16 @@ contract BattleshipGame {
         require(!misses[positionKey], "Cell already hit");
 
         prizePool += msg.value;
-    
+        bool success;
 
         uint8 shipIndex = positionToShipIndex[positionKey];
         if (shipIndex != 0) {
+            success = true;
             Ship storage ship = ships[shipIndex];
             uint8 hitIndex = x - ship.start.x;
             ship.hits[hitIndex] = true;
             hits[positionKey] = true;
-
+            allHits.push(Position(x, y));
             bool allHit = true;
             for (uint8 i = 0; i < shipLength; i++) {
                 if (!ship.hits[i]) {
@@ -160,10 +170,14 @@ contract BattleshipGame {
             }
         }
         else {
+            success = false;
             misses[positionKey] = true;
+            allMisses.push(Position(x, y));
         }
-    } 
-    
+
+        emit HitFeedback(msg.sender, [x, y], success, allHits, allMisses, graveyard, prizePool);
+    }
+
 
     /// @notice Checks if a specific position on the grid is hit.
     /// @param x The x-coordinate of the position.
@@ -192,60 +206,20 @@ contract BattleshipGame {
 
     /// @notice Gets the status of all ships in the graveyard.
     /// @return Array indicating which ships are sunk.
-    function getGraveyard() public view returns (bool[totalShips] memory) {
+    function getGraveyard() public view onlyAdmin returns (bool[totalShips] memory) {
         return graveyard;
     }
 
     /// @notice Gets all hit positions so far.
     /// @return Array of positions that have been hit.
-    function getAllHits() public view returns (Position[] memory) {
-        uint256 hitCount = 0;
-        for (uint8 x = 0; x < gridSize; x++) {
-            for (uint8 y = 0; y < gridSize; y++) {
-                if (hits[packCoordinates(x, y)]) {
-                    hitCount++;
-                }
-            }
-        }
-
-        Position[] memory hitPositions = new Position[](hitCount);
-        uint256 index = 0;
-        for (uint8 x = 0; x < gridSize; x++) {
-            for (uint8 y = 0; y < gridSize; y++) {
-                if (hits[packCoordinates(x, y)]) {
-                    hitPositions[index] = Position(x, y);
-                    index++;
-                }
-            }
-        }
-
-        return hitPositions;
+    function getAllHits() public view onlyAdmin returns (Position[] memory) {
+        return allHits;
     }
 
-    
+
     /// @notice Gets all miss positions so far.
     /// @return Array of positions that have been missed.
-    function getAllMisses() public view returns (Position[] memory) {
-        uint256 missCount = 0;
-        for (uint8 x = 0; x < gridSize; x++) {
-            for (uint8 y = 0; y < gridSize; y++) {
-                if (misses[packCoordinates(x, y)]) {
-                    missCount++;
-                }
-            }
-        }
-
-        Position[] memory missPositions = new Position[](missCount);
-        uint256 index = 0;
-        for (uint8 x = 0; x < gridSize; x++) {
-            for (uint8 y = 0; y < gridSize; y++) {
-                if (misses[packCoordinates(x, y)]) {
-                    missPositions[index] = Position(x, y);
-                    index++;
-                }
-            }
-        }
-
-        return missPositions;
+    function getAllMisses() public view onlyAdmin returns (Position[] memory) {
+        return allMisses;
     }
 }
