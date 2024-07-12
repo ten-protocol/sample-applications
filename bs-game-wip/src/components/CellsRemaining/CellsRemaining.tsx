@@ -1,6 +1,6 @@
 import HudWindow from "@/components/HudWindow/HudWindow";
-import { useContractStore } from "@/stores/contractStore";
 import { COLS, ROWS } from "@/lib/constants";
+import { useContractStore } from "@/stores/contractStore";
 import { useWalletStore } from "@/stores/walletStore";
 
 export default function CellsRemaining() {
@@ -12,9 +12,7 @@ export default function CellsRemaining() {
   const numberOfRevealedCells = misses.length + hits.length;
   const totalCells = ROWS * COLS;
 
-  const Disconnected = (
-      <p className="text-center">System Offline</p>
-  );
+  const Disconnected = <p className="text-center">System Offline</p>;
 
   const Footer = (
     <div className="text-right">

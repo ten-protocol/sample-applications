@@ -6,7 +6,7 @@
 
 .cursor {
   display: inline-block;
-  width: .6em;
+  width: 0.6em;
   background: white;
   height: 1em;
 
@@ -18,15 +18,15 @@
 
 @keyframes CursorFlash {
   0% {
-    opacity: 0
+    opacity: 0;
   }
   25% {
-    opacity: 1
+    opacity: 1;
   }
   75% {
-    opacity: 1
+    opacity: 1;
   }
   75% {
-    opacity: 0
+    opacity: 0;
   }
 }

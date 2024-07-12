@@ -11,10 +11,8 @@ export const hexHitArea = createHexagon(HEX_WIDTH, HEX_HEIGHT);
 export const DRAW_THRESHOLD = 100;
 export const CONTAINER_WIDTH = 600;
 export const CONTAINER_HEIGHT = 500;
-export const COLS = 100
-export const ROWS = 100
-export const HEX_GRID_MARGIN = 32
+export const COLS = 100;
+export const ROWS = 100;
+export const HEX_GRID_MARGIN = 32;
 
-export const QUERY_INTERVAL_MS = 5000
-
-
+export const QUERY_INTERVAL_MS = 5000;

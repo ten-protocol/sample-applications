@@ -1,33 +1,32 @@
-import * as React from "react";
-import HudWindow from "../HudWindow/HudWindow";
+import { useEffect, useState } from "react";
+
+import { motion } from "framer-motion";
+
+import AnimatedText from "@/components/AnimatedText/AnimatedText";
+import HudWindow from "@/components/HudWindow/HudWindow";
+import { useWalletStore } from "@/stores/walletStore";
+
 import BattleGridContainer from "./BattleGridContainer";
 import BattleGridCurrentCoordinates from "./BattleGridCurrentCoordinates";
-import { useWalletStore } from "../../stores/walletStore";
-import AnimatedText from "../AnimatedText/AnimatedText";
-import {useEffect, useState} from "react";
-import { motion } from "framer-motion";
 
 export default function BattleGrid() {
   const isConnected = useWalletStore((state) => state.isConnected);
   const [displayGrid, setDisplayGrid] = useState(false);
 
   useEffect(() => {
-
     if (isConnected) {
       setTimeout(() => {
-        setDisplayGrid(true)
-      }, 3000)
+        setDisplayGrid(true);
+      }, 3000);
     }
-
-  }, [isConnected])
+  }, [isConnected]);
 
   const animation = {
-    initial: { opacity: 0},
+    initial: { opacity: 0 },
     animate: { opacity: 1 },
     exit: { opacity: 0 },
-    transition: { delay: 0, duration:1 },
+    transition: { delay: 0, duration: 1 },
   };
-
 
   const Disconnected = (
     <div className="text-center w-screen max-w-full">
@@ -57,14 +56,15 @@ export default function BattleGrid() {
       isOpen={isConnected}
       closedContent={Disconnected}
     >
-      <div className="w-screen max-w-full" style={{height: 524}}>
-
-      {displayGrid ? (
-        <motion.div {...animation}>
-          <BattleGridContainer />
-          <BattleGridCurrentCoordinates />
-        </motion.div>
-      ): <p>Loading Grid.</p>}
+      <div className="w-screen max-w-full" style={{ height: 524 }}>
+        {displayGrid ? (
+          <motion.div {...animation}>
+            <BattleGridContainer />
+            <BattleGridCurrentCoordinates />
+          </motion.div>
+        ) : (
+          <p>Loading Grid.</p>
+        )}
       </div>
     </HudWindow>
   );

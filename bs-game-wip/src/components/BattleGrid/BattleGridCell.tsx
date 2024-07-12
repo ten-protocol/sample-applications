@@ -1,49 +1,33 @@
-import {Graphics, Text} from "@pixi/react";
-import { TextStyle } from 'pixi.js'
-import React from "react";
-import {hexHitArea} from "@/lib/constants";
+import { Graphics } from "@pixi/react";
 
-export default function BattleGridCell ({col, row, x, y, state}) {
-    return (
-        <>
-        <Graphics
-            key={`${row}-${col}`}
-            draw={g => {
-                g.position.set(x, y);
-                g.clear();
+import { hexHitArea } from "@/lib/constants";
 
-                if (state === "UNTOUCHED") {
-                    g.beginFill(0xD9D9D9, 0)
-                    g.lineStyle(1, 0x464646, 1);
-                }
-                if (state === 'MISSED') {
-                    g.beginFill(0x5A5A5A, 1)
-                    g.lineStyle(1, 0x4F4F4F, 1);
-                }
-                if (state === 'HIT') {
-                    g.beginFill(0xE16F6F, 1)
-                    g.lineStyle(1, 0xE16F6F, 1);
-                }
+export default function BattleGridCell({ col, row, x, y, state }) {
+  return (
+    <>
+      <Graphics
+        key={`${row}-${col}`}
+        draw={(g) => {
+          g.position.set(x, y);
+          g.clear();
 
-                g.drawPolygon(hexHitArea);
-                g.endFill();
-            }}
-        />
-            {/*<Text*/}
-            {/*    text={`${col}-${row}`}*/}
-            {/*    anchor={0.5}*/}
-            {/*    x={x}*/}
-            {/*    y={y}*/}
-            {/*    style={*/}
-            {/*        new TextStyle({*/}
-            {/*            align: 'center',*/}
-            {/*            fontFamily: '"Source Sans Pro", Helvetica, sans-serif',*/}
-            {/*            fontSize: 10,*/}
-            {/*            fontWeight: '100',*/}
-            {/*            fill: '#ffffff',*/}
-            {/*        })*/}
-            {/*    }*/}
-            {/*/>*/}
-        </>
-    )
+          if (state === "UNTOUCHED") {
+            g.beginFill(0xd9d9d9, 0);
+            g.lineStyle(1, 0x464646, 1);
+          }
+          if (state === "MISSED") {
+            g.beginFill(0x5a5a5a, 1);
+            g.lineStyle(1, 0x4f4f4f, 1);
+          }
+          if (state === "HIT") {
+            g.beginFill(0xe16f6f, 1);
+            g.lineStyle(1, 0xe16f6f, 1);
+          }
+
+          g.drawPolygon(hexHitArea);
+          g.endFill();
+        }}
+      />
+    </>
+  );
 }

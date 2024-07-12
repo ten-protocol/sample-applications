@@ -1,12 +1,12 @@
 import { create } from "zustand";
 
 export interface IMessageStore {
-  messages: { id: number; text: string, type: MessageType }[],
-  errorMessage: string,
-  addNewMessage: (msg: string, type?: MessageType ) => void
+  messages: { id: number; text: string; type: MessageType }[];
+  errorMessage: string;
+  addNewMessage: (msg: string, type?: MessageType) => void;
 }
 
-type MessageType = "INFO"|"ERROR"|"SUCCESS"
+type MessageType = "INFO" | "ERROR" | "SUCCESS";
 
 export const useMessageStore = create<IMessageStore>((set) => ({
   messages: [],
@@ -19,13 +19,11 @@ export const useMessageStore = create<IMessageStore>((set) => ({
         {
           id: Date.now(),
           text: text,
-          type
-        }
+          type,
+        },
       ],
-    }))
-  }
-
-
+    }));
+  },
 }));
 
 //

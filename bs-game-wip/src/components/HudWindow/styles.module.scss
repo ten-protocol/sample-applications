@@ -35,7 +35,6 @@
     border-top: solid 1px #ffaba5;
     animation: anim2 3s linear infinite;
     box-shadow: 0 0 7px rgba(231, 76, 60, 0.8);
-
   }
 }
 
@@ -58,7 +57,7 @@
     right: -1px;
     top: -1px;
     border-left: solid 1px #ffaba5;
-    animation: anim3 3s  linear infinite;
+    animation: anim3 3s linear infinite;
     box-shadow: 0 0 7px rgba(231, 76, 60, 0.8);
   }
 
@@ -95,11 +94,11 @@
   }
   50% {
     top: -1px;
-    height: 0
+    height: 0;
   }
   100% {
     top: -1px;
-    height: 0
+    height: 0;
   }
 }
 
@@ -145,12 +144,12 @@
   50% {
     bottom: -1px;
     top: auto;
-    height: 0
+    height: 0;
   }
   100% {
     bottom: -1px;
     top: auto;
-    height: 0
+    height: 0;
   }
 }
 

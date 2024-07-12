@@ -1,14 +1,16 @@
-import { create } from "zustand";
-import { useWalletStore } from "@/stores/walletStore";
-import { TOTAL_SHIPS } from "@/lib/constants";
 import { ethers, formatUnits } from "ethers";
-import BattleshipGameJson from "@/assets/contract/artifacts/contracts/BattleshipGame.sol/BattleshipGame.json";
+import { create } from "zustand";
+
 import ContractAddress from "@/assets/contract/address.json";
+import BattleshipGameJson from "@/assets/contract/artifacts/contracts/BattleshipGame.sol/BattleshipGame.json";
+import { TOTAL_SHIPS } from "@/lib/constants";
 import { MOVE_FEE } from "@/lib/constants";
 import { useMessageStore } from "@/stores/messageStore";
-import { useBattleGridStore } from "./battleGridStore";
+import { useWalletStore } from "@/stores/walletStore";
+
 import getCellXY from "../helpers/getCellXY";
 import handleMetaMaskError from "../utils/handleMetaMaskError";
+import { useBattleGridStore } from "./battleGridStore";
 
 export interface IContractStore {
   hits: any[];
@@ -16,17 +18,24 @@ export interface IContractStore {
   graveyard: any[];
   gameOver: boolean;
   prizePool: number;
-  guessState: GuessState,
-  lastError: string
-  submitGuess: (x: number, y: number) => Promise<void>
-  resetGuessState: () => void
-  getPrizePool: () => Promise<void>
-  getAllHits: () => Promise<void>
-  getAllMisses: () => Promise<void>
-  getGraveyard: () => Promise<void>
+  guessState: GuessState;
+  lastError: string;
+  submitGuess: (x: number, y: number) => Promise<void>;
+  resetGuessState: () => void;
+  getPrizePool: () => Promise<void>;
+  getAllHits: () => Promise<void>;
+  getAllMisses: () => Promise<void>;
+  getGraveyard: () => Promise<void>;
 }
 
-export type GuessState = 'IDLE'|'STARTED'|'ERROR'|'TRANSACTION_SUCCESS'|'RECEIVED_RECEIPT'|'HIT'|'MISS'
+export type GuessState =
+  | "IDLE"
+  | "STARTED"
+  | "ERROR"
+  | "TRANSACTION_SUCCESS"
+  | "RECEIVED_RECEIPT"
+  | "HIT"
+  | "MISS";
 
 export const useContractStore = create<IContractStore>((set, get) => ({
   hits: [],
@@ -46,20 +55,20 @@ export const useContractStore = create<IContractStore>((set, get) => ({
       return;
     }
 
-    set({guessState: 'STARTED'})
+    set({ guessState: "STARTED" });
 
     addNewMessage("Issuing Guess...");
     const contract = new ethers.Contract(
       ContractAddress.address,
       BattleshipGameJson.abi,
-      signer
+      signer,
     );
     const moveFee = ethers.parseEther(MOVE_FEE);
     try {
       const submitTx = await contract.hit(x, y, {
         value: moveFee,
       });
-      set({guessState: 'TRANSACTION_SUCCESS'})
+      set({ guessState: "TRANSACTION_SUCCESS" });
       const receipt = await submitTx.wait();
       addNewMessage("Issued Guess tx: " + receipt.hash);
 
@@ -67,24 +76,25 @@ export const useContractStore = create<IContractStore>((set, get) => ({
       useContractStore.getState().getAllHits();
       useContractStore.getState().getAllMisses();
     } catch (e) {
-      set({guessState: 'ERROR'})
+      set({ guessState: "ERROR" });
       if (e.reason) {
         addNewMessage("Failed to issue Guess - " + e.reason + " ...", "ERROR");
-        set({lastError: "Failed to issue Guess - " + e.reason})
+        set({ lastError: "Failed to issue Guess - " + e.reason });
       } else {
         addNewMessage(
           "Failed to issue Guess - unexpected error occurred, check the console logs...",
-          "ERROR"
+          "ERROR",
         );
-        set({lastError: "Failed to issue Guess - unexpected error occurred"})
+        set({ lastError: "Failed to issue Guess - unexpected error occurred" });
         throw new Error(e);
       }
     }
   },
 
-  resetGuessState: () => set({
-    guessState: "IDLE"
-  }),
+  resetGuessState: () =>
+    set({
+      guessState: "IDLE",
+    }),
 
   getGraveyard: async () => {
     const signer = useWalletStore.getState().signer;
@@ -92,13 +102,13 @@ export const useContractStore = create<IContractStore>((set, get) => ({
     const contract = new ethers.Contract(
       ContractAddress.address,
       BattleshipGameJson.abi,
-      signer
+      signer,
     );
 
     try {
       const latestGraveyard = await contract.getGraveyard();
       const graveyardHasUpdated = get().graveyard.some(
-        (value, index) => value !== latestGraveyard[index]
+        (value, index) => value !== latestGraveyard[index],
       );
 
       if (graveyardHasUpdated) {
@@ -108,7 +118,7 @@ export const useContractStore = create<IContractStore>((set, get) => ({
       console.error(error);
       addNewMessage(
         "Failed to get graveyard - " + error.reason + " ...",
-        "ERROR"
+        "ERROR",
       );
     }
   },
@@ -120,7 +130,7 @@ export const useContractStore = create<IContractStore>((set, get) => ({
     const contract = new ethers.Contract(
       ContractAddress.address,
       BattleshipGameJson.abi,
-      signer
+      signer,
     );
 
     try {
@@ -147,7 +157,7 @@ export const useContractStore = create<IContractStore>((set, get) => ({
       if (e.reason) {
         addNewMessage(
           "Failed to get graveyard - " + e.reason + " ...",
-          "ERROR"
+          "ERROR",
         );
       }
     }
@@ -160,7 +170,7 @@ export const useContractStore = create<IContractStore>((set, get) => ({
     const contract = new ethers.Contract(
       ContractAddress.address,
       BattleshipGameJson.abi,
-      signer
+      signer,
     );
 
     try {
@@ -194,15 +204,15 @@ export const useContractStore = create<IContractStore>((set, get) => ({
     const contract = new ethers.Contract(
       ContractAddress.address,
       BattleshipGameJson.abi,
-      signer
+      signer,
     );
     try {
       const prizePool = await contract.prizePool();
       addNewMessage(
         `[BattleshipGame Contract] Prize pool at: ${formatUnits(
           prizePool,
-          "ether"
-        )} ETH`
+          "ether",
+        )} ETH`,
       );
       set({ prizePool: formatUnits(prizePool, "ether") });
     } catch (e) {

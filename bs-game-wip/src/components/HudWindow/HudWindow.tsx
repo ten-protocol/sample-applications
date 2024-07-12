@@ -1,7 +1,10 @@
 import { ReactNode } from "react";
+
+import { AnimatePresence, motion } from "framer-motion";
+
+import AnimatedText from "@/components/AnimatedText/AnimatedText";
+
 import styles from "./styles.module.scss";
-import { motion, AnimatePresence } from "framer-motion";
-import AnimatedText from "../AnimatedText/AnimatedText";
 
 type Props = {
   children?: ReactNode;
@@ -9,7 +12,7 @@ type Props = {
   headerTitle: string;
   isOpen?: boolean;
   closedContent?: ReactNode;
-  speed?: number
+  speed?: number;
 };
 
 export default function HudWindow({
@@ -18,9 +21,8 @@ export default function HudWindow({
   headerTitle,
   isOpen = true,
   closedContent,
-    speed=1
+  speed = 1,
 }: Props) {
-
   const topDecorationAnimation = {
     initial: { width: 0, height: 0 },
     animate: { width: "80%", height: "80%" },
@@ -52,14 +54,14 @@ export default function HudWindow({
     initial: { opacity: 0, width: 0, right: 0, left: "auto" },
     animate: { opacity: 1, width: "100%", right: 0, left: "auto" },
     exit: { opacity: 0 },
-    transition: { delay: 1, duration: 1 * speed},
+    transition: { delay: 1, duration: 1 * speed },
   };
 
   const footerContentAnimation = {
     initial: { opacity: 0 },
     animate: { opacity: 1 },
     exit: { opacity: 0 },
-    transition: { delay: 3, duration: 1 * speed},
+    transition: { delay: 3, duration: 1 * speed },
   };
 
   const closedScreenAnimation = {

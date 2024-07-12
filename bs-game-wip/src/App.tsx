@@ -1,20 +1,22 @@
-import "./App.css";
-import MetaMask from "@/components/MetaMask/MetaMask";
-import MessageLog from "@/components/MessageLog/MessageLog";
-import Graveyard from "./components/Graveyard/Graveyard";
-import BattleGrid from "./components/BattleGrid/BattleGrid";
-import logo from "@/assets/white_logotype.png"
-import PrizePool from "./components/PrizePool/PrizePool";
-import CellsRemaining from "./components/CellsRemaining/CellsRemaining";
-import ProcessingNotification from "./components/ProcessingNotification/ProcessingNotification";
-import {useState, useEffect} from "react";
+import { useEffect, useState } from "react";
+
 import detectEthereumProvider from "@metamask/detect-provider";
-import {trackEvent} from "./lib/trackEvent";
-import {useWalletStore} from "./stores/walletStore";
-import {useMessageStore} from "./stores/messageStore";
+
+import logo from "@/assets/white_logotype.png";
+import MessageLog from "@/components/MessageLog/MessageLog";
+import MetaMask from "@/components/MetaMask/MetaMask";
+
+import "./App.css";
+import BattleGrid from "./components/BattleGrid/BattleGrid";
+import CellsRemaining from "./components/CellsRemaining/CellsRemaining";
+import Graveyard from "./components/Graveyard/Graveyard";
+import PrizePool from "./components/PrizePool/PrizePool";
+import ProcessingNotification from "./components/ProcessingNotification/ProcessingNotification";
+import { trackEvent } from "./lib/trackEvent";
+import { useMessageStore } from "./stores/messageStore";
+import { useWalletStore } from "./stores/walletStore";
 
 function App() {
-
   const [setProvider, address, setAddress] = useWalletStore((state) => [
     state.setProvider,
     state.address,
@@ -36,7 +38,7 @@ function App() {
         const chainId = await provider.request({ method: "eth_chainId" });
         if (chainId !== "0x1bb") {
           addNewMessage(
-              'Not connected to Ten ! Connect at <a href="https://testnet.ten.xyz/" target="_blank" rel="noopener noreferrer">https://testnet.ten.xyz/</a> '
+            'Not connected to Ten ! Connect at <a href="https://testnet.ten.xyz/" target="_blank" rel="noopener noreferrer">https://testnet.ten.xyz/</a> ',
           );
           return;
         }
@@ -47,48 +49,47 @@ function App() {
 
         setAddress(accounts[0]);
         addNewMessage("Connected to wallet ! Account: " + accounts[0]);
-        setInitialized(true)
+        setInitialized(true);
 
         trackEvent("connect_wallet", {
           value: accounts[0],
         });
-
       } else {
         addNewMessage("Please install MetaMask!", "ERROR");
-        setInitialized(true)
+        setInitialized(true);
       }
     } catch (err) {
       console.error("Error:", err.message);
-      setInitialized(true)
+      setInitialized(true);
     }
   };
 
   if (!initialized) {
-    return null
+    return null;
   }
 
   return (
     <>
       <div className="mb-10">
-        <img src={logo} alt="test" width={120}/>
+        <img src={logo} alt="test" width={120} />
       </div>
-        <div className="grid grid-cols-[220px_1fr_220px] gap-6">
-          <div>
-            <Graveyard />
-          </div>
-          <div className="overflow-hidden">
-            <BattleGrid/>
-          </div>
-          <div className="flex flex-col gap-4">
-            <MetaMask />
-            <PrizePool/>
-            <CellsRemaining/>
-          </div>
-            <div className="col-span-3">
-                <MessageLog />
-            </div>
+      <div className="grid grid-cols-[220px_1fr_220px] gap-6">
+        <div>
+          <Graveyard />
         </div>
-      <ProcessingNotification/>
+        <div className="overflow-hidden">
+          <BattleGrid />
+        </div>
+        <div className="flex flex-col gap-4">
+          <MetaMask />
+          <PrizePool />
+          <CellsRemaining />
+        </div>
+        <div className="col-span-3">
+          <MessageLog />
+        </div>
+      </div>
+      <ProcessingNotification />
     </>
   );
 }
