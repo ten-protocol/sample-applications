@@ -1,6 +1,4 @@
 import "./App.css";
-import * as React from "react";
-import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import MetaMask from "@/components/MetaMask/MetaMask";
 import MessageLog from "@/components/MessageLog/MessageLog";
 import Graveyard from "./components/Graveyard/Graveyard";
@@ -9,8 +7,7 @@ import logo from "@/assets/white_logotype.png"
 import PrizePool from "./components/PrizePool/PrizePool";
 import CellsRemaining from "./components/CellsRemaining/CellsRemaining";
 import ProcessingNotification from "./components/ProcessingNotification/ProcessingNotification";
-import {useState} from "react";
-import {useEffect} from "react";
+import {useState, useEffect} from "react";
 import detectEthereumProvider from "@metamask/detect-provider";
 import {trackEvent} from "./lib/trackEvent";
 import {useWalletStore} from "./stores/walletStore";

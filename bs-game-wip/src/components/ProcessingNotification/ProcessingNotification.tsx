@@ -48,7 +48,7 @@ export default function ProcessingNotification () {
 
     return (
         <div className={styles.container}>
-        <HudWindow headerTitle="Striking coordinates" footerContent={<div>
+        <HudWindow headerTitle="Striking coordinates" speed={.1} footerContent={<div>
             <motion.div
                 key={guessState}
                 initial="initial"

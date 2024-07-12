@@ -9,6 +9,7 @@ type Props = {
   headerTitle: string;
   isOpen?: boolean;
   closedContent?: ReactNode;
+  speed?: number
 };
 
 export default function HudWindow({
@@ -17,53 +18,55 @@ export default function HudWindow({
   headerTitle,
   isOpen = true,
   closedContent,
+    speed=1
 }: Props) {
+
   const topDecorationAnimation = {
     initial: { width: 0, height: 0 },
     animate: { width: "80%", height: "80%" },
     exit: { opacity: 0 },
-    transition: { duration: 1 },
+    transition: { duration: 1 * speed },
   };
   const bottomDecorationAnimation = {
     initial: { width: 0, height: 0 },
     animate: { width: "50px", height: "50px" },
     exit: { opacity: 0 },
-    transition: { duration: 1 },
+    transition: { duration: 1 * speed },
   };
 
   const headerAnimation = {
     initial: { opacity: 0, width: 0 },
     animate: { opacity: 1, width: "100%" },
     exit: { opacity: 0 },
-    transition: { delay: 1, duration: 1 },
+    transition: { delay: 1, duration: 1 * speed },
   };
 
   const contentAnimation = {
     initial: { opacity: 0 },
     animate: { opacity: 1 },
     exit: { opacity: 0 },
-    transition: { delay: 2, duration: 1 },
+    transition: { delay: 2, duration: 1 * speed },
   };
 
   const footerAnimation = {
     initial: { opacity: 0, width: 0, right: 0, left: "auto" },
     animate: { opacity: 1, width: "100%", right: 0, left: "auto" },
     exit: { opacity: 0 },
-    transition: { delay: 1, duration: 1 },
+    transition: { delay: 1, duration: 1 * speed},
   };
 
   const footerContentAnimation = {
     initial: { opacity: 0 },
     animate: { opacity: 1 },
     exit: { opacity: 0 },
-    transition: { delay: 3, duration: 1 },
+    transition: { delay: 3, duration: 1 * speed},
   };
 
   const closedScreenAnimation = {
     initial: { opacity: 0 },
     animate: { opacity: 1 },
     exit: { opacity: 0 },
-    transition: { delay: 3, duration: 1 },
+    transition: { delay: 3, duration: 1 * speed },
   };
 
   return (
