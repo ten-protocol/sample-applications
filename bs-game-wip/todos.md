@@ -10,7 +10,6 @@
 - Prevent shots being placed on cells which are already displayed as hit
 - minimap
 - map legend
-- look into code organization. Separate API calls from store methods.
 - ~~Animate message log entries~~
 - ~~animate hud windows~~
 - highlight errors in message log
@@ -25,10 +24,4 @@
 - ~~Update contract and UI as per discussion~~
 - Persist game state on page reloads
 - empty game state
-
-
-Game  mechanics notes
--Seeing all hits/misses before playing gives teh first mover a disadvantage. Result, no one makes the first move
--not being able to see the game state until after placing a bet makes interacting with an
-almost complete board a frustrating experience.
-- perhaps a portion of the pool can be received after a ship is sunk
+- modify UI and contract to inform user if ship was sunk on hit/guess

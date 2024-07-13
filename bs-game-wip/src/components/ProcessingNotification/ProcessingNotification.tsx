@@ -88,8 +88,6 @@ export default function ProcessingNotification() {
         );
     }
 
-    console.log(guessState);
-
     const variants = {
         initial: { opacity: 0, y: -20 },
         animate: { opacity: 1, y: 0 },

@@ -18,6 +18,7 @@ export interface IContractStore {
     gameOver: boolean;
     prizePool: string;
     guessState: GuessState;
+    lastGuessCoords: number[] | null;
     lastError: string;
     submitGuess: (x: number, y: number) => Promise<void>;
     resetGuessState: () => void;
@@ -25,6 +26,7 @@ export interface IContractStore {
     setHits: (h: any[]) => void;
     setMisses: (m: any[]) => void;
     setGraveyard: (g: any[]) => void;
+    setLastGuessCoords: (g: any) => void;
 }
 
 export type GuessState =
@@ -44,6 +46,7 @@ export const useContractStore = create<IContractStore>((set, get) => ({
     prizePool: '',
     guessState: 'IDLE' as GuessState,
     lastError: '',
+    lastGuessCoords: null,
 
     submitGuess: async (x: number, y: number) => {
         const signer = useWalletStore.getState().signer;
@@ -71,7 +74,7 @@ export const useContractStore = create<IContractStore>((set, get) => ({
             set({ guessState: 'TRANSACTION_SUCCESS' });
             const receipt = await submitTx.wait();
             addNewMessage('Issued Guess tx: ' + receipt.hash);
-            const { allHits, allMisses, graveyard, prizePool, success } =
+            const { allHits, allMisses, graveyard, prizePool, success, guessedCoords } =
                 receipt.logs[0].args.toObject();
             console.log(receipt, receipt.logs[0].args.toObject());
 
@@ -80,6 +83,7 @@ export const useContractStore = create<IContractStore>((set, get) => ({
             get().setGraveyard(graveyard);
             get().setPrizePool(prizePool);
             set({ guessState: success ? 'HIT' : 'MISS' });
+            get().setLastGuessCoords(guessedCoords);
         } catch (e) {
             set({ guessState: 'ERROR' });
             if (e.reason) {
@@ -168,5 +172,9 @@ export const useContractStore = create<IContractStore>((set, get) => ({
             `[BattleshipGame Contract] Prize pool at: ${formatUnits(prizePool, 'ether')} ETH`
         );
         set({ prizePool: formatUnits(prizePool, 'ether') });
+    },
+
+    setLastGuessCoords: (coords: any) => {
+        set({ lastGuessCoords: [parseInt(coords[0]), parseInt(coords[1])] });
     },
 }));

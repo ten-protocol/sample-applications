@@ -47,5 +47,6 @@ export const useBattleGridStore = create((set, get) => ({
         set({ selectedCell });
         const submitGuess = useContractStore.getState().submitGuess;
         submitGuess(selectedCell.col, selectedCell.row);
+        // useContractStore.setState({lastGuessCoords: [selectedCell.x, selectedCell.y]});
     },
 }));
