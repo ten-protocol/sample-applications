@@ -64,7 +64,7 @@ export default function ProcessingNotification() {
         footerContent = <div>{CloseButton}</div>;
         bodyContent = (
             <div className="flex flex-col items-start">
-                <p className="text-lg bg-red-600 inline-block px-1">Miss detected</p>
+                <p className="text-lg bg-neutral-900 inline-block px-1">Miss detected</p>
                 <p className="text-lg bg-neutral-900 inline-block px-1">
                     Shot failed to find target
                 </p>

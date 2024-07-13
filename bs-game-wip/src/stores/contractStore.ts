@@ -41,7 +41,7 @@ export type GuessState =
 export const useContractStore = create<IContractStore>((set, get) => ({
     hits: [],
     misses: [],
-    graveyard: new Array(TOTAL_SHIPS).fill(false),
+    graveyard: [],
     gameOver: false,
     prizePool: '',
     guessState: 'IDLE' as GuessState,
@@ -108,7 +108,7 @@ export const useContractStore = create<IContractStore>((set, get) => ({
     setGraveyard: (latestGraveyard: any[]) => {
         const addNewMessage = useMessageStore.getState().addNewMessage;
 
-        const graveyardHasUpdated = get().graveyard.some(
+        const graveyardHasUpdated = get().graveyard.length !== latestGraveyard.length|| get().graveyard.some(
             (value, index) => value !== latestGraveyard[index]
         );
 
