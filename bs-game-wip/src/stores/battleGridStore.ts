@@ -4,8 +4,9 @@ import getCellXY from '@/helpers/getCellXY';
 import getSnappedMousePosition from '@/utils/getSnappedMousePosition';
 
 import { useContractStore } from './contractStore';
+import {createJSONStorage, persist} from "zustand/middleware";
 
-export const useBattleGridStore = create((set, get) => ({
+export const useBattleGridStore = create(persist((set, get) => ({
     grid: [],
     missedCells: [],
     hitCells: [],
@@ -49,4 +50,8 @@ export const useBattleGridStore = create((set, get) => ({
         submitGuess(selectedCell.col, selectedCell.row);
         // useContractStore.setState({lastGuessCoords: [selectedCell.x, selectedCell.y]});
     },
+}), {
+    name: 'battle-grid-storage',
+    storage: createJSONStorage(() => localStorage),
+    partialize: (state) => ({ hitCells: state.hitCells, missedCells: state.missedCells })
 }));

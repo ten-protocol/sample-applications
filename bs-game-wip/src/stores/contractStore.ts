@@ -1,10 +1,10 @@
 import { ethers, formatUnits } from 'ethers';
 import { create } from 'zustand';
+import {createJSONStorage, persist} from 'zustand/middleware';
 
 import ContractAddress from '@/assets/contract/address.json';
 import BattleshipGameJson from '@/assets/contract/artifacts/contracts/BattleshipGame.sol/BattleshipGame.json';
 import getCellXY from '@/helpers/getCellXY';
-import { TOTAL_SHIPS } from '@/lib/constants';
 import { MOVE_FEE } from '@/lib/constants';
 import { useMessageStore } from '@/stores/messageStore';
 import { useWalletStore } from '@/stores/walletStore';
@@ -38,7 +38,7 @@ export type GuessState =
     | 'HIT'
     | 'MISS';
 
-export const useContractStore = create<IContractStore>((set, get) => ({
+export const useContractStore = create(persist((set, get) => ({
     hits: [],
     misses: [],
     graveyard: [],
@@ -108,9 +108,9 @@ export const useContractStore = create<IContractStore>((set, get) => ({
     setGraveyard: (latestGraveyard: any[]) => {
         const addNewMessage = useMessageStore.getState().addNewMessage;
 
-        const graveyardHasUpdated = get().graveyard.length !== latestGraveyard.length|| get().graveyard.some(
-            (value, index) => value !== latestGraveyard[index]
-        );
+        const graveyardHasUpdated =
+            get().graveyard.length !== latestGraveyard.length ||
+            get().graveyard.some((value, index) => value !== latestGraveyard[index]);
 
         if (graveyardHasUpdated) {
             set({ graveyard: latestGraveyard });
@@ -177,4 +177,8 @@ export const useContractStore = create<IContractStore>((set, get) => ({
     setLastGuessCoords: (coords: any) => {
         set({ lastGuessCoords: [parseInt(coords[0]), parseInt(coords[1])] });
     },
+}), {
+    name: 'contract-storage',
+    storage: createJSONStorage(() => localStorage),
+    partialize: (state) => ({ prizePool: state.prizePool, graveyard: state.graveyard })
 }));

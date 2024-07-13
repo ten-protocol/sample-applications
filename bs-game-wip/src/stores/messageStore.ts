@@ -8,7 +8,7 @@ export interface IMessageStore {
 
 type MessageType = 'INFO' | 'ERROR' | 'SUCCESS';
 
-export const useMessageStore = create<IMessageStore>((set) => ({
+export const useMessageStore = create((set) => ({
     messages: [],
     errorMessage: '',
 
@@ -26,22 +26,3 @@ export const useMessageStore = create<IMessageStore>((set) => ({
     },
 }));
 
-//
-//     create({
-
-//
-//         setNewMessage:  (text) => set({
-//
-//             return ({messages: []})
-//             this.messages.push({
-
-//             })
-//         }),
-//         addErrorMessage(text) {
-//             this.errorMessage = text
-//         },
-//         clearErrorMessage() {
-//             this.errorMessage = ''
-//         }
-//     }
-// })
