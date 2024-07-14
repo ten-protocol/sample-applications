@@ -1,22 +1,17 @@
 import { useEffect, useState } from 'react';
 
-import { BloomFilter } from '@pixi/filter-bloom';
 import { Container } from '@pixi/react';
 
-import { useBattleGridStore } from '../../stores/battleGridStore.ts';
-import { useContractStore } from '../../stores/contractStore.ts';
+import { useBattleGridStore } from '@/stores/battleGridStore';
+import { useContractStore } from '@/stores/contractStore';
+
 import BattleGridExplosionParticle from './BattleGridExplosionParticle';
 
 export default function BattleGridExplosion({ particleCount, duration }) {
-    const [lastGuessCoords, guessState] = useContractStore((state) => [
-        state.lastGuessCoords,
-        state.guessState,
-    ]);
+    const guessState = useContractStore((state) => state.guessState);
     const selectedCell = useBattleGridStore((state) => state.selectedCell);
     const [particles, setParticles] = useState([]);
-    const [isAnimating, setIsAnimating] = useState(true);
-    const hide = !['HIT'].includes(guessState);
-    // const hide = !selectedCell
+    const hide = guessState !== 'HIT';
 
     useEffect(() => {
         if (hide) return;
@@ -38,12 +33,6 @@ export default function BattleGridExplosion({ particleCount, duration }) {
             });
         }
         setParticles(newParticles);
-
-        const timeout = setTimeout(() => {
-            setIsAnimating(false);
-        }, duration);
-
-        return () => clearTimeout(timeout);
     }, [guessState, selectedCell, particleCount, duration]);
 
     if (hide) return null;

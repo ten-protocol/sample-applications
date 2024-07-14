@@ -93,8 +93,8 @@ export function HitHighlightState(x, y, duration) {
         const rotationSpeed = 0; // Random rotation speed
         const startRadius = 400;
         const endRadius = -800;
-        const startHeight = 100;
-        const endHeight = 80;
+        const startHeight = 30;
+        const endHeight = 10;
         newParticles.push({
             x,
             y,
@@ -105,7 +105,7 @@ export function HitHighlightState(x, y, duration) {
             startHeight,
             endHeight,
             duration,
-            color: 0xe16f6f,
+            color: 0xffffff,
             age: 50,
             ageReset: true,
         });

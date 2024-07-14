@@ -13,19 +13,15 @@ import {
     MissHighlightState,
 } from './CellHighlightStates';
 
-export default function CellHighlight({ duration }) {
-    const [lastGuessCoords, guessState] = useContractStore((state) => [
-        state.lastGuessCoords,
-        state.guessState,
-    ]);
+export default function CellHighlight() {
+    const guessState = useContractStore((state) => state.guessState);
     const selectedCell = useBattleGridStore((state) => state.selectedCell);
     const [particles, setParticles] = useState([]);
-    const [isAnimating, setIsAnimating] = useState(true);
     const hide = guessState === 'IDLE';
+    const duration = 1000;
 
     useEffect(() => {
         if (hide) return;
-        let particles = [];
 
         if (guessState === 'STARTED') {
             setParticles(DefaultHighlightState(selectedCell.x, selectedCell.y, duration));
@@ -42,12 +38,6 @@ export default function CellHighlight({ duration }) {
         if (guessState === 'HIT') {
             setParticles(HitHighlightState(selectedCell.x, selectedCell.y, duration));
         }
-
-        const timeout = setTimeout(() => {
-            setIsAnimating(false);
-        }, duration);
-
-        return () => clearTimeout(timeout);
     }, [selectedCell, guessState, duration]);
 
     if (hide) return null;

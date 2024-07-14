@@ -4,7 +4,7 @@ import {
     HEX_WIDTH,
     HORIZONTAL_OFFSET,
     VERTICAL_OFFSET,
-} from '../lib/constants';
+} from '@/lib/constants';
 
 export default function getCellXY(col: number, row: number) {
     const x =

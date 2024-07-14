@@ -51,8 +51,8 @@ export default function HudWindow({
     };
 
     const footerAnimation = {
-        initial: { opacity: 0, width: 0,},
-        animate: { opacity: 1, width: '100%'},
+        initial: { opacity: 0, width: 0 },
+        animate: { opacity: 1, width: '100%' },
         exit: { opacity: 0 },
         transition: { delay: 1, duration: 1 * speed },
     };

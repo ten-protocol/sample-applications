@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import { Container, Stage } from '@pixi/react';
 
+import CellHighlight from '@/components/CellHighlight/CellHighlight';
 import { HEX_GRID_MARGIN, HEX_HEIGHT, HEX_WIDTH } from '@/lib/constants';
 
 import BattleGridCell from './BattleGridCell';
@@ -9,6 +10,7 @@ import BattleGridCursor from './BattleGridCursor';
 import BattleGridExplosion from './BattleGridExplosion';
 import BattleGridHits from './BattleGridHits';
 import BattleGridMisses from './BattleGridMisses';
+import BattleGridUnknowns from './BattleGridUnknowns';
 
 export default function BattleGridCanvas({ grid, width, height }) {
     const gridCells = useMemo(
@@ -33,14 +35,16 @@ export default function BattleGridCanvas({ grid, width, height }) {
             options={{
                 backgroundAlpha: 0,
                 antialias: true,
-                resolution: Math.floor(window.devicePixelRatio),
+                resolution: 2,
                 autoDensity: true,
             }}
         >
             <Container>{gridCells}</Container>
+            <BattleGridUnknowns />
             <BattleGridMisses />
             <BattleGridHits />
-            <BattleGridExplosion particleCount={50} duration={1000} />
+            <CellHighlight particleCount={20} />
+            <BattleGridExplosion particleCount={40} duration={1000} />
             <BattleGridCursor />
         </Stage>
     );

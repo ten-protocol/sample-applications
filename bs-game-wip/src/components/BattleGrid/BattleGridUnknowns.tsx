@@ -6,23 +6,27 @@ import { useBattleGridStore } from '@/stores/battleGridStore';
 
 import BattleGridCell from './BattleGridCell';
 
-export default function BattleGridMisses() {
-    const missedCells = useBattleGridStore((state) => state.missedCells);
+export default function BattleGridUnknowns() {
+    const unknownCells = useBattleGridStore((state) => state.unknownCells);
 
     const revealedGridCells = useMemo(
         () =>
-            missedCells.map(({ row, col, x, y }) => (
+            unknownCells.map(({ row, col, x, y }) => (
                 <BattleGridCell
                     key={`${row}-${col}`}
                     x={x}
                     y={y}
                     row={row}
                     col={col}
-                    state="MISSED"
+                    state="UNKNOWN"
                 />
             )),
-        [missedCells]
+        [unknownCells]
     );
+
+    if (unknownCells.length === 0) {
+        return null;
+    }
 
     return <Container>{revealedGridCells}</Container>;
 }

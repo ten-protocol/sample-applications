@@ -1,5 +1,5 @@
+import createHexagon from '@/helpers/createHexagon';
 import formatAddress from '@/helpers/formatAddress';
-import createHexagon from '@/utils/createHexagon';
 
 export const MOVE_FEE: string = '0.0443';
 export const TOTAL_SHIPS: number = 249;

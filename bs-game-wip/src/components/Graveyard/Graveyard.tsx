@@ -11,11 +11,12 @@ export default function Graveyard() {
     const fleetHealth = (sunkShipTotal / graveyard.length) * 100;
     const unknownState = graveyard.length === 0;
 
-
     const Footer = (
         <div className="text-right">
             <h3 className="text-sm whitespace-nowrap">Fleet Strength</h3>
-            <p className="text-xl whitespace-nowrap">{unknownState ? '???' : fleetHealth.toFixed(1)}% PERC</p>
+            <p className="text-xl whitespace-nowrap">
+                {unknownState ? '???' : fleetHealth.toFixed(1)}% PERC
+            </p>
             <p className="text-3xl mt-4 whitespace-nowrap">
                 {unknownState ? '???' : sunkShipTotal}/{unknownState ? '???' : graveyard.length}
             </p>

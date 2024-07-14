@@ -7,8 +7,6 @@ import { hexHitArea } from '@/lib/constants';
 import { useBattleGridStore } from '@/stores/battleGridStore';
 import { useContractStore } from '@/stores/contractStore';
 
-import CellHighlight from '../CellHighlight/CellHighlight';
-
 export default function BattleGridCursor() {
     const [[x, y], hoveredCell] = useBattleGridStore((state) => [
         state.mousePosition,
@@ -48,7 +46,7 @@ export default function BattleGridCursor() {
     }
 
     return (
-        <Container filters={[]}>
+        <Container>
             <Graphics
                 ref={shapeRef}
                 draw={(g) => {
@@ -59,7 +57,6 @@ export default function BattleGridCursor() {
                     g.endFill();
                 }}
             />
-            <CellHighlight particleCount={20} duration={1000} />
         </Container>
     );
 }

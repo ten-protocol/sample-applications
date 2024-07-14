@@ -14,7 +14,7 @@ export default function PrizePool() {
             closedContent={<p className="text-center">System Offline</p>}
         >
             <h3 className="text-3xl text-right my-2">
-                {unknownState ? "???.????" : prizePool} <span className="text-xl">ETH</span>
+                {unknownState ? '???.????' : prizePool} <span className="text-xl">ETH</span>
             </h3>
         </HudWindow>
     );

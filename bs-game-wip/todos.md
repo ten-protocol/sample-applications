@@ -13,7 +13,7 @@
 - ~~Animate message log entries~~
 - ~~animate hud windows~~
 - highlight errors in message log
-- display Remaining Cells chart
+- ~~display Remaining Cells~~
 - add ability to scale teh map
 - percentage bar for fleet strength
 - ~~finish connection window~~
@@ -22,6 +22,7 @@
 - improve x,y coords display
 - detect metamask disconnection
 - ~~Update contract and UI as per discussion~~
-- Persist game state on page reloads
-- empty game state
+- ~~Persist game state on page reloads~~
+- ~~empty game state~~
 - modify UI and contract to inform user if ship was sunk on hit/guess
+- Game rules/how to play window
