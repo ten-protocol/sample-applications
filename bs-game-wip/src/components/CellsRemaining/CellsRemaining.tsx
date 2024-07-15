@@ -2,13 +2,11 @@ import { useShallow } from 'zustand/react/shallow';
 
 import HudWindow from '@/components/HudWindow/HudWindow';
 import { COLS, ROWS } from '@/lib/constants';
-import { useBattleGridStore } from '@/stores/battleGridStore';
+import { useGameStore } from '@/stores/gameStore';
 import { useWalletStore } from '@/stores/walletStore';
 
 export default function CellsRemaining() {
-    const [misses, hits] = useBattleGridStore(
-        useShallow((state) => [state.missedCells, state.hitCells])
-    );
+    const [misses, hits] = useGameStore(useShallow((state) => [state.missedCells, state.hitCells]));
     const isConnected = useWalletStore((state) => state.isConnected);
     const numberOfRevealedCells = misses.length + hits.length;
     const totalCells = ROWS * COLS;

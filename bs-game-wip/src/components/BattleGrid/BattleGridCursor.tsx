@@ -4,16 +4,13 @@ import { Container, Graphics, useTick } from '@pixi/react';
 
 import createHexagon from '@/helpers/createHexagon';
 import { HEX_HEIGHT, HEX_WIDTH } from '@/lib/constants';
-import { useBattleGridStore } from '@/stores/battleGridStore';
 import { useContractStore } from '@/stores/contractStore';
+import { useGameStore } from '@/stores/gameStore';
 
 const hexagon = createHexagon(HEX_WIDTH, HEX_HEIGHT);
 
 export default function BattleGridCursor() {
-    const [[x, y], hoveredCell] = useBattleGridStore((state) => [
-        state.mousePosition,
-        state.hoveredCell,
-    ]);
+    const [[x, y], hoveredCell] = useGameStore((state) => [state.mousePosition, state.hoveredCell]);
     const guessState = useContractStore((state) => state.guessState);
     const isLoadingState = guessState !== 'IDLE';
     const shapeRef = useRef(null);

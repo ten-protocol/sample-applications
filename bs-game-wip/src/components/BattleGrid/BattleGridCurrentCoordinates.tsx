@@ -1,7 +1,7 @@
-import { useBattleGridStore } from '@/stores/battleGridStore';
+import { useGameStore } from '@/stores/gameStore';
 
 export default function BattleGridCurrentCoordinates() {
-    const currentHoveredCell = useBattleGridStore((state) => state.hoveredCell);
+    const currentHoveredCell = useGameStore((state) => state.hoveredCell);
 
     return (
         <h6>

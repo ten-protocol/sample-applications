@@ -5,7 +5,7 @@ import { Container, Graphics, Stage } from '@pixi/react';
 import CellHighlight from '@/components/CellHighlight/CellHighlight';
 import drawGridCells from '@/helpers/drawGridCells';
 import { HEX_GRID_MARGIN, HEX_HEIGHT, HEX_WIDTH } from '@/lib/constants';
-import { Cell } from '@/stores/battleGridStore';
+import { Cell } from '@/stores/gameStore';
 
 import BattleGridCursor from './BattleGridCursor';
 import BattleGridExplosion from './BattleGridExplosion';

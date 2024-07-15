@@ -1,7 +1,7 @@
 import { MouseEvent, useEffect, useRef } from 'react';
 
 import { COLS, CONTAINER_HEIGHT, ROWS } from '@/lib/constants';
-import { useBattleGridStore } from '@/stores/battleGridStore';
+import { useGameStore } from '@/stores/gameStore';
 
 import BattleGridCanvas from './BattleGridCanvas';
 
@@ -14,10 +14,10 @@ const styles = {
 };
 
 export default function BattleGridContainer() {
-    const setMousePosition = useBattleGridStore((state) => state.setMousePosition);
-    const initGrid = useBattleGridStore((state) => state.initGrid);
-    const grid = useBattleGridStore((state) => state.grid);
-    const selectCell = useBattleGridStore((state) => state.selectCell);
+    const setMousePosition = useGameStore((state) => state.setMousePosition);
+    const initGrid = useGameStore((state) => state.initGrid);
+    const grid = useGameStore((state) => state.grid);
+    const selectCell = useGameStore((state) => state.selectCell);
 
     useEffect(() => {
         initGrid(COLS, ROWS);

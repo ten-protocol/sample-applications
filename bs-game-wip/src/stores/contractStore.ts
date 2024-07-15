@@ -9,7 +9,7 @@ import { MOVE_FEE } from '@/lib/constants';
 import { useMessageStore } from '@/stores/messageStore';
 import { useWalletStore } from '@/stores/walletStore';
 
-import { useBattleGridStore } from './battleGridStore';
+import { useGameStore } from './gameStore';
 
 export type ContractStore = {
     hits: any[];
@@ -72,13 +72,11 @@ export const useContractStore = create<ContractStore>(
                     const submitTx = await contract.hit(x, y, {
                         value: moveFee,
                     });
-                    console.log(submitTx);
                     set({ guessState: 'TRANSACTION_SUCCESS' });
                     const receipt = await submitTx.wait();
                     addNewMessage('Issued Guess tx: ' + receipt.hash);
                     const { allHits, allMisses, graveyard, prizePool, success, guessedCoords } =
                         receipt.logs[0].args.toObject();
-                    console.log(receipt, receipt.logs[0].args.toObject());
 
                     get().setHits(allHits);
                     get().setMisses(allMisses);
@@ -93,7 +91,7 @@ export const useContractStore = create<ContractStore>(
                         set({ lastError: 'Failed to issue Guess - ' + e.reason });
 
                         if (e.reason === 'Cell already hit') {
-                            useBattleGridStore.getState().addUnknownCell(x, y);
+                            useGameStore.getState().addUnknownCell(x, y);
                         }
                     } else {
                         addNewMessage(
@@ -125,7 +123,7 @@ export const useContractStore = create<ContractStore>(
             },
 
             setMisses: (latestMisses: any[]) => {
-                const currentMisses = useBattleGridStore.getState().missedCells;
+                const currentMisses = useGameStore.getState().missedCells;
                 const addNewMessage = useMessageStore.getState().addNewMessage;
                 const missesHaveUpdated = latestMisses.length !== currentMisses.length;
 
@@ -142,16 +140,16 @@ export const useContractStore = create<ContractStore>(
                     });
 
                     set({ misses: latestMisses });
-                    useBattleGridStore.setState({ missedCells });
-                    useBattleGridStore.getState().setRevealedCells(latestMisses, 'MISS');
-                    useBattleGridStore.getState().clearUnknownCells();
+                    useGameStore.setState({ missedCells });
+                    useGameStore.getState().setRevealedCells(latestMisses, 'MISS');
+                    useGameStore.getState().clearUnknownCells();
                     addNewMessage('Missed. Shot failed to find target.');
                 }
             },
 
             //TODO: Given the similarity of the methods here might be worth combining with the above.
             setHits: (latestHits: any[]) => {
-                const currentHits = useBattleGridStore.getState().hitCells;
+                const currentHits = useGameStore.getState().hitCells;
                 const addNewMessage = useMessageStore.getState().addNewMessage;
                 const hitsHaveUpdated = latestHits.length !== currentHits.length;
 
@@ -168,8 +166,8 @@ export const useContractStore = create<ContractStore>(
                     });
 
                     set({ hits: latestHits });
-                    useBattleGridStore.setState({ hitCells });
-                    useBattleGridStore.getState().setRevealedCells(latestHits, 'HIT');
+                    useGameStore.setState({ hitCells });
+                    useGameStore.getState().setRevealedCells(latestHits, 'HIT');
                     addNewMessage('DIRECT HIT. Shot successfully found target.', 'SUCCESS');
                 }
             },

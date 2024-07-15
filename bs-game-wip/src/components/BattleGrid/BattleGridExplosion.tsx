@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react';
 
 import { Container } from '@pixi/react';
 
-import { useBattleGridStore } from '@/stores/battleGridStore';
 import { useContractStore } from '@/stores/contractStore';
+import { useGameStore } from '@/stores/gameStore';
 
 import BattleGridExplosionParticle from './BattleGridExplosionParticle';
 
 export default function BattleGridExplosion({ particleCount, duration }) {
     const guessState = useContractStore((state) => state.guessState);
-    const selectedCell = useBattleGridStore((state) => state.selectedCell);
+    const selectedCell = useGameStore((state) => state.selectedCell);
     const [particles, setParticles] = useState([]);
     const hide = guessState !== 'HIT';
 

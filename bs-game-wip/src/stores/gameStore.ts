@@ -16,7 +16,7 @@ export type Cell = {
 
 export type RevealedCellType = 'HIT' | 'MISS' | 'UNKNOWN';
 
-export type BattleGridState = {
+export type GameState = {
     grid: Cell[];
     missedCells: Cell[];
     hitCells: Cell[];
@@ -26,9 +26,10 @@ export type BattleGridState = {
     scrollPosition: [number, number];
     mousePosition: [number, number];
     selectedCell: Cell | null;
+    helpWindowOpen: boolean;
 };
 
-export type BattleGridActions = {
+export type GameActions = {
     initGrid: (height: number, width: number) => void;
     setMousePosition: (x: number, y: number) => void;
     selectCell: () => void;
@@ -36,11 +37,12 @@ export type BattleGridActions = {
     setSingleRevealedCell: (x: number, y: number, type: RevealedCellType) => void;
     addUnknownCell: (x: number, y: number) => void;
     clearUnknownCells: () => void;
+    toggleHelpWindow: () => void;
 };
 
-export type BattleGridStore = BattleGridState & BattleGridActions;
+export type GameStore = GameState & GameActions;
 
-export const useBattleGridStore = create<BattleGridStore>(
+export const useGameStore = create<GameStore>(
     persist(
         (set, get) => ({
             grid: [],
@@ -52,6 +54,7 @@ export const useBattleGridStore = create<BattleGridStore>(
             scrollPosition: [0, 0],
             mousePosition: [0, 0],
             selectedCell: null,
+            helpWindowOpen: true,
 
             initGrid: (height: number, width: number) =>
                 set(() => {
@@ -124,16 +127,24 @@ export const useBattleGridStore = create<BattleGridStore>(
                 }),
 
             clearUnknownCells: () => set({ unknownCells: [] }),
+            toggleHelpWindow: () => set((state) => ({ helpWindowOpen: !state.helpWindowOpen })),
         }),
         {
             name: 'battle-grid-storage',
             storage: createJSONStorage(() => localStorage),
-            partialize: ({ hitCells, missedCells, revealedCells, unknownCells }) => ({
+            partialize: ({
                 hitCells,
                 missedCells,
                 revealedCells,
                 unknownCells,
+                helpWindowOpen,
+            }) => ({
+                hitCells,
+                missedCells,
+                revealedCells,
+                unknownCells,
+                helpWindowOpen,
             }),
         }
-    ) as StateCreator<BattleGridStore, [], []>
+    ) as StateCreator<GameStore, [], []>
 );

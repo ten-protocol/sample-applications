@@ -2,19 +2,20 @@ import { useEffect, useState } from 'react';
 
 import detectEthereumProvider from '@metamask/detect-provider';
 
-import logo from '@/assets/white_logotype.png';
+import BattleGrid from '@/components/BattleGrid/BattleGrid';
+import CellsRemaining from '@/components/CellsRemaining/CellsRemaining';
+import Graveyard from '@/components/Graveyard/Graveyard';
+import HelpWindow from '@/components/HelpWindow/HelpWindow';
 import MessageLog from '@/components/MessageLog/MessageLog';
 import MetaMask from '@/components/MetaMask/MetaMask';
+import PageHeader from '@/components/PageHeader/PageHeader';
+import PrizePool from '@/components/PrizePool/PrizePool';
+import ProcessingNotification from '@/components/ProcessingNotification/ProcessingNotification';
+import { trackEvent } from '@/lib/trackEvent';
+import { useMessageStore } from '@/stores/messageStore';
+import { useWalletStore } from '@/stores/walletStore';
 
 import './App.css';
-import BattleGrid from './components/BattleGrid/BattleGrid';
-import CellsRemaining from './components/CellsRemaining/CellsRemaining';
-import Graveyard from './components/Graveyard/Graveyard';
-import PrizePool from './components/PrizePool/PrizePool';
-import ProcessingNotification from './components/ProcessingNotification/ProcessingNotification';
-import { trackEvent } from './lib/trackEvent';
-import { useMessageStore } from './stores/messageStore';
-import { useWalletStore } from './stores/walletStore';
 
 function App() {
     const [setProvider, address, setAddress] = useWalletStore((state) => [
@@ -70,9 +71,7 @@ function App() {
 
     return (
         <>
-            <div className="mb-10">
-                <img src={logo} alt="test" width={120} />
-            </div>
+            <PageHeader />
             <div className="grid grid-cols-[220px_1fr_220px] gap-6">
                 <div>
                     <Graveyard />
@@ -90,6 +89,7 @@ function App() {
                 </div>
             </div>
             <ProcessingNotification />
+            <HelpWindow />
         </>
     );
 }

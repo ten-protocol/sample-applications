@@ -1,7 +1,7 @@
 import { Graphics as PixiGraphics } from '@pixi/graphics';
 
 import { HEX_HEIGHT, HEX_WIDTH } from '@/lib/constants';
-import { RevealedCellType } from '@/stores/battleGridStore';
+import { RevealedCellType } from '@/stores/gameStore';
 
 import createHexagon from './createHexagon';
 

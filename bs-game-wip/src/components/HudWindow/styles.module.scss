@@ -2,6 +2,13 @@
     box-shadow: 0 0 7px rgba(231, 76, 60, 0.6);
 }
 
+.container {
+    position: absolute;
+    top: 30vh;
+    left: 50vw;
+    transform: translateX(-50%);
+}
+
 .topLeftDecoration {
     width: 80%;
     height: 80%;

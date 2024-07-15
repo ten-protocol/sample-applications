@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 
 import { Container } from '@pixi/react';
 
-import { useBattleGridStore } from '@/stores/battleGridStore';
 import { useContractStore } from '@/stores/contractStore';
+import { useGameStore } from '@/stores/gameStore';
 
 import CellHighlightParticle from './CellHighlightParticle';
 import {
@@ -15,7 +15,7 @@ import {
 
 export default function CellHighlight() {
     const guessState = useContractStore((state) => state.guessState);
-    const selectedCell = useBattleGridStore((state) => state.selectedCell);
+    const selectedCell = useGameStore((state) => state.selectedCell);
     const [particles, setParticles] = useState([]);
     const hide = guessState === 'IDLE';
     const duration = 1000;

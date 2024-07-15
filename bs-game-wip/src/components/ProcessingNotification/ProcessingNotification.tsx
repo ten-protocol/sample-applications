@@ -1,9 +1,8 @@
 import { AnimatePresence, motion } from 'framer-motion';
 
+import Button from '@/components/Button/Button';
 import HudWindow from '@/components/HudWindow/HudWindow';
 import { useContractStore } from '@/stores/contractStore';
-
-import styles from './styles.module.scss';
 
 export default function ProcessingNotification() {
     const [guessState, lastError, resetGuessState] = useContractStore((state) => [
@@ -19,7 +18,7 @@ export default function ProcessingNotification() {
         resetGuessState();
     };
 
-    const CloseButton = <button onClick={handleClose}>Close</button>;
+    const CloseButton = <Button onClick={handleClose}>Close</Button>;
 
     if (guessState === 'IDLE') return null;
 
@@ -27,10 +26,8 @@ export default function ProcessingNotification() {
         footerContent = <p>Processing...</p>;
         bodyContent = (
             <div className="flex flex-col items-start">
-                <p className="text-lg bg-stone-900 inline-block px-1">
-                    Target locked and confirmed.
-                </p>
-                <p className="text-sm bg-stone-900 px-1">Initiating plasma cannon sequence</p>
+                <p className="text-lg inline-block px-1">Target locked and confirmed.</p>
+                <p className="text-sm px-1">Initiating plasma cannon sequence</p>
             </div>
         );
     }
@@ -40,8 +37,8 @@ export default function ProcessingNotification() {
         bodyContent = (
             <div className="flex flex-col items-start">
                 <p className="text-lg bg-red-600 inline-block px-1">WEAPON ACTIVATION FAILED</p>
-                <p className="text-sm bg-red-600 px-1">Error detected</p>
-                <p className="text-sm bg-red-600 px-1">{lastError}</p>
+                <p className="text-sm px-1">Error detected</p>
+                <p className="text-sm px-1">{lastError}</p>
             </div>
         );
     }
@@ -50,12 +47,8 @@ export default function ProcessingNotification() {
         footerContent = <p>CANNONS FIRED...</p>;
         bodyContent = (
             <div className="flex flex-col items-start">
-                <p className="text-lg bg-neutral-900 inline-block px-1">
-                    Ordinance en route to target
-                </p>
-                <p className="text-sm bg-neutral-900 inline-block px-1">
-                    Monitor for impact confirmation
-                </p>
+                <p className="text-lg inline-block px-1">Ordinance en route to target</p>
+                <p className="text-sm inline-block px-1">Monitor for impact confirmation</p>
             </div>
         );
     }
@@ -64,11 +57,8 @@ export default function ProcessingNotification() {
         footerContent = <div>{CloseButton}</div>;
         bodyContent = (
             <div className="flex flex-col items-start">
-                <p className="text-lg bg-neutral-900 inline-block px-1">Miss detected</p>
-                <p className="text-lg bg-neutral-900 inline-block px-1">
-                    Shot failed to find target
-                </p>
-                <p className="text-sm bg-neutral-900 inline-block px-1">
+                <p className="text-lg inline-block px-1">Shot failed to find target</p>
+                <p className="text-sm inline-block px-1">
                     Initiate trajectory analysis and recalibrate targeting systems
                 </p>
             </div>
@@ -79,9 +69,8 @@ export default function ProcessingNotification() {
         footerContent = <div>{CloseButton}</div>;
         bodyContent = (
             <div className="flex flex-col items-start">
-                <p className="text-lg bg-blue-600 inline-block px-1">DIRECT HIT</p>
-                <p className="text-lg bg-neutral-900 inline-block px-1">Impact confirmed</p>
-                <p className="text-sm bg-neutral-900 inline-block px-1">
+                <p className="text-lg bg-blue-600 inline-block px-1 mb-2">DIRECT HIT</p>
+                <p className="text-sm inline-block px-1">
                     Assess damage and prepare for immediate re-engagement
                 </p>
             </div>
@@ -95,25 +84,13 @@ export default function ProcessingNotification() {
     };
 
     return (
-        <div className={styles.container}>
-            <HudWindow
-                headerTitle="Striking coordinates"
-                speed={0.1}
-                footerContent={
-                    <div>
-                        <motion.div
-                            key={guessState}
-                            initial="initial"
-                            animate="animate"
-                            exit="exit"
-                            variants={variants}
-                        >
-                            {footerContent}
-                        </motion.div>
-                    </div>
-                }
-            >
-                <AnimatePresence mode="wait">
+        <HudWindow
+            headerTitle="Striking coordinates"
+            speed={0.1}
+            modalMode={true}
+            transparentOverlay={true}
+            footerContent={
+                <div>
                     <motion.div
                         key={guessState}
                         initial="initial"
@@ -121,10 +98,23 @@ export default function ProcessingNotification() {
                         exit="exit"
                         variants={variants}
                     >
-                        {bodyContent}
+                        {footerContent}
                     </motion.div>
-                </AnimatePresence>
-            </HudWindow>
-        </div>
+                </div>
+            }
+        >
+            <AnimatePresence mode="wait">
+                <motion.div
+                    key={guessState}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    variants={variants}
+                    className="py-2 w-96"
+                >
+                    {bodyContent}
+                </motion.div>
+            </AnimatePresence>
+        </HudWindow>
     );
 }

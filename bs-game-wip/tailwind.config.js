@@ -6,7 +6,9 @@ module.exports = {
     extend: {
       colors: {
         accent: 'rgb(var(--color-accent) / 1)',
-        accentBackground: 'rgb(var(--color-accent) / .08)'
+        accentBackground: 'rgb(var(--color-accent) / .08)',
+        bg: 'var(--color-bg)',
+        translucentBg: 'var(--color-translucent-bg)',
       }
     },
   },

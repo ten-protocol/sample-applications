@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 
+import classNames from 'classnames';
 import { AnimatePresence, motion } from 'framer-motion';
 
 import AnimatedText from '@/components/AnimatedText/AnimatedText';
@@ -13,6 +14,8 @@ type Props = {
     isOpen?: boolean;
     closedContent?: ReactNode;
     speed?: number;
+    modalMode?: boolean;
+    transparentOverlay?: boolean;
 };
 
 export default function HudWindow({
@@ -22,6 +25,8 @@ export default function HudWindow({
     isOpen = true,
     closedContent,
     speed = 1,
+    modalMode = false,
+    transparentOverlay = false,
 }: Props) {
     const topDecorationAnimation = {
         initial: { width: 0, height: 0 },
@@ -40,66 +45,73 @@ export default function HudWindow({
         initial: { opacity: 0, width: 0 },
         animate: { opacity: 1, width: '100%' },
         exit: { opacity: 0 },
-        transition: { delay: 1, duration: 1 * speed },
+        transition: { delay: 1 * speed, duration: 1 * speed },
     };
 
     const contentAnimation = {
         initial: { opacity: 0 },
         animate: { opacity: 1 },
         exit: { opacity: 0 },
-        transition: { delay: 2, duration: 1 * speed },
+        transition: { delay: 2 * speed, duration: 1 * speed },
     };
 
     const footerAnimation = {
         initial: { opacity: 0, width: 0 },
         animate: { opacity: 1, width: '100%' },
         exit: { opacity: 0 },
-        transition: { delay: 1, duration: 1 * speed },
+        transition: { delay: 1 * speed, duration: 1 * speed },
     };
 
     const footerContentAnimation = {
         initial: { opacity: 0 },
         animate: { opacity: 1 },
         exit: { opacity: 0 },
-        transition: { delay: 3, duration: 1 * speed },
+        transition: { delay: 3 * speed, duration: 1 * speed },
     };
 
     const closedScreenAnimation = {
         initial: { opacity: 0 },
         animate: { opacity: 1 },
         exit: { opacity: 0 },
-        transition: { delay: 3, duration: 1 * speed },
+        transition: { delay: 3 * speed, duration: 1 * speed },
     };
+
+    const modalClass = classNames({
+        'absolute inset-0 flex justify-center items-center  -mt-40': modalMode,
+        'bg-translucentBg': !transparentOverlay,
+    });
 
     return (
         <AnimatePresence>
-            <section className="relative p-2 backdrop-blur">
-                <motion.div {...topDecorationAnimation} className={styles.topLeftDecoration} />
-                <motion.div {...headerAnimation}>
-                    <header className={`px-2 mb-2 bg-white text-black ${styles.glow}`}>
-                        <AnimatedText text={headerTitle} delay={2} speed={0.1} />
-                    </header>
-                </motion.div>
+            <div className={modalClass}>
+                <section className="relative p-2 backdrop-blur bg-translucentBg">
+                    <motion.div {...topDecorationAnimation} className={styles.topLeftDecoration} />
+                    <motion.div {...headerAnimation}>
+                        <header className={`px-2 mb-2 bg-white text-black ${styles.glow}`}>
+                            <AnimatedText text={headerTitle} delay={2 * speed} speed={0.1} />
+                        </header>
+                    </motion.div>
 
-                {!isOpen && <motion.div {...closedScreenAnimation}>{closedContent}</motion.div>}
+                    {!isOpen && <motion.div {...closedScreenAnimation}>{closedContent}</motion.div>}
 
-                {isOpen && <motion.div {...contentAnimation}>{children}</motion.div>}
+                    {isOpen && <motion.div {...contentAnimation}>{children}</motion.div>}
 
-                {footerContent && isOpen && (
-                    <>
-                        <motion.footer
-                            {...footerAnimation}
-                            className={`p-2 mt-2 bg-white text-black ${styles.glow}`}
-                        >
-                            <motion.div {...footerContentAnimation}>{footerContent}</motion.div>
-                        </motion.footer>
-                        <motion.div
-                            {...bottomDecorationAnimation}
-                            className={styles.bottomRightDecoration}
-                        />
-                    </>
-                )}
-            </section>
+                    {footerContent && isOpen && (
+                        <>
+                            <motion.footer
+                                {...footerAnimation}
+                                className={`p-2 mt-2 bg-white text-black ${styles.glow}`}
+                            >
+                                <motion.div {...footerContentAnimation}>{footerContent}</motion.div>
+                            </motion.footer>
+                            <motion.div
+                                {...bottomDecorationAnimation}
+                                className={styles.bottomRightDecoration}
+                            />
+                        </>
+                    )}
+                </section>
+            </div>
         </AnimatePresence>
     );
 }

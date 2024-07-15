@@ -1,14 +1,14 @@
 import { create } from 'zustand';
 
-export interface IMessageStore {
+export type MessageStore = {
     messages: { id: number; text: string; type: MessageType }[];
     errorMessage: string;
     addNewMessage: (msg: string, type?: MessageType) => void;
-}
+};
 
 type MessageType = 'INFO' | 'ERROR' | 'SUCCESS';
 
-export const useMessageStore = create((set) => ({
+export const useMessageStore = create<MessageStore>((set) => ({
     messages: [],
     errorMessage: '',
 

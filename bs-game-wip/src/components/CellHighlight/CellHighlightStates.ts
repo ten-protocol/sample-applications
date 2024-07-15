@@ -62,7 +62,7 @@ export function MissHighlightState(x, y, duration) {
         const angle = angleIncrement * i;
         const rotationSpeed = 0; // Random rotation speed
         const startRadius = 400;
-        const endRadius = -800;
+        const endRadius = -1200;
         const startHeight = 100;
         const endHeight = 10;
         newParticles.push({
@@ -92,9 +92,9 @@ export function HitHighlightState(x, y, duration) {
         const angle = angleIncrement * i;
         const rotationSpeed = 0; // Random rotation speed
         const startRadius = 400;
-        const endRadius = -800;
+        const endRadius = -1200;
         const startHeight = 30;
-        const endHeight = 10;
+        const endHeight = 100;
         newParticles.push({
             x,
             y,
