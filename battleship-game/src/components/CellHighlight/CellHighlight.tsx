@@ -12,12 +12,13 @@ import {
     HitHighlightState,
     MissHighlightState,
 } from './CellHighlightStates';
+import {Particle} from "./cellHighlights.models";
 
 export default function CellHighlight() {
     const guessState = useContractStore((state) => state.guessState);
     const selectedCell = useGameStore((state) => state.selectedCell);
-    const [particles, setParticles] = useState([]);
-    const hide = guessState === 'IDLE';
+    const [particles, setParticles] = useState<Particle[]>([]);
+    const hide = guessState === 'IDLE' || !selectedCell;
     const duration = 1000;
 
     useEffect(() => {

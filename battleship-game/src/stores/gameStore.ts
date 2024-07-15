@@ -33,7 +33,7 @@ export type GameActions = {
     initGrid: (height: number, width: number) => void;
     setMousePosition: (x: number, y: number) => void;
     selectCell: () => void;
-    setRevealedCells: (cells: [col: number, row: number][], type: RevealedCellType) => void;
+    setRevealedCells: (cells: string[][], type: RevealedCellType) => void;
     setSingleRevealedCell: (x: number, y: number, type: RevealedCellType) => void;
     addUnknownCell: (x: number, y: number) => void;
     clearUnknownCells: () => void;
@@ -98,7 +98,7 @@ export const useGameStore = create<GameStore>(
             },
 
             setRevealedCells: (
-                cells: [col: number, row: number][],
+                cells: string[][],
                 type: 'HIT' | 'MISS' | 'UNKNOWN'
             ) => {
                 const newRevealedCells = { ...get().revealedCells };
@@ -122,7 +122,7 @@ export const useGameStore = create<GameStore>(
                 set((state) => {
                     state.setSingleRevealedCell(x, y, 'UNKNOWN');
 
-                    return { unknownCells: [...state.unknownCells, { ...state.hoveredCell }] };
+                    return state.hoveredCell ? { unknownCells: [...state.unknownCells, { ...state.hoveredCell }] } : {}
                 }),
 
             clearUnknownCells: () => set({ unknownCells: [] }),

@@ -1,9 +1,11 @@
 import { useRef, useState } from 'react';
 
-import { Graphics, useTick } from '@pixi/react';
+import {Graphics, useTick} from '@pixi/react';
+import {Particle} from "./cellHighlights.models";
+import PIXI from 'pixi.js'
 
-export default function CellhighLightParticle(p) {
-    const graphicRef = useRef();
+export default function CellhighLightParticle(p: Particle) {
+    const graphicRef = useRef<PIXI.Graphics>(null);
     const [currentAngle, setCurrentAngle] = useState(p.angle);
     const [age, setAge] = useState(0);
     const [ageReset, setAgeReset] = useState(false);
@@ -11,7 +13,7 @@ export default function CellhighLightParticle(p) {
     useTick((delta) => {
         if (graphicRef.current) {
             // Update the angle
-            if (p.ageReset && !ageReset) {
+            if (p.age && p.ageReset && !ageReset) {
                 setAge(p.age);
                 setAgeReset(true);
             }
@@ -28,9 +30,6 @@ export default function CellhighLightParticle(p) {
             graphicRef.current.y = y;
             graphicRef.current.height = height;
             graphicRef.current.rotation = currentAngle + Math.PI / 2;
-
-            const opacity = Math.max(1 - age / p.duration, 0);
-            // graphicRef.current.alpha = opacity;
         }
     });
 

@@ -12,8 +12,8 @@ import { useWalletStore } from '@/stores/walletStore';
 import { useGameStore } from './gameStore';
 
 export type ContractStore = {
-    hits: any[];
-    misses: any[];
+    hits: string[][];
+    misses: string[][];
     graveyard: boolean[];
     gameOver: boolean;
     prizePool: string;
@@ -23,10 +23,10 @@ export type ContractStore = {
     submitGuess: (x: number, y: number) => Promise<void>;
     resetGuessState: () => void;
     setPrizePool: (pp: string) => void;
-    setHits: (h: any[]) => void;
-    setMisses: (m: any[]) => void;
-    setGraveyard: (g: any[]) => void;
-    setLastGuessCoords: (g: any) => void;
+    setHits: (h: string[][]) => void;
+    setMisses: (m: string[][]) => void;
+    setGraveyard: (g: boolean[]) => void;
+    setLastGuessCoords: (g: string[]) => void;
 };
 
 export type GuessState =
@@ -84,7 +84,7 @@ export const useContractStore = create<ContractStore>(
                     get().setPrizePool(prizePool);
                     set({ guessState: success ? 'HIT' : 'MISS' });
                     get().setLastGuessCoords(guessedCoords);
-                } catch (e) {
+                } catch (error) {
                     const e = error as { reason?: string };
                     set({ guessState: 'ERROR' });
                     if (e?.reason) {
@@ -100,7 +100,7 @@ export const useContractStore = create<ContractStore>(
                             'ERROR'
                         );
                         set({ lastError: 'Failed to issue Guess - unexpected error occurred' });
-                        throw new Error(e);
+                        console.error(e);
                     }
                 }
             },
@@ -110,7 +110,7 @@ export const useContractStore = create<ContractStore>(
                     guessState: 'IDLE',
                 }),
 
-            setGraveyard: (latestGraveyard: any[]) => {
+            setGraveyard: (latestGraveyard: boolean[]) => {
                 const addNewMessage = useMessageStore.getState().addNewMessage;
 
                 const graveyardHasUpdated =
@@ -123,7 +123,7 @@ export const useContractStore = create<ContractStore>(
                 }
             },
 
-            setMisses: (latestMisses: any[]) => {
+            setMisses: (latestMisses: string[][]) => {
                 const currentMisses = useGameStore.getState().missedCells;
                 const addNewMessage = useMessageStore.getState().addNewMessage;
                 const missesHaveUpdated = latestMisses.length !== currentMisses.length;
@@ -149,7 +149,7 @@ export const useContractStore = create<ContractStore>(
             },
 
             //TODO: Given the similarity of the methods here might be worth combining with the above.
-            setHits: (latestHits: any[]) => {
+            setHits: (latestHits: string[][]) => {
                 const currentHits = useGameStore.getState().hitCells;
                 const addNewMessage = useMessageStore.getState().addNewMessage;
                 const hitsHaveUpdated = latestHits.length !== currentHits.length;
@@ -182,7 +182,7 @@ export const useContractStore = create<ContractStore>(
                 set({ prizePool: formatUnits(prizePool, 'ether') });
             },
 
-            setLastGuessCoords: (coords: any) => {
+            setLastGuessCoords: (coords: string[]) => {
                 set({ lastGuessCoords: [parseInt(coords[0]), parseInt(coords[1])] });
             },
         }),

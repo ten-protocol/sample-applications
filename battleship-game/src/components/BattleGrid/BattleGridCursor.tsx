@@ -6,6 +6,7 @@ import createHexagon from '@/helpers/createHexagon';
 import { HEX_HEIGHT, HEX_WIDTH } from '@/lib/constants';
 import { useContractStore } from '@/stores/contractStore';
 import { useGameStore } from '@/stores/gameStore';
+import PIXI from "pixi.js";
 
 const hexagon = createHexagon(HEX_WIDTH, HEX_HEIGHT);
 
@@ -13,11 +14,11 @@ export default function BattleGridCursor() {
     const [[x, y], hoveredCell] = useGameStore((state) => [state.mousePosition, state.hoveredCell]);
     const guessState = useContractStore((state) => state.guessState);
     const isLoadingState = guessState !== 'IDLE';
-    const shapeRef = useRef(null);
+    const graphicRef = useRef<PIXI.Graphics>(null);
     const timeRef = useRef(0);
 
     useTick((delta) => {
-        if (shapeRef.current) {
+        if (graphicRef.current) {
             timeRef.current += delta;
             const scaleSpeed = 0.1;
             const rotationSpeed = 1;
@@ -27,12 +28,12 @@ export default function BattleGridCursor() {
             const midScale = (maxScale + minScale) / 2;
             const newScale = midScale + Math.sin(timeRef.current * scaleSpeed) * scaleRange;
 
-            shapeRef.current.scale.set(newScale);
+            graphicRef.current.scale.set(newScale);
 
             if (isLoadingState && guessState !== 'ERROR') {
-                shapeRef.current.rotation += timeRef.current * rotationSpeed;
+                graphicRef.current.rotation += timeRef.current * rotationSpeed;
             } else {
-                shapeRef.current.rotation = 0;
+                graphicRef.current.rotation = 0;
             }
         }
     });
@@ -44,7 +45,7 @@ export default function BattleGridCursor() {
     return (
         <Container>
             <Graphics
-                ref={shapeRef}
+                ref={graphicRef}
                 draw={(g) => {
                     g.position.set(x, y);
                     g.clear();

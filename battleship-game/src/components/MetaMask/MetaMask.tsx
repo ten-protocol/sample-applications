@@ -12,7 +12,7 @@ export default function MetaMask() {
     const addNewMessage = useMessageStore((state) => state.addNewMessage);
 
     const connectAccount = async () => {
-        if (provider) {
+        if (provider && window.ethereum?.request) {
             try {
                 const accounts = await window.ethereum.request({
                     method: 'eth_requestAccounts',

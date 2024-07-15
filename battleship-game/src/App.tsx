@@ -16,6 +16,7 @@ import { useMessageStore } from '@/stores/messageStore';
 import { useWalletStore } from '@/stores/walletStore';
 
 import './App.css';
+import { Eip1193Provider } from 'ethers/src.ts/providers/provider-browser';
 
 function App() {
     const [setProvider, address, setAddress] = useWalletStore((state) => [
@@ -32,7 +33,7 @@ function App() {
 
     const connectToMetaMask = async () => {
         try {
-            const provider = await detectEthereumProvider();
+            const provider: Eip1193Provider|null = await detectEthereumProvider();
             //TODO: If we want to only support metamask there is a 'isMetaMask' property on the provider object
             if (provider) {
                 setProvider(provider);
@@ -59,8 +60,8 @@ function App() {
                 addNewMessage('Please install MetaMask!', 'ERROR');
                 setInitialized(true);
             }
-        } catch (err) {
-            console.error('Error:', err.message);
+        } catch (err: any) {
+            console.error('Error:', err?.message);
             setInitialized(true);
         }
     };
