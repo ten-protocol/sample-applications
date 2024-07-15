@@ -1,28 +1,31 @@
-- ~~intro screen/state~~
+
 - gameover screen/state
 - explosion effect/notification when ship is sunk
 - Stress test
 - Get started help
 - component help tips
-- ~~shot pending notification/overlay~~
-- ~~offset grid to make edge cells entirely visible~~
 - Make responsive for mobile?
-- Prevent shots being placed on cells which are already displayed as hit
-- minimap
 - map legend
-- ~~Animate message log entries~~
-- ~~animate hud windows~~
 - highlight errors in message log
-- ~~display Remaining Cells~~
 - add ability to scale teh map
 - percentage bar for fleet strength
-- ~~finish connection window~~
 - move contract address var to env var
-~~- Fetch game data on connection~~
 - improve x,y coords display
 - detect metamask disconnection
+- improve performance
+- display age of gameboard
+- modify UI and contract to inform user if ship was sunk on hit/guess
+- Game rules/how to play window
+
 - ~~Update contract and UI as per discussion~~
 - ~~Persist game state on page reloads~~
 - ~~empty game state~~
-- modify UI and contract to inform user if ship was sunk on hit/guess
-- Game rules/how to play window
+- ~~- Fetch game data on connection~~
+- ~~finish connection window~~
+- ~~display Remaining Cells~~
+- - ~~shot pending notification/overlay~~
+- ~~offset grid to make edge cells entirely visible~~
+-  ~~- Prevent shots being placed on cells which are already displayed as hit~~
+- ~~Animate message log entries~~
+- ~~animate hud windows~~
+- - ~~intro screen/state~~

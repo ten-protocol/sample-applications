@@ -1,11 +1,13 @@
 import { useRef } from 'react';
 
-import { BloomFilter } from '@pixi/filter-bloom';
 import { Container, Graphics, useTick } from '@pixi/react';
 
-import { hexHitArea } from '@/lib/constants';
+import createHexagon from '@/helpers/createHexagon';
+import { HEX_HEIGHT, HEX_WIDTH } from '@/lib/constants';
 import { useBattleGridStore } from '@/stores/battleGridStore';
 import { useContractStore } from '@/stores/contractStore';
+
+const hexagon = createHexagon(HEX_WIDTH, HEX_HEIGHT);
 
 export default function BattleGridCursor() {
     const [[x, y], hoveredCell] = useBattleGridStore((state) => [
@@ -15,10 +17,7 @@ export default function BattleGridCursor() {
     const guessState = useContractStore((state) => state.guessState);
     const isLoadingState = guessState !== 'IDLE';
     const shapeRef = useRef(null);
-    const scaleRef = useRef(1);
-    const directionRef = useRef(1);
     const timeRef = useRef(0);
-    const bloomFilter = new BloomFilter(3, 3, 2);
 
     useTick((delta) => {
         if (shapeRef.current) {
@@ -53,7 +52,7 @@ export default function BattleGridCursor() {
                     g.position.set(x, y);
                     g.clear();
                     g.lineStyle(1, guessState !== 'ERROR' ? 0xffffff : 0xdc2626, 1);
-                    g.drawPolygon(hexHitArea);
+                    g.drawPolygon(hexagon);
                     g.endFill();
                 }}
             />

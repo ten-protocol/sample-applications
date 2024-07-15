@@ -1,13 +1,9 @@
-import createHexagon from '@/helpers/createHexagon';
-import formatAddress from '@/helpers/formatAddress';
-
 export const MOVE_FEE: string = '0.0443';
 export const TOTAL_SHIPS: number = 249;
 export const HEX_WIDTH = 32;
 export const HEX_HEIGHT = 32;
 export const VERTICAL_OFFSET = 8;
 export const HORIZONTAL_OFFSET = 0;
-export const hexHitArea = createHexagon(HEX_WIDTH, HEX_HEIGHT);
 export const DRAW_THRESHOLD = 100;
 export const CONTAINER_WIDTH = 600;
 export const CONTAINER_HEIGHT = 500;

@@ -1,32 +1,26 @@
 import { useMemo } from 'react';
 
-import { Container, Stage } from '@pixi/react';
+import { Container, Graphics, Stage } from '@pixi/react';
 
 import CellHighlight from '@/components/CellHighlight/CellHighlight';
+import drawGridCells from '@/helpers/drawGridCells';
 import { HEX_GRID_MARGIN, HEX_HEIGHT, HEX_WIDTH } from '@/lib/constants';
+import { Cell } from '@/stores/battleGridStore';
 
-import BattleGridCell from './BattleGridCell';
 import BattleGridCursor from './BattleGridCursor';
 import BattleGridExplosion from './BattleGridExplosion';
 import BattleGridHits from './BattleGridHits';
 import BattleGridMisses from './BattleGridMisses';
 import BattleGridUnknowns from './BattleGridUnknowns';
 
-export default function BattleGridCanvas({ grid, width, height }) {
-    const gridCells = useMemo(
-        () =>
-            grid.map(({ row, col, x, y }) => (
-                <BattleGridCell
-                    key={`${row}-${col}`}
-                    x={x}
-                    y={y}
-                    row={row}
-                    col={col}
-                    state="UNTOUCHED"
-                />
-            )),
-        [grid]
-    );
+type Props = {
+    grid: Cell[];
+    width: number;
+    height: number;
+};
+
+export default function BattleGridCanvas({ grid, width, height }: Props) {
+    const gridCells = useMemo(() => <Graphics draw={(g) => drawGridCells(g, grid)} />, [grid]);
 
     return (
         <Stage
@@ -39,11 +33,13 @@ export default function BattleGridCanvas({ grid, width, height }) {
                 autoDensity: true,
             }}
         >
-            <Container>{gridCells}</Container>
-            <BattleGridUnknowns />
-            <BattleGridMisses />
-            <BattleGridHits />
-            <CellHighlight particleCount={20} />
+            <Container>
+                {gridCells}
+                <BattleGridUnknowns />
+                <BattleGridMisses />
+                <BattleGridHits />
+            </Container>
+            <CellHighlight />
             <BattleGridExplosion particleCount={40} duration={1000} />
             <BattleGridCursor />
         </Stage>

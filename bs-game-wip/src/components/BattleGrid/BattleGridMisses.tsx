@@ -1,28 +1,15 @@
 import { useMemo } from 'react';
 
-import { Container } from '@pixi/react';
+import { Graphics } from '@pixi/react';
 
+import drawGridCells from '@/helpers/drawGridCells';
 import { useBattleGridStore } from '@/stores/battleGridStore';
-
-import BattleGridCell from './BattleGridCell';
 
 export default function BattleGridMisses() {
     const missedCells = useBattleGridStore((state) => state.missedCells);
 
-    const revealedGridCells = useMemo(
-        () =>
-            missedCells.map(({ row, col, x, y }) => (
-                <BattleGridCell
-                    key={`${row}-${col}`}
-                    x={x}
-                    y={y}
-                    row={row}
-                    col={col}
-                    state="MISSED"
-                />
-            )),
+    return useMemo(
+        () => <Graphics draw={(g) => drawGridCells(g, missedCells, 'MISS')} />,
         [missedCells]
     );
-
-    return <Container>{revealedGridCells}</Container>;
 }
