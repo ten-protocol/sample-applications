@@ -1,23 +1,27 @@
-import { defineStore } from 'pinia'
+import { create } from 'zustand';
 
-export const useMessageStore = defineStore({
-  id: 'messageStore',
-  state: () => ({
-    messages: [] as { id: number; text: string }[],
-    errorMessage: ''
-  }),
-  actions: {
-    addMessage(text) {
-      this.messages.push({
-        id: Date.now(),
-        text: text
-      })
+export type MessageStore = {
+    messages: { id: number; text: string; type: MessageType }[];
+    errorMessage: string;
+    addNewMessage: (msg: string, type?: MessageType) => void;
+};
+
+type MessageType = 'INFO' | 'ERROR' | 'SUCCESS';
+
+export const useMessageStore = create<MessageStore>((set) => ({
+    messages: [],
+    errorMessage: '',
+
+    addNewMessage: (text, type = 'INFO') => {
+        set((state) => ({
+            messages: [
+                ...state.messages,
+                {
+                    id: Date.now(),
+                    text: text,
+                    type,
+                },
+            ],
+        }));
     },
-    addErrorMessage(text) {
-      this.errorMessage = text
-    },
-    clearErrorMessage() {
-      this.errorMessage = ''
-    }
-  }
-})
+}));

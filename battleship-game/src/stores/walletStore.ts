@@ -1,26 +1,34 @@
-import { defineStore } from 'pinia'
-import { ethers } from 'ethers'
-import { markRaw, toRef } from 'vue'
+import { ethers } from 'ethers';
+import type { JsonRpcSigner } from 'ethers/lib.commonjs/providers/provider-jsonrpc';
+import { Eip1193Provider } from 'ethers/src.ts/providers/provider-browser';
+import { create } from 'zustand';
 
-export const useWalletStore = defineStore({
-  id: 'wallet',
-  state: () => ({
+import ContractAddress from '@/assets/contract/address.json';
+import { useMessageStore } from '@/stores/messageStore';
+
+export interface IWalletStore {
+    provider: Eip1193Provider | null;
+    signer: JsonRpcSigner | null;
+    address: string | null;
+    isConnected: boolean;
+    setProvider: (provider: Eip1193Provider) => Promise<void>;
+    setAddress: (address: string) => void;
+}
+
+export const useWalletStore = create<IWalletStore>((set) => ({
     provider: null,
     signer: null,
     address: null,
-    isConnected: false
-  }),
-  actions: {
-    setProvider(provider) {
-      this.provider = markRaw(provider)
-      this.signer = markRaw(new ethers.providers.Web3Provider(provider).getSigner())
-      this.isConnected = true
+    isConnected: false,
+    setProvider: async (provider) => {
+        const signer = await new ethers.BrowserProvider(provider).getSigner();
+        const addNewMessage = useMessageStore.getState().addNewMessage;
+        addNewMessage(`[BattleshipGame Contract] Contract Address: ${ContractAddress.address}`);
+        set({
+            provider,
+            signer,
+            isConnected: true,
+        });
     },
-    setAddress(address) {
-      this.address = address
-    },
-    connected() {
-      return this.isConnected
-    }
-  }
-})
+    setAddress: (address) => set({ address }),
+}));
