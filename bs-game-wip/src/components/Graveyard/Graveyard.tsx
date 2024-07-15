@@ -3,12 +3,15 @@ import ShipSunk from '@/assets/shipSunk.svg';
 import HudWindow from '@/components/HudWindow/HudWindow';
 import { useContractStore } from '@/stores/contractStore';
 import { useWalletStore } from '@/stores/walletStore';
+import {SHIP_SIZE} from "@/lib/constants";
+import {useGameStore} from "@/stores/gameStore";
 
 export default function Graveyard() {
-    const [graveyard] = useContractStore((state) => [state.graveyard]);
+    const graveyard = useContractStore(state => state.graveyard);
+    const hitCells = useGameStore(state => state.hitCells)
     const isConnected = useWalletStore((state) => state.isConnected);
     const sunkShipTotal = graveyard.reduce((nxt, cur) => (cur ? nxt : nxt + 1), 0);
-    const fleetHealth = (sunkShipTotal / graveyard.length) * 100;
+    const fleetHealth = 100 - ((hitCells.length / (graveyard.length * SHIP_SIZE)) * 100);
     const unknownState = graveyard.length === 0;
 
     const Footer = (
@@ -17,7 +20,10 @@ export default function Graveyard() {
             <p className="text-xl whitespace-nowrap">
                 {unknownState ? '???' : fleetHealth.toFixed(1)}% PERC
             </p>
-            <p className="text-3xl mt-4 whitespace-nowrap">
+            <div className="h-2 bg-zinc-400 mt-2">
+                <div className="h-2 bg-zinc-950" style={{width: fleetHealth + "%"}}/>
+            </div>
+            <p className="text-3xl mt-5 whitespace-nowrap font-bold">
                 {unknownState ? '???' : sunkShipTotal}/{unknownState ? '???' : graveyard.length}
             </p>
             <h3 className="text-sm whitespace-nowrap">Ships remaining</h3>

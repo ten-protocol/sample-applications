@@ -10,5 +10,6 @@ export const CONTAINER_HEIGHT = 500;
 export const COLS = 100;
 export const ROWS = 100;
 export const HEX_GRID_MARGIN = 32;
+export const SHIP_SIZE = 3
 
 export const QUERY_INTERVAL_MS = 5000;

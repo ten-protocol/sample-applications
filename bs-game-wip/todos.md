@@ -2,7 +2,6 @@
 - gameover screen/state
 - explosion effect/notification when ship is sunk
 - Stress test
-- Get started help
 - component help tips
 - Make responsive for mobile?
 - map legend
@@ -15,8 +14,9 @@
 - improve performance
 - display age of gameboard
 - modify UI and contract to inform user if ship was sunk on hit/guess
-- Game rules/how to play window
 
+- ~~- Game rules/how to play window~~
+- ~~Get started help~~
 - ~~Update contract and UI as per discussion~~
 - ~~Persist game state on page reloads~~
 - ~~empty game state~~
