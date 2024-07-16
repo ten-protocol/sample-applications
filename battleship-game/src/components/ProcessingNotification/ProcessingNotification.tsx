@@ -84,7 +84,7 @@ export default function ProcessingNotification() {
     };
 
     return (
-        <div className="-mt-60">
+        <div className="-mt-60 mb-60">
         <HudWindow
             headerTitle="Striking coordinates"
             speed={0.1}
