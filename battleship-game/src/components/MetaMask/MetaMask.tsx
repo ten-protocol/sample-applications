@@ -4,15 +4,14 @@ import { useMessageStore } from '@/stores/messageStore';
 import { useWalletStore } from '@/stores/walletStore';
 
 export default function MetaMask() {
-    const [provider, address, setAddress] = useWalletStore((state) => [
-        state.provider,
+    const [ address, setAddress] = useWalletStore((state) => [
         state.address,
         state.setAddress,
     ]);
     const addNewMessage = useMessageStore((state) => state.addNewMessage);
 
     const connectAccount = async () => {
-        if (provider && window.ethereum?.request) {
+        if (window.ethereum?.request) {
             try {
                 const accounts = await window.ethereum.request({
                     method: 'eth_requestAccounts',

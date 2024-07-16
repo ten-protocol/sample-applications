@@ -31,7 +31,7 @@ export default function CellsRemaining() {
             isOpen={isConnected}
             closedContent={Disconnected}
         >
-            <CellRemainingPieChart totalCells={totalCells} revealedCells={numberOfRevealedCells} />
+            {unknownState ? <p className="text-center py-2">No Data</p> : <CellRemainingPieChart totalCells={totalCells} revealedCells={numberOfRevealedCells} />}
         </HudWindow>
     );
 }

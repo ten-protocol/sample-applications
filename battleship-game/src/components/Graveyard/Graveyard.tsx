@@ -20,9 +20,10 @@ export default function Graveyard() {
             <p className="text-xl whitespace-nowrap">
                 {unknownState ? '???' : fleetHealth.toFixed(1)}% PERC
             </p>
-            <div className="h-2 bg-zinc-400 mt-2">
+            {!unknownState && <div className="h-2 bg-zinc-400 mt-2">
                 <div className="h-2 bg-zinc-950" style={{width: fleetHealth + "%"}}/>
-            </div>
+            </div>}
+
             <p className="text-3xl mt-5 whitespace-nowrap font-bold">
                 {unknownState ? '???' : sunkShipTotal}/{unknownState ? '???' : graveyard.length}
             </p>
