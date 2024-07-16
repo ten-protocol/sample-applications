@@ -28,6 +28,12 @@ function App() {
     const [initialized, setInitialized] = useState(false);
 
     useEffect(() => {
+        const timeout = setTimeout(() => setInitialized(true), 3000);
+
+        return () => clearTimeout(timeout);
+    }, [])
+
+    useEffect(() => {
         connectToMetaMask();
     }, [address]);
 
@@ -42,6 +48,7 @@ function App() {
                     addNewMessage(
                         'Not connected to Ten ! Connect at <a href="https://testnet.ten.xyz/" target="_blank" rel="noopener noreferrer">https://testnet.ten.xyz/</a> '
                     );
+                    setInitialized(true);
                     return;
                 }
 
