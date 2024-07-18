@@ -10,6 +10,7 @@ import { useMessageStore } from '@/stores/messageStore';
 import { useWalletStore } from '@/stores/walletStore';
 
 import { useGameStore } from './gameStore';
+import {handleMetaMaskError} from "@/lib/handleMetaMaskError";
 
 export type ContractStore = {
     hits: string[][];
@@ -96,10 +97,10 @@ export const useContractStore = create<ContractStore>(
                         }
                     } else {
                         addNewMessage(
-                            'Failed to issue Guess - unexpected error occurred, check the console logs...',
+                            handleMetaMaskError(error),
                             'ERROR'
                         );
-                        set({ lastError: 'Failed to issue Guess - unexpected error occurred' });
+                        set({ lastError: handleMetaMaskError(error) });
                         console.error(e);
                     }
                 }

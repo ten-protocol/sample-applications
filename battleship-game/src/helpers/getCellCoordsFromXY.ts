@@ -1,11 +1,8 @@
-import { HEX_GRID_MARGIN, HEX_HEIGHT, HEX_WIDTH, VERTICAL_OFFSET } from '@/lib/constants';
-
-import getSnappedMousePosition from './getSnappedMousePosition';
+import {COLS, HEX_GRID_MARGIN, HEX_HEIGHT, HEX_WIDTH, ROWS, VERTICAL_OFFSET} from '@/lib/constants';
 
 export default function getCellCoordsFromXY(x: number, y: number) {
-    const [sx, sy] = getSnappedMousePosition(x, y);
-    const row = (sy - HEX_GRID_MARGIN) / (HEX_HEIGHT - VERTICAL_OFFSET);
-    const col = (sx - (HEX_GRID_MARGIN + (row % 2) * (HEX_WIDTH / 2))) / HEX_WIDTH;
+    const row = (y - HEX_GRID_MARGIN) / (HEX_HEIGHT - VERTICAL_OFFSET);
+    const col = (x - (HEX_GRID_MARGIN + (row % 2) * (HEX_WIDTH / 2))) / HEX_WIDTH;
 
-    return [col, row];
+    return [Math.max(0, Math.min(col, COLS - 1)), Math.max(0, Math.min(row, ROWS - 1))];
 }

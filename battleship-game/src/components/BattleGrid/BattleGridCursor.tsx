@@ -11,7 +11,7 @@ import PIXI from "pixi.js";
 const hexagon = createHexagon(HEX_WIDTH, HEX_HEIGHT);
 
 export default function BattleGridCursor() {
-    const [[x, y], hoveredCell] = useGameStore((state) => [state.mousePosition, state.hoveredCell]);
+    const hoveredCell = useGameStore((state) => state.hoveredCell);
     const guessState = useContractStore((state) => state.guessState);
     const isLoadingState = guessState !== 'IDLE';
     const graphicRef = useRef<PIXI.Graphics>(null);
@@ -47,7 +47,7 @@ export default function BattleGridCursor() {
             <Graphics
                 ref={graphicRef}
                 draw={(g) => {
-                    g.position.set(x, y);
+                    g.position.set(hoveredCell.x, hoveredCell.y);
                     g.clear();
                     g.lineStyle(1, guessState !== 'ERROR' ? 0xffffff : 0xdc2626, 1);
                     g.drawPolygon(hexagon);

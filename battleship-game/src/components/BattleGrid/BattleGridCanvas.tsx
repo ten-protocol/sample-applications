@@ -1,31 +1,22 @@
-import { useMemo } from 'react';
 
-import { Container, Graphics, Stage } from '@pixi/react';
+import { Container, Stage } from '@pixi/react';
 
 import CellHighlight from '@/components/CellHighlight/CellHighlight';
-import drawGridCells from '@/helpers/drawGridCells';
-import { HEX_GRID_MARGIN, HEX_HEIGHT, HEX_WIDTH } from '@/lib/constants';
-import { Cell } from '@/stores/gameStore';
+import {COLS, HEX_GRID_MARGIN, HEX_HEIGHT, HEX_WIDTH, ROWS} from '@/lib/constants';
 
 import BattleGridCursor from './BattleGridCursor';
 import BattleGridExplosion from './BattleGridExplosion';
 import BattleGridHits from './BattleGridHits';
 import BattleGridMisses from './BattleGridMisses';
 import BattleGridUnknowns from './BattleGridUnknowns';
+import BattleGridBackgroundCells from "@/components/BattleGrid/BattleGridBackgoundCells";
 
-type Props = {
-    grid: Cell[];
-    width: number;
-    height: number;
-};
 
-export default function BattleGridCanvas({ grid, width, height }: Props) {
-    const gridCells = useMemo(() => <Graphics draw={(g) => drawGridCells(g, grid)} />, [grid]);
-
+export default function BattleGridCanvas() {
     return (
         <Stage
-            width={HEX_WIDTH * width + HEX_GRID_MARGIN * 1.5}
-            height={HEX_HEIGHT * height * 0.75 + HEX_GRID_MARGIN}
+            width={HEX_WIDTH * COLS + HEX_GRID_MARGIN * 1.5}
+            height={HEX_HEIGHT * ROWS * 0.75 + HEX_GRID_MARGIN}
             options={{
                 backgroundAlpha: 0,
                 antialias: true,
@@ -34,7 +25,7 @@ export default function BattleGridCanvas({ grid, width, height }: Props) {
             }}
         >
             <Container>
-                {gridCells}
+                <BattleGridBackgroundCells />
                 <BattleGridUnknowns />
                 <BattleGridMisses />
                 <BattleGridHits />

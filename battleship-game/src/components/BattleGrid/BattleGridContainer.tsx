@@ -14,9 +14,8 @@ const styles = {
 };
 
 export default function BattleGridContainer() {
-    const setMousePosition = useGameStore((state) => state.setMousePosition);
+    const setHoveredCell = useGameStore((state) => state.setHoveredCell);
     const initGrid = useGameStore((state) => state.initGrid);
-    const grid = useGameStore((state) => state.grid);
     const selectCell = useGameStore((state) => state.selectCell);
 
     useEffect(() => {
@@ -33,7 +32,7 @@ export default function BattleGridContainer() {
 
             const x = event.clientX - rect.left + scrollLeft;
             const y = event.clientY - rect.top + scrollTop;
-            setMousePosition(x, y);
+            setHoveredCell(x, y);
         }
     };
 
@@ -48,7 +47,7 @@ export default function BattleGridContainer() {
             onMouseMove={handleMouseMove}
             onClick={handleMouseClick}
         >
-            <BattleGridCanvas grid={grid} width={COLS} height={ROWS} />
+            <BattleGridCanvas />
         </div>
     );
 }

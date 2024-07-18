@@ -9,8 +9,8 @@
 - add ability to scale teh map
 ~~- percentage bar for fleet strength~~
 - move contract address var to env var
-- improve x,y coords display
 - detect metamask disconnection
+- display modal is connected to wrong network or some issue which requires action on gateway
 - improve performance
 - display age of gameboard
 - modify UI and contract to inform user if ship was sunk on hit/guess

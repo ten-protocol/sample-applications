@@ -3,7 +3,7 @@ import { useContractStore } from '@/stores/contractStore';
 import { useWalletStore } from '@/stores/walletStore';
 
 export default function PrizePool() {
-    const [prizePool] = useContractStore((state) => [state.prizePool]);
+    const prizePool = useContractStore((state) => state.prizePool);
     const isConnected = useWalletStore((state) => state.isConnected);
     const unknownState = prizePool === '';
 

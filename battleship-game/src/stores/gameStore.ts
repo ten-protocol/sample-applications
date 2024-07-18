@@ -6,6 +6,7 @@ import getCellXY from '@/helpers/getCellXY';
 import getIndexFromCoords from '@/helpers/getIndexFromCoords';
 
 import { useContractStore } from './contractStore';
+import getSnappedMousePosition from "@/helpers/getSnappedMousePosition";
 
 export type Cell = {
     row: number;
@@ -24,14 +25,13 @@ export type GameState = {
     revealedCells: { [key: string]: RevealedCellType };
     hoveredCell: Cell | null;
     scrollPosition: [number, number];
-    mousePosition: [number, number];
     selectedCell: Cell | null;
     helpWindowOpen: boolean;
 };
 
 export type GameActions = {
     initGrid: (height: number, width: number) => void;
-    setMousePosition: (x: number, y: number) => void;
+    setHoveredCell: (x: number, y: number) => void;
     selectCell: () => void;
     setRevealedCells: (cells: string[][], type: RevealedCellType) => void;
     setSingleRevealedCell: (x: number, y: number, type: RevealedCellType) => void;
@@ -56,7 +56,7 @@ export const useGameStore = create<GameStore>(
             selectedCell: null,
             helpWindowOpen: true,
 
-            initGrid: (height: number, width: number) =>
+            initGrid: (width: number, height: number,) =>
                 set(() => {
                     const hexagons = [];
                     for (let row = 0; row < height; row++) {
@@ -69,14 +69,13 @@ export const useGameStore = create<GameStore>(
                     return { grid: hexagons };
                 }),
 
-            setMousePosition: (x: number, y: number) =>
+            setHoveredCell: (x: number, y: number) =>
                 set((state) => {
                     const guessState = useContractStore.getState().guessState;
 
                     if (guessState !== 'IDLE') return {};
-
-                    // const [sx, sy] = getSnappedMousePosition(x, y);
-                    const [col, row] = getCellCoordsFromXY(x, y);
+                    const [sx, sy] = getSnappedMousePosition(x, y);
+                    const [col, row] = getCellCoordsFromXY(sx, sy);
                     const hoveredCell = state.grid[getIndexFromCoords(col, row)];
                     const isRevealed = !!state.revealedCells[`${col}_${row}`];
 
@@ -84,7 +83,6 @@ export const useGameStore = create<GameStore>(
 
                     return {
                         hoveredCell: hoveredCell || null,
-                        mousePosition: [hoveredCell.x, hoveredCell.y],
                     };
                 }),
 
