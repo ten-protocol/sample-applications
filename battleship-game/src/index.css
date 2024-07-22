@@ -1,0 +1,29 @@
+:root {
+    font-family: 'Space Mono', monospace;
+    line-height: 1.5;
+    font-weight: 100;
+    color-scheme: light dark;
+    color: rgba(255, 255, 255, 0.87);
+    background-color: #1e1e1e;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+    cursor: pointer;
+}
+
+a:hover {
+    color: rgb(var(--color-accent));
+    text-decoration: underline;
+}
+
+body {
+    margin: 0;
+    display: flex;
+    place-items: center;
+    min-width: 320px;
+    min-height: 100vh;
+}

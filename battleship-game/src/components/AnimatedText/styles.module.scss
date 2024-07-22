@@ -1,0 +1,26 @@
+.cursor {
+    display: inline-block;
+    width: 0.6em;
+    background: currentColor;
+    height: 1em;
+
+    &.withFlash {
+        opacity: 0;
+        animation: CursorFlash 1s linear infinite;
+    }
+}
+
+@keyframes CursorFlash {
+    0% {
+        opacity: 0;
+    }
+    25% {
+        opacity: 1;
+    }
+    75% {
+        opacity: 1;
+    }
+    75% {
+        opacity: 0;
+    }
+}
