@@ -2,7 +2,7 @@ import { create } from 'zustand';
 
 export type MessageType = 'INFO' | 'ERROR' | 'SUCCESS';
 
-export type Message = { id: number; text: string; type: MessageType }
+export type Message = { id: number; text: string; type: MessageType };
 
 export type MessageStore = {
     messages: Message[];

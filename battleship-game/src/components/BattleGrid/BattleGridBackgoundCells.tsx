@@ -7,7 +7,7 @@ export default function BattleGridBackgroundCells() {
     const sections = new Array(10).fill(true);
 
     return (
-        <Container >
+        <Container>
             {sections.map((section, index) => (
                 <Sprite
                     key={index}

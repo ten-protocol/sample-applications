@@ -4,18 +4,17 @@ import { Eip1193Provider } from 'ethers/src.ts/providers/provider-browser';
 import { create } from 'zustand';
 
 import ContractAddress from '@/assets/contract/address.json';
+import { TEN_CHAIN_ID } from '@/lib/constants';
 import { useMessageStore } from '@/stores/messageStore';
-import {TEN_CHAIN_ID} from "@/lib/constants";
 
 export interface IWalletStore {
     provider: Eip1193Provider | null;
     signer: JsonRpcSigner | null;
     address: string | null;
     isConnected: boolean;
-    tenNetwork: boolean;
     setProvider: (provider: Eip1193Provider, chainId?: string) => Promise<void>;
-    setAddress: (address: string|null) => void;
-    setNetwork: (chainId: string) => void
+    setAddress: (address: string | null) => void;
+    handleNetworkChange: (chainId: string) => void;
 }
 
 export const useWalletStore = create<IWalletStore>((set) => ({
@@ -23,7 +22,6 @@ export const useWalletStore = create<IWalletStore>((set) => ({
     signer: null,
     address: null,
     isConnected: false,
-    tenNetwork: false,
     setProvider: async (provider, chainId) => {
         const signer = await new ethers.BrowserProvider(provider).getSigner();
         const addNewMessage = useMessageStore.getState().addNewMessage;
@@ -31,14 +29,14 @@ export const useWalletStore = create<IWalletStore>((set) => ({
         set({
             provider,
             signer,
-            isConnected: true,
-            tenNetwork: chainId === TEN_CHAIN_ID
+            isConnected: chainId === TEN_CHAIN_ID,
         });
     },
     setAddress: (address) => set({ address }),
-    setNetwork: (chainId: string) => {
+
+    handleNetworkChange: (chainId: string) => {
         set({
-            tenNetwork: chainId === TEN_CHAIN_ID
+            isConnected: chainId === TEN_CHAIN_ID,
         });
-    }
+    },
 }));

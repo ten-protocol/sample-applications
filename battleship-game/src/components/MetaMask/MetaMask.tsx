@@ -6,11 +6,10 @@ import { useMessageStore } from '@/stores/messageStore';
 import { useWalletStore } from '@/stores/walletStore';
 
 export default function MetaMask() {
-    const { address, setAddress, tenNetwork } = useWalletStore(
+    const { address, setAddress } = useWalletStore(
         useShallow((state) => ({
             address: state.address,
             setAddress: state.setAddress,
-            tenNetwork: state.tenNetwork,
         }))
     );
     const addNewMessage = useMessageStore((state) => state.addNewMessage);
@@ -41,20 +40,6 @@ export default function MetaMask() {
                     )}
                 </div>
             }
-        >
-            {!tenNetwork && (
-                <div className="flex justify-center p-8">
-                    <div className="border-l-stone-50 border p-4 -mb-6">
-                        <p>Wallet connected but not to Ten.</p>
-                        <p>
-                            Connect at{' '}
-                            <a href="HTTPS://TESTNET.TEN.XYZ" rel="noopener" target="_blank">
-                                HTTPS://TESTNET.TEN.XYZ
-                            </a>
-                        </p>
-                    </div>
-                </div>
-            )}
-        </HudWindow>
+        />
     );
 }

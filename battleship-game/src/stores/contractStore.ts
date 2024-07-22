@@ -6,11 +6,11 @@ import ContractAddress from '@/assets/contract/address.json';
 import BattleshipGameJson from '@/assets/contract/artifacts/contracts/BattleshipGame.sol/BattleshipGame.json';
 import getCellXY from '@/helpers/getCellXY';
 import { MOVE_FEE } from '@/lib/constants';
+import { handleMetaMaskError } from '@/lib/handleMetaMaskError';
 import { useMessageStore } from '@/stores/messageStore';
 import { useWalletStore } from '@/stores/walletStore';
 
 import { useGameStore } from './gameStore';
-import {handleMetaMaskError} from "@/lib/handleMetaMaskError";
 
 export type ContractStore = {
     hits: string[][];
@@ -96,10 +96,7 @@ export const useContractStore = create<ContractStore>(
                             useGameStore.getState().addUnknownCell(x, y);
                         }
                     } else {
-                        addNewMessage(
-                            handleMetaMaskError(error),
-                            'ERROR'
-                        );
+                        addNewMessage(handleMetaMaskError(error), 'ERROR');
                         set({ lastError: handleMetaMaskError(error) });
                         console.error(e);
                     }

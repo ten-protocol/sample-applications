@@ -1,8 +1,8 @@
-type EventData =  {
+type EventData = {
     [key: string]: any;
-}
+};
 
-export function trackEvent(eventName:string, eventData: EventData) {
+export function trackEvent(eventName: string, eventData: EventData) {
     if (typeof window === 'undefined' || !window.gtag) {
         console.error('gtag is not defined');
         return;

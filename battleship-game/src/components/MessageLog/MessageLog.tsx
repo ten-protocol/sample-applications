@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import AnimatedText from '@/components/AnimatedText/AnimatedText';
 import HudWindow from '@/components/HudWindow/HudWindow';
-import { useMessageStore, Message } from '@/stores/messageStore';
+import { Message, useMessageStore } from '@/stores/messageStore';
 
 import styles from './styles.module.scss';
 

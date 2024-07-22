@@ -12,7 +12,7 @@ import {
     HitHighlightState,
     MissHighlightState,
 } from './CellHighlightStates';
-import {Particle} from "./cellHighlights.models";
+import { Particle } from './cellHighlights.models';
 
 export default function CellHighlight() {
     const guessState = useContractStore((state) => state.guessState);

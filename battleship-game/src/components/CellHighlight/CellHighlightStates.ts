@@ -1,6 +1,6 @@
-import {Particle} from "./cellHighlights.models";
+import { Particle } from './cellHighlights.models';
 
-export function DefaultHighlightState(x:number, y: number, duration: number): Particle[] {
+export function DefaultHighlightState(x: number, y: number, duration: number): Particle[] {
     const newParticles = [];
     const particleCount = 24;
     const angleIncrement = (Math.PI * 2) / particleCount; // Evenly distributed angles
@@ -28,7 +28,7 @@ export function DefaultHighlightState(x:number, y: number, duration: number): Pa
     return newParticles;
 }
 
-export function ErrorHighlightState(x:number, y: number, duration: number): Particle[] {
+export function ErrorHighlightState(x: number, y: number, duration: number): Particle[] {
     const newParticles = [];
     const particleCount = 24;
     const angleIncrement = (Math.PI * 2) / particleCount; // Evenly distributed angles
@@ -56,7 +56,7 @@ export function ErrorHighlightState(x:number, y: number, duration: number): Part
     return newParticles;
 }
 
-export function MissHighlightState(x:number, y: number, duration: number): Particle[] {
+export function MissHighlightState(x: number, y: number, duration: number): Particle[] {
     const newParticles = [];
     const particleCount = 24;
     const angleIncrement = (Math.PI * 2) / particleCount; // Evenly distributed angles
@@ -86,7 +86,7 @@ export function MissHighlightState(x:number, y: number, duration: number): Parti
     return newParticles;
 }
 
-export function HitHighlightState(x:number, y: number, duration: number): Particle[] {
+export function HitHighlightState(x: number, y: number, duration: number): Particle[] {
     const newParticles = [];
     const particleCount = 24;
     const angleIncrement = (Math.PI * 2) / particleCount; // Evenly distributed angles

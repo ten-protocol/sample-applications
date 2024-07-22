@@ -1,12 +1,12 @@
 import { useRef } from 'react';
 
 import { Container, Graphics, useTick } from '@pixi/react';
+import PIXI from 'pixi.js';
 
 import createHexagon from '@/helpers/createHexagon';
 import { HEX_HEIGHT, HEX_WIDTH } from '@/lib/constants';
 import { useContractStore } from '@/stores/contractStore';
 import { useGameStore } from '@/stores/gameStore';
-import PIXI from "pixi.js";
 
 const hexagon = createHexagon(HEX_WIDTH, HEX_HEIGHT);
 

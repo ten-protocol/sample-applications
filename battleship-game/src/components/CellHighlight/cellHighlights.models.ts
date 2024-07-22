@@ -11,4 +11,4 @@ export type Particle = {
     color: number;
     age?: number;
     ageReset?: boolean;
-}
+};

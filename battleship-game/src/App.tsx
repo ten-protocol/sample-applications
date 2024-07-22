@@ -20,11 +20,11 @@ import { useWalletStore } from '@/stores/walletStore';
 import './App.css';
 
 function App() {
-    const [address, setAddress, setProvider, setNetwork] = useWalletStore((state) => [
+    const [address, setAddress, setProvider, handleNetworkChange] = useWalletStore((state) => [
         state.address,
         state.setAddress,
         state.setProvider,
-        state.setNetwork
+        state.handleNetworkChange,
     ]);
     const addNewMessage = useMessageStore((state) => state.addNewMessage);
     const [initialized, setInitialized] = useState(false);
@@ -49,7 +49,6 @@ function App() {
                 window.ethereum.removeListener('chainChanged', handleChainChanged);
             }
         };
-
     }, [address]);
 
     const connectToMetaMask = async () => {
@@ -94,7 +93,7 @@ function App() {
 
     const handleChainChanged = (chainId: string) => {
         console.log('Network changed to:', chainId);
-        setNetwork(chainId);
+        handleNetworkChange(chainId);
     };
 
     if (!initialized) {
@@ -102,27 +101,27 @@ function App() {
     }
 
     return (
-        <>
+        <div className="p-2">
             <PageHeader />
-            <div className="grid grid-cols-[220px_1fr_220px] gap-6">
-                <div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[220px_1fr_220px] gap-6">
+                <div className="order-2 lg:order-1">
                     <Graveyard />
                 </div>
-                <div className="overflow-hidden">
+                <div className="overflow-hidden order-1 md:col-span-2 lg:order-2 lg:col-span-1">
                     <BattleGrid />
                 </div>
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-4 order-3 md:col-span-3 md:grid md:grid-cols-3 lg:col-span-1 lg:grid-cols-1">
                     <MetaMask />
                     <PrizePool />
                     <CellsRemaining />
                 </div>
-                <div className="col-span-3">
+                <div className="md:col-span-3 order-4">
                     <MessageLog />
                 </div>
             </div>
             <ProcessingNotification />
             <HelpWindow />
-        </>
+        </div>
     );
 }
 

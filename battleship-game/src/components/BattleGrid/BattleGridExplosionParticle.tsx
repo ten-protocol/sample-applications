@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 
 import { Graphics, useTick } from '@pixi/react';
-import PIXI from "pixi.js";
+import PIXI from 'pixi.js';
 
 export type ExplosionParticle = {
     x: number;
@@ -11,7 +11,7 @@ export type ExplosionParticle = {
     rotationSpeed: number;
     duration: number;
     angle: number;
-}
+};
 
 export default function BattleGridExplosionParticle({
     x,
@@ -20,7 +20,7 @@ export default function BattleGridExplosionParticle({
     vy,
     angle,
     duration,
-}:ExplosionParticle ) {
+}: ExplosionParticle) {
     const graphicRef = useRef<PIXI.Graphics>(null);
     const [age, setAge] = useState(0);
     const startHeight = 0;

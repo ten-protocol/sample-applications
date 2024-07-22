@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { motion } from 'framer-motion';
+import { useShallow } from 'zustand/react/shallow';
 
 import AnimatedText from '@/components/AnimatedText/AnimatedText';
 import HudWindow from '@/components/HudWindow/HudWindow';
@@ -10,7 +11,7 @@ import BattleGridContainer from './BattleGridContainer';
 import BattleGridCurrentCoordinates from './BattleGridCurrentCoordinates';
 
 export default function BattleGrid() {
-    const isConnected = useWalletStore((state) => state.isConnected);
+    const isConnected = useWalletStore(useShallow((state) => state.isConnected));
     const [displayGrid, setDisplayGrid] = useState(false);
 
     useEffect(() => {
@@ -32,6 +33,7 @@ export default function BattleGrid() {
         <div className="text-center w-screen max-w-full">
             <div className="p-8">
                 <p className="text-2xl mb-8">SYSTEM OFFLINE.</p>
+
                 <p className="text-sm my-6">
                     <AnimatedText
                         text="Awaiting establishment of connection to primary nexus. Standby mode activated."
@@ -39,13 +41,24 @@ export default function BattleGrid() {
                         speed={0.05}
                     />
                 </p>
-                <p className="text-sm my-6">
+                <p className="text-sm mt-6">
                     <AnimatedText
                         text="Initiate diagnostic protocol 001. All units remain on high alert and prepare for potential engagement upon connection."
                         delay={7}
                         speed={0.05}
                     />
                 </p>
+            </div>
+            <div className="flex justify-center p-8">
+                <div className="border-l-stone-50 border p-4">
+                    <p>Connect your wallet to the TEN chain.</p>
+                    <p>
+                        Connect at{' '}
+                        <a href="HTTPS://TESTNET.TEN.XYZ" rel="noopener" target="_blank">
+                            HTTPS://TESTNET.TEN.XYZ
+                        </a>
+                    </p>
+                </div>
             </div>
         </div>
     );

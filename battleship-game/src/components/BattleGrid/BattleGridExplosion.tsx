@@ -5,12 +5,12 @@ import { Container } from '@pixi/react';
 import { useContractStore } from '@/stores/contractStore';
 import { useGameStore } from '@/stores/gameStore';
 
-import BattleGridExplosionParticle, {ExplosionParticle} from './BattleGridExplosionParticle';
+import BattleGridExplosionParticle, { ExplosionParticle } from './BattleGridExplosionParticle';
 
 type Props = {
-    particleCount: number,
-    duration: number
-}
+    particleCount: number;
+    duration: number;
+};
 
 export default function BattleGridExplosion({ particleCount, duration }: Props) {
     const guessState = useContractStore((state) => state.guessState);

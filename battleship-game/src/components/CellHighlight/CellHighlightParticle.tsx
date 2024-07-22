@@ -1,8 +1,9 @@
 import { useRef, useState } from 'react';
 
-import {Graphics, useTick} from '@pixi/react';
-import {Particle} from "./cellHighlights.models";
-import PIXI from 'pixi.js'
+import { Graphics, useTick } from '@pixi/react';
+import PIXI from 'pixi.js';
+
+import { Particle } from './cellHighlights.models';
 
 export default function CellhighLightParticle(p: Particle) {
     const graphicRef = useRef<PIXI.Graphics>(null);

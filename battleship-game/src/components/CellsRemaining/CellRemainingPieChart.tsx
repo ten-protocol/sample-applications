@@ -1,17 +1,18 @@
-import {Cell, Pie, PieChart} from 'recharts';
-import formatNumber from "@/helpers/formatNumber";
+import { Cell, Pie, PieChart } from 'recharts';
+
+import formatNumber from '@/helpers/formatNumber';
 
 type Props = {
     totalCells: number;
-    revealedCells: number
-}
+    revealedCells: number;
+};
 
-export default function CellRemainingPieChart({totalCells, revealedCells}: Props) {
-    const percRevealedCells = (revealedCells/totalCells) * 100
-    const percRemaining = 100 - percRevealedCells
+export default function CellRemainingPieChart({ totalCells, revealedCells }: Props) {
+    const percRevealedCells = (revealedCells / totalCells) * 100;
+    const percRemaining = 100 - percRevealedCells;
     const data = [
-        { name: 'remaining', value: percRemaining, color: "#ffffff" },
-        { name: 'revealed', value: percRevealedCells, color: "#353538" },
+        { name: 'remaining', value: percRemaining, color: '#ffffff' },
+        { name: 'revealed', value: percRevealedCells, color: '#353538' },
     ];
 
     return (
@@ -28,13 +29,21 @@ export default function CellRemainingPieChart({totalCells, revealedCells}: Props
                 endAngle={450}
             >
                 {data.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color}/>
+                    <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
             </Pie>
-            <text x={105} y={100} fill="white" textAnchor="middle" fontSize={30} fontWeight="bold" dominantBaseline="central">
+            <text
+                x={105}
+                y={100}
+                fill="white"
+                textAnchor="middle"
+                fontSize={30}
+                fontWeight="bold"
+                dominantBaseline="central"
+            >
                 {`${formatNumber(percRemaining)}%`}
             </text>
-            <circle cx={105} cy={100} r={85} fill="none" stroke="#868686"/>
+            <circle cx={105} cy={100} r={85} fill="none" stroke="#868686" />
         </PieChart>
     );
 }

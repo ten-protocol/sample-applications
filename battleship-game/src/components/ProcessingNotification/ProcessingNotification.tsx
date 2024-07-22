@@ -85,38 +85,38 @@ export default function ProcessingNotification() {
 
     return (
         <div className="inset-0 absolute -mt-60">
-        <HudWindow
-            headerTitle="Striking coordinates"
-            speed={0.1}
-            modalMode={true}
-            transparentOverlay={true}
-            footerContent={
-                <div>
+            <HudWindow
+                headerTitle="Striking coordinates"
+                speed={0.1}
+                modalMode={true}
+                transparentOverlay={true}
+                footerContent={
+                    <div>
+                        <motion.div
+                            key={guessState}
+                            initial="initial"
+                            animate="animate"
+                            exit="exit"
+                            variants={variants}
+                        >
+                            {footerContent}
+                        </motion.div>
+                    </div>
+                }
+            >
+                <AnimatePresence mode="wait">
                     <motion.div
                         key={guessState}
                         initial="initial"
                         animate="animate"
                         exit="exit"
                         variants={variants}
+                        className="py-2 w-96"
                     >
-                        {footerContent}
+                        {bodyContent}
                     </motion.div>
-                </div>
-            }
-        >
-            <AnimatePresence mode="wait">
-                <motion.div
-                    key={guessState}
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                    variants={variants}
-                    className="py-2 w-96"
-                >
-                    {bodyContent}
-                </motion.div>
-            </AnimatePresence>
-        </HudWindow>
+                </AnimatePresence>
+            </HudWindow>
         </div>
     );
 }

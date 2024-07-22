@@ -4,9 +4,9 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 import getCellCoordsFromXY from '@/helpers/getCellCoordsFromXY';
 import getCellXY from '@/helpers/getCellXY';
 import getIndexFromCoords from '@/helpers/getIndexFromCoords';
+import getSnappedMousePosition from '@/helpers/getSnappedMousePosition';
 
 import { useContractStore } from './contractStore';
-import getSnappedMousePosition from "@/helpers/getSnappedMousePosition";
 
 export type Cell = {
     row: number;
@@ -56,7 +56,7 @@ export const useGameStore = create<GameStore>(
             selectedCell: null,
             helpWindowOpen: true,
 
-            initGrid: (width: number, height: number,) =>
+            initGrid: (width: number, height: number) =>
                 set(() => {
                     const hexagons = [];
                     for (let row = 0; row < height; row++) {
@@ -95,10 +95,7 @@ export const useGameStore = create<GameStore>(
                 submitGuess(selectedCell.col, selectedCell.row);
             },
 
-            setRevealedCells: (
-                cells: string[][],
-                type: 'HIT' | 'MISS' | 'UNKNOWN'
-            ) => {
+            setRevealedCells: (cells: string[][], type: 'HIT' | 'MISS' | 'UNKNOWN') => {
                 const newRevealedCells = { ...get().revealedCells };
                 for (let i = 0; i < cells.length; i++) {
                     const key = `${cells[i][0]}_${cells[i][1]}`;
@@ -120,7 +117,9 @@ export const useGameStore = create<GameStore>(
                 set((state) => {
                     state.setSingleRevealedCell(x, y, 'UNKNOWN');
 
-                    return state.hoveredCell ? { unknownCells: [...state.unknownCells, { ...state.hoveredCell }] } : {}
+                    return state.hoveredCell
+                        ? { unknownCells: [...state.unknownCells, { ...state.hoveredCell }] }
+                        : {};
                 }),
 
             clearUnknownCells: () => set({ unknownCells: [] }),

@@ -1,4 +1,11 @@
-import {COLS, HEX_GRID_MARGIN, HEX_HEIGHT, HEX_WIDTH, ROWS, VERTICAL_OFFSET} from '@/lib/constants';
+import {
+    COLS,
+    HEX_GRID_MARGIN,
+    HEX_HEIGHT,
+    HEX_WIDTH,
+    ROWS,
+    VERTICAL_OFFSET,
+} from '@/lib/constants';
 
 export default function getCellCoordsFromXY(x: number, y: number) {
     const row = (y - HEX_GRID_MARGIN) / (HEX_HEIGHT - VERTICAL_OFFSET);
