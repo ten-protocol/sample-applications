@@ -5,7 +5,7 @@
       :key="message.id"
       :class="['message', getMessageClass(index)]"
     >
-      <div v-html="message.text"></div>
+      <p v-html="message.text"></p>
     </div>
   </div>
 </template>
@@ -34,7 +34,6 @@ export default {
 
     const getMessageClass = (index) => {
       if (index === 0) return 'first-message'
-      if (index === 1) return 'second-message'
       return 'other-messages'
     }
 
