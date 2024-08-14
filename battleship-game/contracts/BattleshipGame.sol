@@ -5,8 +5,6 @@ contract BattleshipGame {
     uint8 constant gridSize = 100;
     uint8 constant totalShips = 249;
     uint8 constant shipLength = 3;
-    address public owner;
-    mapping(address => bool) public admins;
 
     struct Position {
         uint8 x;
@@ -18,35 +16,30 @@ contract BattleshipGame {
         bool[shipLength] hits;
     }
 
-    Ship[totalShips] private ships;
+    Ship[totalShips] public ships;
     mapping(uint16 => uint8) private positionToShipIndex;
-    mapping(uint16 => bool) private hits;
+    mapping(uint16 => bool) public hits;
     mapping(uint16 => bool) private misses;
-    Position[] private allHits;
-    Position[] private allMisses;
     uint256 private seed;
     uint256 private nonce = 0;
     uint256 public prizePool;
     bool[totalShips] public graveyard;
     uint8 public sunkShipsCount;
     bool public gameOver;
+    Position[] private allHits;
+    Position[] private allMisses;
 
-    /// @notice Initializes the contract by setting the initial seed and generating ship positions.
+    mapping(address => uint16) private playerHits;
+    mapping(address => uint16) private playerSinks;
+    address private lastSunkShipPlayer;
+    uint256 private totalHits;
+
+    event GameOver(address winner, uint256 prizePool);
+
+
     constructor() {
         seed = uint256(keccak256(abi.encodePacked(block.difficulty)));
-        owner = msg.sender;
-        admins[owner] = true;
         generatePositions();
-    }
-
-    modifier onlyAdmin() {
-        require(admins[msg.sender], "Caller is not an admin");
-        _;
-    }
-
-    modifier onlyOwner() {
-        require(msg.sender == owner, "Caller is not the owner");
-        _;
     }
 
     /// @notice Emitted when a guess is made.
@@ -56,11 +49,6 @@ contract BattleshipGame {
     //TODO: Add comments
     event HitFeedback(address indexed user, uint8[2] guessedCoords, bool success, Position[] allHits, Position[] allMisses, bool[totalShips] graveyard, uint256 prizePool);
 
-    /// @notice Adds a new admin address. Only the owner can add new admins.
-    /// @param newAdmin The address of the new admin.
-    function addAdmin(address newAdmin) public onlyOwner {
-        admins[newAdmin] = true;
-    }
 
     /// @notice Generates unique positions for ships on the grid.
     function generatePositions() private {
@@ -105,20 +93,20 @@ contract BattleshipGame {
     /// @param y The y-coordinate.
     /// @return uint16 representing the packed coordinates.
     function packCoordinates(uint8 x, uint8 y) private pure returns (uint16) {
-        return uint16(x) << 8 | uint16(y);
+        return (uint16(x) << 8) | uint16(y);
     }
 
     /// @notice Gets the position of a specific ship by its index.
     /// @param shipIndex The index of the ship.
     /// @return Position of the ship.
-    function getShipPosition(uint8 shipIndex) public view onlyAdmin returns (Position memory) {
-        require(shipIndex < totalShips, "Ship index out of bounds");
+    function getShipPosition(uint8 shipIndex) public view returns (Position memory) {
+        require(shipIndex < totalShips, 'Ship index out of bounds');
         return ships[shipIndex].start;
     }
 
     /// @notice Gets positions of all ships.
     /// @return Array of all ships.
-    function getAllShipPositions() public view onlyAdmin returns (Ship[totalShips] memory) {
+    function getAllShipPositions() public view returns (Ship[totalShips] memory) {
         return ships;
     }
 
@@ -126,10 +114,10 @@ contract BattleshipGame {
     /// @param x The x-coordinate of the position.
     /// @param y The y-coordinate of the position.
     /// @return The index of the ship at the specified position.
-    function getShipAtPosition(uint8 x, uint8 y) public view onlyAdmin returns (uint8) {
+    function getShipAtPosition(uint8 x, uint8 y) public view returns (uint8) {
         uint16 positionKey = packCoordinates(x, y);
         uint8 shipIndex = positionToShipIndex[positionKey];
-        require(shipIndex != 0, "No ship at given position");
+        require(shipIndex != 0, 'No ship at given position');
         return shipIndex;
     }
 
@@ -137,14 +125,17 @@ contract BattleshipGame {
     /// @param x The x-coordinate of the position to hit.
     /// @param y The y-coordinate of the position to hit.
     function hit(uint8 x, uint8 y) public payable {
-        require(!gameOver, "Game is over, no more hits accepted");
-        require(msg.value == 0.0443 ether, "Incorrect fee amount");
+        require(!gameOver, 'Game is over, no more hits accepted');
+        require(msg.value == 0.0443 ether, 'Incorrect fee amount');
         uint16 positionKey = packCoordinates(x, y);
-        require(!hits[positionKey], "Cell already hit");
-        require(!misses[positionKey], "Cell already hit");
+        require(!hits[positionKey], 'Cell already hit');
+
+        bool success;
 
         prizePool += msg.value;
-        bool success;
+        hits[positionKey] = true;
+        totalHits++;
+        playerHits[msg.sender]++;
 
         uint8 shipIndex = positionToShipIndex[positionKey];
         if (shipIndex != 0) {
@@ -152,8 +143,8 @@ contract BattleshipGame {
             Ship storage ship = ships[shipIndex];
             uint8 hitIndex = x - ship.start.x;
             ship.hits[hitIndex] = true;
-            hits[positionKey] = true;
             allHits.push(Position(x, y));
+
             bool allHit = true;
             for (uint8 i = 0; i < shipLength; i++) {
                 if (!ship.hits[i]) {
@@ -164,8 +155,12 @@ contract BattleshipGame {
             if (allHit) {
                 graveyard[shipIndex] = true;
                 sunkShipsCount++;
+                playerSinks[msg.sender]++;
+
                 if (sunkShipsCount == totalShips) {
                     gameOver = true;
+                    lastSunkShipPlayer = msg.sender;
+                    emit GameOver(lastSunkShipPlayer, prizePool);
                 }
             }
         }
@@ -177,7 +172,6 @@ contract BattleshipGame {
 
         emit HitFeedback(msg.sender, [x, y], success, allHits, allMisses, graveyard, prizePool);
     }
-
 
     /// @notice Checks if a specific position on the grid is hit.
     /// @param x The x-coordinate of the position.
@@ -192,34 +186,60 @@ contract BattleshipGame {
     /// @param shipIndex The index of the ship.
     /// @return bool indicating whether the ship is sunk.
     function isSunk(uint8 shipIndex) public view returns (bool) {
-        require(shipIndex < totalShips, "Ship index out of bounds");
+        require(shipIndex < totalShips, 'Ship index out of bounds');
         return graveyard[shipIndex];
     }
 
     /// @notice Gets the hit status of each part of a specific ship.
     /// @param shipIndex The index of the ship.
     /// @return Array indicating which parts of the ship are hit.
-    function getHitsOnShip(uint8 shipIndex) public view onlyAdmin returns (bool[shipLength] memory) {
-        require(shipIndex < totalShips, "Ship index out of bounds");
+    function getHitsOnShip(uint8 shipIndex) public view returns (bool[shipLength] memory) {
+        require(shipIndex < totalShips, 'Ship index out of bounds');
         return ships[shipIndex].hits;
     }
 
     /// @notice Gets the status of all ships in the graveyard.
     /// @return Array indicating which ships are sunk.
-    function getGraveyard() public view onlyAdmin returns (bool[totalShips] memory) {
+    function getGraveyard() public view returns (bool[totalShips] memory) {
         return graveyard;
     }
 
-    /// @notice Gets all hit positions so far.
-    /// @return Array of positions that have been hit.
-    function getAllHits() public view onlyAdmin returns (Position[] memory) {
+    /// @notice Gets all hit positions on the grid.
+    /// @return An array of Position structs representing the hit positions.
+    function getAllHits() public view returns (Position[] memory) {
         return allHits;
     }
 
-
     /// @notice Gets all miss positions so far.
     /// @return Array of positions that have been missed.
-    function getAllMisses() public view onlyAdmin returns (Position[] memory) {
+    function getAllMisses() public view returns (Position[] memory) {
         return allMisses;
+    }
+
+    function getPersonalStats() public view returns (uint16 personalHits, uint16 personalSinks) {
+    personalHits = playerHits[msg.sender];
+    personalSinks = playerSinks[msg.sender];
+    return (personalHits, personalSinks);
+  }
+
+    function claimReward() public {
+        require(gameOver, 'Game is not over yet');
+        uint256 reward;
+
+        uint256 hitReward = (prizePool * 30) / 100;
+        reward += (hitReward * playerHits[msg.sender]) / totalHits;
+
+        uint256 sinkReward = (prizePool * 65) / 100;
+        reward += (sinkReward * playerSinks[msg.sender]) / sunkShipsCount;
+
+        if (msg.sender == lastSunkShipPlayer) {
+            uint256 finalShipReward = (prizePool * 5) / 100;
+            reward += finalShipReward;
+        }
+
+        playerHits[msg.sender] = 0;
+        playerSinks[msg.sender] = 0;
+
+        payable(msg.sender).transfer(reward);
     }
 }
