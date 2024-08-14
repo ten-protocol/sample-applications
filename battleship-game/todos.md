@@ -1,0 +1,31 @@
+
+- gameover screen/state
+- explosion effect/notification when ship is sunk
+- Stress test
+- component help tips
+- Make responsive for mobile?
+- map legend
+- highlight errors in message log
+- add ability to scale teh map
+~~- percentage bar for fleet strength~~
+- move contract address var to env var
+- detect metamask disconnection
+- display modal is connected to wrong network or some issue which requires action on gateway
+- improve performance
+- display age of gameboard
+- modify UI and contract to inform user if ship was sunk on hit/guess
+
+- ~~- Game rules/how to play window~~
+- ~~Get started help~~
+- ~~Update contract and UI as per discussion~~
+- ~~Persist game state on page reloads~~
+- ~~empty game state~~
+- ~~- Fetch game data on connection~~
+- ~~finish connection window~~
+- ~~display Remaining Cells~~
+- - ~~shot pending notification/overlay~~
+- ~~offset grid to make edge cells entirely visible~~
+-  ~~- Prevent shots being placed on cells which are already displayed as hit~~
+- ~~Animate message log entries~~
+- ~~animate hud windows~~
+- - ~~intro screen/state~~
