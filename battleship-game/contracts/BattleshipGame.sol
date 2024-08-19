@@ -53,7 +53,7 @@ contract BattleshipGame {
                     ships[index].start = Position(x, y);
                     for (uint8 j = 0; j < shipLength; j++) {
                         uint16 positionKey = packCoordinates(x + j, y);
-                        positionToShipIndex[positionKey] = index;
+                        positionToShipIndex[positionKey] = index + 1;
                     }
                     index++;
                 }
@@ -89,7 +89,7 @@ contract BattleshipGame {
 
     function getShipAtPosition(uint8 x, uint8 y) public view returns (uint8) {
         uint16 positionKey = packCoordinates(x, y);
-        uint8 shipIndex = positionToShipIndex[positionKey];
+        uint8 shipIndex = positionToShipIndex[positionKey] - 1;
         require(shipIndex != 0, 'No ship at given position');
         return shipIndex;
     }
@@ -108,6 +108,7 @@ contract BattleshipGame {
 
         uint8 shipIndex = positionToShipIndex[positionKey];
         if (shipIndex != 0) {
+            shipIndex--;
             Ship storage ship = ships[shipIndex];
             uint8 hitIndex = x - ship.start.x;
             ship.hits[hitIndex] = true;
