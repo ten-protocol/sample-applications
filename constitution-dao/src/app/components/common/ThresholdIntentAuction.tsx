@@ -207,9 +207,9 @@ const CONTRACT_ABI = [
 ];
 
 const TENThresholdIntentAuction = () => {
-  const [contract, setContract] = useState(null);
+  const [contract, setContract] = useState<ethers.Contract | null>(null);
   const [account, setAccount] = useState("");
-  const [totalRaised, setTotalRaised] = useState(0);
+  const [totalRaised, setTotalRaised] = useState<string>("");
   const [deadline, setDeadline] = useState(0);
   const [contribution, setContribution] = useState("");
   const [isThresholdMet, setIsThresholdMet] = useState(false);
@@ -264,7 +264,7 @@ const TENThresholdIntentAuction = () => {
     init();
   }, []);
 
-  const updateContractState = async (contract) => {
+  const updateContractState = async (contract: ethers.Contract) => {
     try {
       const totalRaised = await contract.getTotalRaised();
       const deadline = await contract.getDeadline();
