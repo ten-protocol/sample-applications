@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "npx hardhat compile && next dev",
+    "dev": "next dev",
     "build": "npx hardhat compile && next build",
     "start": "next start",
     "lint": "next lint"
