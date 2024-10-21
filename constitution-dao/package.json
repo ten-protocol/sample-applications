@@ -4,12 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npx hardhat compile && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
     "@radix-ui/react-progress": "^1.1.0",
+    "@radix-ui/react-toast": "^1.2.2",
     "@radix-ui/react-slot": "^1.1.0",
     "@rainbow-me/rainbowkit": "^2.1.5",
     "class-variance-authority": "^0.7.0",
