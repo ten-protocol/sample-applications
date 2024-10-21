@@ -262,6 +262,7 @@ const TENThresholdIntentAuction = () => {
     };
 
     init();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const updateContractState = async (contract: ethers.Contract) => {
@@ -347,9 +348,9 @@ const TENThresholdIntentAuction = () => {
     <div className="container mx-auto p-4">
       <Card className="max-w-lg mx-auto">
         <CardHeader>
-          <h1 className="text-2xl font-bold">TEN ThresholdIntentAuction</h1>
+          <h1 className="text-2xl font-bold">TEN Threshold Intent Auction</h1>
           <p className="text-sm text-gray-500">
-            Powered by TEN's Shared Private State
+            Powered by TEN&apos;s Shared Private State
           </p>
         </CardHeader>
         <CardContent>
@@ -384,7 +385,7 @@ const TENThresholdIntentAuction = () => {
           </div>
           <div className="mb-4">
             <p className="text-sm font-semibold mb-2">
-              Estimated Progress (TEN's Secure RNG)
+              Estimated Progress (TEN&apos;s Secure RNG)
             </p>
             <Progress value={progressEstimate} className="h-2" />
             <p className="text-xs text-gray-500 mt-1">
