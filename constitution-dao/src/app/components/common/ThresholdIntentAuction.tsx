@@ -54,7 +54,8 @@ const ThresholdIntentAuction = () => {
       const contractStore = useContractStore.getState();
       contractStore.cleanup();
     };
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [walletConnected]);
 
   const loading = contractLoading || walletLoading;
 
