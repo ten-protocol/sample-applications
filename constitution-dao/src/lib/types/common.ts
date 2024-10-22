@@ -1,6 +1,6 @@
-import { IWalletState } from "../interfaces/wallet";
+import { IContractState, IWalletState } from "../interfaces/wallet";
 
-export type StoreSet = (
+export type WalletStoreSet = (
   partial:
     | IWalletState
     | Partial<IWalletState>
@@ -8,7 +8,29 @@ export type StoreSet = (
   replace?: boolean | undefined
 ) => void;
 
-export type StoreGet = () => IWalletState;
+export type WalletStoreGet = () => IWalletState;
+
+export interface WalletStoreInterface {
+  state: IWalletState;
+  set: WalletStoreSet;
+  get: WalletStoreGet;
+}
+
+export type ContractStoreSet = (
+  partial:
+    | IContractState
+    | Partial<IContractState>
+    | ((state: IContractState) => IContractState | Partial<IContractState>),
+  replace?: boolean | undefined
+) => void;
+
+export type ContractStoreGet = () => IContractState;
+
+export interface ContractStoreInterface {
+  state: IContractState;
+  set: ContractStoreSet;
+  get: ContractStoreGet;
+}
 
 export interface ResponseDataInterface<T> {
   result: T;

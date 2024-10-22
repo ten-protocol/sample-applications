@@ -8,10 +8,12 @@ import { getEthereumProvider, handleError } from "@/src/lib/utils/walletUtils";
 import { toast } from "@/src/app/components/ui/use-toast";
 import { requestMethods } from "@/src/routes";
 import { ToastType } from "@/src/lib/enums/toast";
-import { StoreSet, StoreGet } from "@/src/lib/types/common";
+import CONTRACT_ABI from "@/src/contracts/artifacts/ThresholdIntentAuctionABI.json";
+import CONTRACT_ADDRESS from "@/src/contracts/artifacts/address.json";
+import { WalletStoreGet, WalletStoreSet } from "../lib/types/common";
 
 export const walletService = {
-  initializeProvider: async (set: StoreSet, get: StoreGet) => {
+  initializeProvider: async (set: WalletStoreSet, get: WalletStoreGet) => {
     try {
       let detectedProvider = await getEthereumProvider();
       if (!detectedProvider) {
@@ -52,7 +54,10 @@ export const walletService = {
     }
   },
 
-  proceedWithProviderInitialization: async (set: StoreSet, get: StoreGet) => {
+  proceedWithProviderInitialization: async (
+    set: WalletStoreSet,
+    get: WalletStoreGet
+  ) => {
     try {
       const { provider: detectedProvider } = get();
 
@@ -66,7 +71,7 @@ export const walletService = {
 
       set({
         address: accounts[0],
-        signer: signer,
+        signer,
         isWrongNetwork,
       });
 
@@ -86,7 +91,7 @@ export const walletService = {
     }
   },
 
-  connectWallet: async (set: StoreSet, get: StoreGet) => {
+  connectWallet: async (set: WalletStoreSet, get: WalletStoreGet) => {
     try {
       await walletService.initializeProvider(set, get);
 
@@ -108,7 +113,7 @@ export const walletService = {
     }
   },
 
-  disconnectWallet: async (set: StoreSet, get: StoreGet) => {
+  disconnectWallet: async (set: WalletStoreSet, get: WalletStoreGet) => {
     const { provider } = get();
     try {
       if (provider) {
@@ -137,7 +142,7 @@ export const walletService = {
     }
   },
 
-  switchNetwork: async (set: StoreSet, get: StoreGet) => {
+  switchNetwork: async (set: WalletStoreSet, get: WalletStoreGet) => {
     const { provider } = get();
     if (!provider) {
       toast({
