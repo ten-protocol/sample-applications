@@ -14,7 +14,7 @@ import {
   AlertDescription,
   AlertTitle,
 } from "@/src/app/components/ui/alert";
-import { Loader2 } from "lucide-react";
+import { Clock, Loader2 } from "lucide-react";
 import { useToast } from "../ui/use-toast";
 
 const CONTRACT_ADDRESS = "0xDB8445Fd7704A2C43de03692523b2373B1E6A3A5";
@@ -206,17 +206,60 @@ const CONTRACT_ABI = [
   },
 ];
 
+const useCountdown = (deadline: number) => {
+  const [timeLeft, setTimeLeft] = useState("");
+
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const now = Math.floor(Date.now() / 1000);
+      const difference = deadline - now;
+
+      if (difference <= 0) {
+        return "Auction ended";
+      }
+
+      const days = Math.floor(difference / 86400);
+      const hours = Math.floor((difference % 86400) / 3600);
+      const minutes = Math.floor((difference % 3600) / 60);
+      const seconds = difference % 60;
+
+      if (days > 0) {
+        return `${days}d ${hours}h ${minutes}m`;
+      } else if (hours > 0) {
+        return `${hours}h ${minutes}m ${seconds}s`;
+      } else if (minutes > 0) {
+        return `${minutes}m ${seconds}s`;
+      } else {
+        return `${seconds}s`;
+      }
+    };
+
+    const updateTimeLeft = () => {
+      setTimeLeft(calculateTimeLeft());
+    };
+
+    updateTimeLeft();
+    const timer = setInterval(updateTimeLeft, 1000);
+
+    return () => clearInterval(timer);
+  }, [deadline]);
+
+  return timeLeft;
+};
+
 const TENThresholdIntentAuction = () => {
   const [contract, setContract] = useState<ethers.Contract | null>(null);
   const [account, setAccount] = useState("");
   const [totalRaised, setTotalRaised] = useState<string>("");
-  const [deadline, setDeadline] = useState(0);
-  const [contribution, setContribution] = useState("");
-  const [isThresholdMet, setIsThresholdMet] = useState(false);
-  const [isAuctionWon, setIsAuctionWon] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [deadline, setDeadline] = useState<number>(0);
+  const [contribution, setContribution] = useState<string>("");
+  const [isThresholdMet, setIsThresholdMet] = useState<boolean>(false);
+  const [isAuctionWon, setIsAuctionWon] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [progressEstimate, setProgressEstimate] = useState(0);
   const { toast } = useToast();
+
+  const timeLeft = useCountdown(deadline);
 
   useEffect(() => {
     const init = async () => {
@@ -251,33 +294,43 @@ const TENThresholdIntentAuction = () => {
             variant: "destructive",
           });
         }
-      } else {
-        toast({
-          title: "Wallet Not Found",
-          description:
-            "Please install an Ethereum wallet like MetaMask to use this dApp.",
-          variant: "warning",
-        });
       }
     };
 
     init();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Periodic contract state update
+  useEffect(() => {
+    if (!contract) return;
+
+    const fetchUpdates = async () => {
+      try {
+        await updateContractState(contract);
+      } catch (error) {
+        console.error("Error fetching updates:", error);
+      }
+    };
+
+    // Update every 30 seconds
+    const interval = setInterval(fetchUpdates, 30000);
+    return () => clearInterval(interval);
+  }, [contract]);
 
   const updateContractState = async (contract: ethers.Contract) => {
     try {
-      const totalRaised = await contract.getTotalRaised();
-      const deadline = await contract.getDeadline();
-      const isThresholdMet = await contract.isThresholdMet();
-      const isAuctionWon = await contract.isAuctionWon();
+      const [totalRaised, deadline, isThresholdMet, isAuctionWon] =
+        await Promise.all([
+          contract.getTotalRaised(),
+          contract.getDeadline(),
+          contract.isThresholdMet(),
+          contract.isAuctionWon(),
+        ]);
 
       setTotalRaised(ethers.utils.formatEther(totalRaised));
       setDeadline(deadline.toNumber());
       setIsThresholdMet(isThresholdMet);
       setIsAuctionWon(isAuctionWon);
-
-      // Simulate progress based on threshold met status
       setProgressEstimate(isThresholdMet ? 100 : Math.random() * 99);
     } catch (error) {
       console.error("Error updating contract state:", error);
@@ -348,9 +401,9 @@ const TENThresholdIntentAuction = () => {
     <div className="container mx-auto p-4">
       <Card className="max-w-lg mx-auto">
         <CardHeader>
-          <h1 className="text-2xl font-bold">TEN Threshold Intent Auction</h1>
+          <h1 className="text-2xl font-bold">TEN ThresholdIntentAuction</h1>
           <p className="text-sm text-gray-500">
-            Powered by TEN&apos;s Shared Private State
+            Powered by TEN's Shared Private State
           </p>
         </CardHeader>
         <CardContent>
@@ -370,10 +423,17 @@ const TENThresholdIntentAuction = () => {
               <span className="font-semibold">Total Raised:</span> {totalRaised}{" "}
               ETH
             </p>
-            <p>
-              <span className="font-semibold">Deadline:</span>{" "}
-              {new Date(deadline * 1000).toLocaleString()}
-            </p>
+            <div className="flex items-center gap-2">
+              <Clock className="h-4 w-4" />
+              <span className="font-semibold">Time Remaining:</span>
+              <span
+                className={`${
+                  timeLeft === "Auction ended" ? "text-red-500" : ""
+                }`}
+              >
+                {timeLeft}
+              </span>
+            </div>
             <p>
               <span className="font-semibold">Threshold Met:</span>{" "}
               {isThresholdMet ? "Yes" : "No"}
@@ -385,7 +445,7 @@ const TENThresholdIntentAuction = () => {
           </div>
           <div className="mb-4">
             <p className="text-sm font-semibold mb-2">
-              Estimated Progress (TEN&apos;s Secure RNG)
+              Estimated Progress (TEN's Shared Private State)
             </p>
             <Progress value={progressEstimate} className="h-2" />
             <p className="text-xs text-gray-500 mt-1">
@@ -399,10 +459,11 @@ const TENThresholdIntentAuction = () => {
               value={contribution}
               onChange={(e) => setContribution(e.target.value)}
               className="flex-grow"
+              disabled={timeLeft === "Auction ended"}
             />
             <Button
               onClick={handleContribute}
-              disabled={loading}
+              disabled={loading || timeLeft === "Auction ended"}
               className="w-32"
             >
               {loading ? (
@@ -414,17 +475,22 @@ const TENThresholdIntentAuction = () => {
           </div>
         </CardContent>
         <CardFooter>
-          <Button
-            onClick={handleRefund}
-            disabled={isAuctionWon || loading}
-            className="w-full"
-          >
-            {loading ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              "Request Refund"
-            )}
-          </Button>
+          <div className="flex flex-col gap-2 w-full items-center">
+            <p className="text-sm text-gray-500 mb-2">
+              Request a refund if the auction is unsuccessful.
+            </p>
+            <Button
+              onClick={handleRefund}
+              disabled={isAuctionWon || loading || timeLeft !== "Auction ended"}
+              className="w-full"
+            >
+              {loading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                "Request Refund"
+              )}
+            </Button>
+          </div>
         </CardFooter>
       </Card>
     </div>
