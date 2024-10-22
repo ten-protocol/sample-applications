@@ -13,26 +13,31 @@ export default function Header() {
   return (
     <div className="border-b">
       <div className="flex h-16 justify-between items-center px-4">
-        <Link href="/">
-          <Image
-            src="/assets/images/black_logotype.png"
-            alt="Logo"
-            width={150}
-            height={40}
-            className="cursor-pointer dark:hidden"
-          />
-          <Image
-            src="/assets/images/white_logotype.png"
-            alt="Logo"
-            width={150}
-            height={40}
-            className="cursor-pointer hidden dark:block"
-          />
-        </Link>
-        <div className="hidden md:flex items-center space-x-4">
-          <HealthIndicator />
-          <ModeToggle />
-          <ConnectWalletButton />
+        <div className="flex items-center space-x-4">
+          <Link href="/">
+            <Image
+              src="/assets/images/black_logotype.png"
+              alt="Logo"
+              width={150}
+              height={40}
+              className="cursor-pointer dark:hidden"
+            />
+            <Image
+              src="/assets/images/white_logotype.png"
+              alt="Logo"
+              width={150}
+              height={40}
+              className="cursor-pointer hidden dark:block"
+            />
+          </Link>
+          <h1>Constitution DAO</h1>
+        </div>
+        <div>
+          <div className="hidden md:flex items-center space-x-4">
+            <HealthIndicator />
+            <ModeToggle />
+            <ConnectWalletButton />
+          </div>
         </div>
         <div className="flex items-center space-x-4 md:hidden">
           <MobileMenu />

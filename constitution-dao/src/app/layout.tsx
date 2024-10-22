@@ -1,32 +1,30 @@
 "use client";
 
-import "./styles/globals.css";
+import "../styles/globals.css";
 import Layout from "./components/layouts/default-layout";
 import HeadSeo from "./components/head-seo";
 import { siteMetadata } from "../lib/siteMetadata";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { NetworkStatus } from "./components/common/network-status";
 import { Toaster } from "./components/ui/toaster";
 import { ThemeProvider } from "./components/providers/theme-provider";
+import { ReactQueryProvider } from "./components/providers/react-query-provider";
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const queryClient = new QueryClient();
-
   return (
     // <WagmiProvider config={wagmiConfig}>
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange
-      >
-        {/* <RainbowKitProvider> */}
-        <html lang="en">
+    <ReactQueryProvider>
+      <html lang="en">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {/* <RainbowKitProvider> */}
           <HeadSeo
             title={`${siteMetadata.companyName} `}
             description={siteMetadata.description}
@@ -37,13 +35,13 @@ export default function RootLayout({
           ></HeadSeo>
           <body>
             <Layout>{children}</Layout>
+            <Toaster />
+            <NetworkStatus />
           </body>
-        </html>
-        <Toaster />
-        <NetworkStatus />
-      </ThemeProvider>
+        </ThemeProvider>
+      </html>
       {/* </RainbowKitProvider> */}
-    </QueryClientProvider>
+    </ReactQueryProvider>
     // </WagmiProvider>
   );
 }
