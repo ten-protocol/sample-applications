@@ -11,9 +11,10 @@ export function cn(...inputs: ClassValue[]) {
 export const { ethereum } =
   typeof window !== "undefined" ? window : ({} as any);
 
-export const downloadMetaMask = () => {
-  window ? window.open("https://metamask.io/download", "_blank") : null;
-};
+export const downloadMetaMask = () =>
+  typeof window !== "undefined"
+    ? window.open("https://metamask.io/download", "_blank")
+    : null;
 
 export const networkMappings = {
   "uat-testnet": {

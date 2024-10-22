@@ -29,13 +29,13 @@ const TruncatedAddress = ({
       };
   showFullLength?: boolean;
 }) => {
-  if (!address) {
-    return <span>-</span>;
-  }
-
   const isDesktop = useMediaQuery({
     query: MD_SCREEN_WIDTH_QUERY,
   });
+
+  if (!address) {
+    return <span>-</span>;
+  }
 
   // should show full address only on desktop if showFullLength is true; otherwise show truncated version
   const shouldShowFullAddress = isDesktop && showFullLength;

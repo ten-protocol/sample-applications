@@ -19,7 +19,6 @@ const HealthIndicator = () => {
   React.useEffect(() => {
     if (result) {
       setStatus(true);
-      //@ts-ignore
     } else if (errors?.includes("[p2p]")) {
       setStatus(true);
     } else {

@@ -41,17 +41,17 @@ const ThresholdIntentAuction = () => {
     <div className="container mx-auto p-4">
       <Card className="max-w-lg mx-auto">
         <CardHeader>
-          <h1 className="text-2xl font-bold">TEN ThresholdIntentAuction</h1>
+          <h1 className="text-2xl font-bold">TEN Threshold Intent Auction</h1>
           <p className="text-sm text-gray-500">
-            Powered by TEN's Shared Private State
+            Powered by TEN&apos;s Shared Private State
           </p>
         </CardHeader>
         <CardContent>
           <Alert className="mb-4">
             <AlertTitle>TEN Features Showcase</AlertTitle>
             <AlertDescription>
-              Experience privacy-preserving auctions with MEV protection and
-              secure random number generation.
+              Experience smartly transparent auctions with MEV protection and
+              shared private state.
             </AlertDescription>
           </Alert>
           <div className="mb-4 space-y-2">
@@ -85,7 +85,7 @@ const ThresholdIntentAuction = () => {
           </div>
           <div className="mb-4">
             <p className="text-sm font-semibold mb-2">
-              Estimated Progress (TEN's Shared Private State)
+              Estimated Progress (TEN&apos;s Shared Private State)
             </p>
             <Progress value={progressEstimate} className="h-2" />
             <p className="text-xs text-gray-500 mt-1">

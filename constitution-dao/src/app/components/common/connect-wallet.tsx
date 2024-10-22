@@ -28,8 +28,7 @@ const ConnectWalletButton = ({
 
   const handleClick = () => {
     if (!ethereum) {
-      downloadMetaMask();
-      return;
+      return downloadMetaMask;
     }
 
     if (isWrongNetwork) {

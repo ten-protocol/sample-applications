@@ -1,10 +1,10 @@
 import React from "react";
 import Custom404Error from "./404";
-import Spinner from "../shared/spinner";
 import {
   DocumentContentInterface,
   DocumentInterface,
-} from "../../lib/types/common";
+} from "@/src/lib/types/common";
+import Spinner from "../ui/spinner";
 
 type DocumentProps = {
   document: DocumentInterface;

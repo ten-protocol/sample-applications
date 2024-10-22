@@ -41,7 +41,7 @@ const copyText = async (text: string) => {
 
 const fallbackCopyTextToClipboard = (text: string) => {
   return new Promise((res, rej) => {
-    var textArea = document.createElement("textarea");
+    const textArea = document.createElement("textarea");
     textArea.value = text;
 
     // Avoid scrolling to bottom

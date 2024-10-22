@@ -42,15 +42,15 @@ const HeadSeo = ({
   ].join(", ");
 
   const defaultStructuredData = {
-    // @ts-ignore
+    // @ts-expect-error - structuredData is optional
     "@context": "https://schema.org",
-    // @ts-ignore
+    // @ts-expect-error - structuredData is optional
     "@type": "WebApplication",
-    // @ts-ignore
+    // @ts-expect-error  - structuredData is optional
     name: siteMetadata.companyName,
-    // @ts-ignore
+    // @ts-expect-error - structuredData is optional
     applicationCategory: "DeFi",
-    // @ts-ignore
+    // @ts-expect-error - structuredData is optional
     operatingSystem: "Web3",
     ...siteMetadata.structuredData,
     ...structuredData,
@@ -77,7 +77,7 @@ const HeadSeo = ({
       <meta name="referrer" content="strict-origin-when-cross-origin" />
       <meta
         name="_vgeujvlkxz15hyr8vbuvqxnfmzlkm059"
-        //@ts-ignore
+        //@ts-expect-error - This is a custom meta tag
         signature="_vd3udx2g2hfn9zclob5cat43b94q7fyk"
       />
 
