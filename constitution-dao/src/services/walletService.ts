@@ -8,9 +8,8 @@ import { getEthereumProvider, handleError } from "@/src/lib/utils/walletUtils";
 import { toast } from "@/src/app/components/ui/use-toast";
 import { requestMethods } from "@/src/routes";
 import { ToastType } from "@/src/lib/enums/toast";
-import CONTRACT_ABI from "@/src/contracts/artifacts/ThresholdIntentAuctionABI.json";
-import CONTRACT_ADDRESS from "@/src/contracts/artifacts/address.json";
 import { WalletStoreGet, WalletStoreSet } from "../lib/types/common";
+import useContractStore from "../stores/contract-store";
 
 export const walletService = {
   initializeProvider: async (set: WalletStoreSet, get: WalletStoreGet) => {
@@ -94,6 +93,10 @@ export const walletService = {
   connectWallet: async (set: WalletStoreSet, get: WalletStoreGet) => {
     try {
       await walletService.initializeProvider(set, get);
+      const { signer } = get();
+
+      const contractStore = useContractStore.getState();
+      await contractStore.initializeContract(signer as ethers.Signer);
 
       set({
         walletConnected: true,
@@ -118,13 +121,16 @@ export const walletService = {
     try {
       if (provider) {
         provider.removeAllListeners();
+
+        const contractStore = useContractStore.getState();
+        contractStore.cleanup();
+
         set({
           provider: null,
           signer: null,
           address: "",
           walletConnected: false,
         });
-        // window.location.reload();
 
         toast({
           title: "Disconnected",
@@ -133,10 +139,10 @@ export const walletService = {
         });
       }
     } catch (error) {
-      console.error("Error disconnecting from wallet:", error);
+      console.error("Error disconnecting wallet:", error);
       toast({
         title: "Error",
-        description: "Failed to disconnect wallet.",
+        description: "Failed to disconnect from wallet.",
         variant: ToastType.DESTRUCTIVE,
       });
     }

@@ -14,16 +14,21 @@ export interface IWalletState {
   switchNetwork: () => void;
 }
 
-export interface IContractState {
+export interface ContractState {
   contract: ethers.Contract | null;
   contribution: string;
   totalRaised: string;
-  loading: boolean;
   deadline: number;
   isThresholdMet: boolean;
   isAuctionWon: boolean;
+  loading: boolean;
   progressEstimate: number;
-  handleContribute: () => void;
+}
+
+export interface ContractActions {
+  initializeContract: (signer: ethers.Signer) => Promise<void>;
+  handleContribute: () => Promise<void>;
   setContribution: (contribution: string) => void;
-  handleRefund: () => void;
+  handleRefund: () => Promise<void>;
+  cleanup: () => void;
 }

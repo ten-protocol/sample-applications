@@ -34,8 +34,8 @@ const HealthIndicator = () => {
           (isStatusLoading
             ? "secondary"
             : status
-            ? "success"
-            : "destructive") as keyof typeof badgeVariants
+            ? "static-success"
+            : "static-destructive") as keyof typeof badgeVariants
         }
       >
         {isStatusLoading ? (

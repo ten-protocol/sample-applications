@@ -5,5 +5,5 @@ export const requestMethods = {
 };
 
 export const apiRoutes = {
-  getHealthStatus: `/network-health/`,
+  getHealthStatus: `/v1/network-health/`,
 };

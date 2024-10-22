@@ -18,6 +18,7 @@ import { Clock, Loader2 } from "lucide-react";
 import { useCountdown } from "@/src/hooks/useCountdown";
 import useContractStore from "@/src/stores/contract-store";
 import useWalletStore from "@/src/stores/wallet-store";
+import { Skeleton } from "../ui/skeleton";
 
 const ThresholdIntentAuction = () => {
   const {
@@ -27,15 +28,65 @@ const ThresholdIntentAuction = () => {
     isThresholdMet,
     isAuctionWon,
     setContribution,
-    loading,
+    loading: contractLoading,
     handleContribute,
     handleRefund,
     progressEstimate,
   } = useContractStore();
 
-  const { walletConnected, address } = useWalletStore();
+  const {
+    walletConnected,
+    address,
+    isWrongNetwork,
+    connectWallet,
+    switchNetwork,
+    loading: walletLoading,
+  } = useWalletStore();
 
   const timeLeft = useCountdown(deadline);
+
+  useEffect(() => {
+    if (!walletConnected) {
+      connectWallet();
+    }
+
+    return () => {
+      const contractStore = useContractStore.getState();
+      contractStore.cleanup();
+    };
+  }, []);
+
+  const loading = contractLoading || walletLoading;
+
+  if (loading) {
+    <Skeleton className="w-full h-96" />;
+  }
+
+  if (!walletConnected && !isWrongNetwork && !loading) {
+    return (
+      <div className="container mx-auto p-4">
+        <Card className="max-w-lg mx-auto">
+          <CardContent className="flex flex-col items-center gap-4">
+            <p>Please connect your wallet to participate in the auction</p>
+            <Button onClick={connectWallet}>Connect Wallet</Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (isWrongNetwork) {
+    return (
+      <div className="container mx-auto p-4">
+        <Card className="max-w-lg mx-auto">
+          <CardContent className="flex flex-col items-center gap-4">
+            <p>Please switch to the correct network</p>
+            <Button onClick={switchNetwork}>Switch Network</Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto p-4">

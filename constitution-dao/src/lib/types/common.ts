@@ -1,4 +1,10 @@
-import { IContractState, IWalletState } from "../interfaces/wallet";
+import {
+  ContractActions,
+  ContractState,
+  IWalletState,
+} from "../interfaces/wallet";
+
+export interface IContractState extends ContractState, ContractActions {}
 
 export type WalletStoreSet = (
   partial:

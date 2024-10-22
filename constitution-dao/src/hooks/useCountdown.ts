@@ -18,7 +18,7 @@ export const useCountdown = (deadline: number) => {
       const seconds = difference % 60;
 
       if (days > 0) {
-        return `${days}d ${hours}h ${minutes}m`;
+        return `${days}d ${hours}h ${minutes}m ${seconds}s`;
       } else if (hours > 0) {
         return `${hours}h ${minutes}m ${seconds}s`;
       } else if (minutes > 0) {
