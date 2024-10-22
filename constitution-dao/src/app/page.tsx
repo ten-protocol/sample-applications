@@ -1,21 +1,21 @@
 "use client";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { siteMetadata } from "../lib/siteMetadata";
 import ThresholdIntentAuction from "./components/common/ThresholdIntentAuction";
-// import { WagmiProvider } from "wagmi";
-// import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
-// import { wagmiConfig } from "../lib/wagmiConfig";
+import HeadSeo from "./components/head-seo";
 
 export default function Home() {
-  const queryClient = new QueryClient();
-
   return (
-    // <WagmiProvider config={wagmiConfig}>
-    <QueryClientProvider client={queryClient}>
-      {/* <RainbowKitProvider> */}
-      <ThresholdIntentAuction />
-      {/* </RainbowKitProvider> */}
-    </QueryClientProvider>
-    // </WagmiProvider>
+    <>
+      <HeadSeo
+        title={`${siteMetadata.companyName} `}
+        description={siteMetadata.description}
+        canonicalUrl={`${siteMetadata.siteUrl}`}
+        ogImageUrl={siteMetadata.siteLogo}
+        ogTwitterImage={siteMetadata.siteLogo}
+        ogType={"website"}
+      ></HeadSeo>
+      <ThresholdIntentAuction />;
+    </>
   );
 }

@@ -14,335 +14,80 @@ import {
   AlertDescription,
   AlertTitle,
 } from "@/src/app/components/ui/alert";
-import { Loader2 } from "lucide-react";
-import { useToast } from "../ui/use-toast";
+import { Clock, Loader2 } from "lucide-react";
+import { useCountdown } from "@/src/hooks/useCountdown";
+import useContractStore from "@/src/stores/contract-store";
+import useWalletStore from "@/src/stores/wallet-store";
+import { Skeleton } from "../ui/skeleton";
 
-const CONTRACT_ADDRESS = "0xDB8445Fd7704A2C43de03692523b2373B1E6A3A5";
-const CONTRACT_ABI = [
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_threshold",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_durationInDays",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "nonpayable",
-    type: "constructor",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "bidAmount",
-        type: "uint256",
-      },
-    ],
-    name: "AuctionWon",
-    type: "event",
-  },
-  {
-    inputs: [],
-    name: "contribute",
-    outputs: [],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "contributor",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-    ],
-    name: "ContributionMade",
-    type: "event",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "bidAmount",
-        type: "uint256",
-      },
-    ],
-    name: "placeBid",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "refund",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "contributor",
-        type: "address",
-      },
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-    ],
-    name: "RefundIssued",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: "uint256",
-        name: "totalAmount",
-        type: "uint256",
-      },
-    ],
-    name: "ThresholdReached",
-    type: "event",
-  },
-  {
-    inputs: [],
-    name: "withdraw",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "contributor",
-        type: "address",
-      },
-    ],
-    name: "getContribution",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getDeadline",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "getTotalRaised",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "isAuctionWon",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "isThresholdMet",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-];
+const ThresholdIntentAuction = () => {
+  const {
+    deadline,
+    totalRaised,
+    contribution,
+    isThresholdMet,
+    isAuctionWon,
+    setContribution,
+    loading: contractLoading,
+    handleContribute,
+    handleRefund,
+    progressEstimate,
+  } = useContractStore();
 
-const TENThresholdIntentAuction = () => {
-  const [contract, setContract] = useState<ethers.Contract | null>(null);
-  const [account, setAccount] = useState("");
-  const [totalRaised, setTotalRaised] = useState<string>("");
-  const [deadline, setDeadline] = useState(0);
-  const [contribution, setContribution] = useState("");
-  const [isThresholdMet, setIsThresholdMet] = useState(false);
-  const [isAuctionWon, setIsAuctionWon] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [progressEstimate, setProgressEstimate] = useState(0);
-  const { toast } = useToast();
+  const {
+    walletConnected,
+    address,
+    isWrongNetwork,
+    connectWallet,
+    switchNetwork,
+    loading: walletLoading,
+  } = useWalletStore();
+
+  const timeLeft = useCountdown(deadline);
 
   useEffect(() => {
-    const init = async () => {
-      if (typeof window.ethereum !== "undefined") {
-        try {
-          const provider = new ethers.providers.Web3Provider(window.ethereum);
-          const signer = provider.getSigner();
-          const contract = new ethers.Contract(
-            CONTRACT_ADDRESS,
-            CONTRACT_ABI,
-            signer
-          );
-          setContract(contract);
+    if (!walletConnected) {
+      connectWallet();
+    }
 
-          const accounts = await window.ethereum.request({
-            method: "eth_requestAccounts",
-          });
-          setAccount(accounts[0]);
-
-          await updateContractState(contract);
-          toast({
-            title: "Connected",
-            description: "Successfully connected to the Ethereum network.",
-            variant: "success",
-          });
-        } catch (error) {
-          console.error("Error initializing:", error);
-          toast({
-            title: "Connection Error",
-            description:
-              "Failed to connect to the Ethereum network. Please check your wallet.",
-            variant: "destructive",
-          });
-        }
-      } else {
-        toast({
-          title: "Wallet Not Found",
-          description:
-            "Please install an Ethereum wallet like MetaMask to use this dApp.",
-          variant: "warning",
-        });
-      }
+    return () => {
+      const contractStore = useContractStore.getState();
+      contractStore.cleanup();
     };
-
-    init();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [walletConnected]);
 
-  const updateContractState = async (contract: ethers.Contract) => {
-    try {
-      const totalRaised = await contract.getTotalRaised();
-      const deadline = await contract.getDeadline();
-      const isThresholdMet = await contract.isThresholdMet();
-      const isAuctionWon = await contract.isAuctionWon();
+  const loading = contractLoading || walletLoading;
 
-      setTotalRaised(ethers.utils.formatEther(totalRaised));
-      setDeadline(deadline.toNumber());
-      setIsThresholdMet(isThresholdMet);
-      setIsAuctionWon(isAuctionWon);
+  if (loading) {
+    <Skeleton className="w-full h-96" />;
+  }
 
-      // Simulate progress based on threshold met status
-      setProgressEstimate(isThresholdMet ? 100 : Math.random() * 99);
-    } catch (error) {
-      console.error("Error updating contract state:", error);
-      toast({
-        title: "Update Error",
-        description: "Failed to update contract state. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
+  if (!walletConnected && !isWrongNetwork && !loading) {
+    return (
+      <div className="container mx-auto p-4">
+        <Card className="max-w-lg mx-auto">
+          <CardContent className="flex flex-col items-center gap-4">
+            <p>Please connect your wallet to participate in the auction</p>
+            <Button onClick={connectWallet}>Connect Wallet</Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
-  const handleContribute = async () => {
-    if (contract && contribution) {
-      try {
-        setLoading(true);
-        const tx = await contract.contribute({
-          value: ethers.utils.parseEther(contribution),
-        });
-        await tx.wait();
-        await updateContractState(contract);
-        setContribution("");
-        toast({
-          title: "Contribution Successful",
-          description: `You have successfully contributed ${contribution} ETH.`,
-          variant: "success",
-        });
-      } catch (error) {
-        console.error("Error contributing:", error);
-        toast({
-          title: "Contribution Failed",
-          description:
-            "There was an error processing your contribution. Please try again.",
-          variant: "destructive",
-        });
-      } finally {
-        setLoading(false);
-      }
-    }
-  };
-
-  const handleRefund = async () => {
-    if (contract) {
-      try {
-        setLoading(true);
-        const tx = await contract.refund();
-        await tx.wait();
-        await updateContractState(contract);
-        toast({
-          title: "Refund Requested",
-          description: "Your refund request has been processed successfully.",
-          variant: "info",
-        });
-      } catch (error) {
-        console.error("Error requesting refund:", error);
-        toast({
-          title: "Refund Failed",
-          description:
-            "There was an error processing your refund request. Please try again.",
-          variant: "destructive",
-        });
-      } finally {
-        setLoading(false);
-      }
-    }
-  };
+  if (isWrongNetwork) {
+    return (
+      <div className="container mx-auto p-4">
+        <Card className="max-w-lg mx-auto">
+          <CardContent className="flex flex-col items-center gap-4">
+            <p>Please switch to the correct network</p>
+            <Button onClick={switchNetwork}>Switch Network</Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto p-4">
@@ -357,23 +102,30 @@ const TENThresholdIntentAuction = () => {
           <Alert className="mb-4">
             <AlertTitle>TEN Features Showcase</AlertTitle>
             <AlertDescription>
-              Experience privacy-preserving auctions with MEV protection and
-              secure random number generation.
+              Experience smartly transparent auctions with MEV protection and
+              shared private state.
             </AlertDescription>
           </Alert>
           <div className="mb-4 space-y-2">
             <p>
               <span className="font-semibold">Connected Account:</span>{" "}
-              {account}
+              {address}
             </p>
             <p>
               <span className="font-semibold">Total Raised:</span> {totalRaised}{" "}
               ETH
             </p>
-            <p>
-              <span className="font-semibold">Deadline:</span>{" "}
-              {new Date(deadline * 1000).toLocaleString()}
-            </p>
+            <div className="flex items-center gap-2">
+              <Clock className="h-4 w-4" />
+              <span className="font-semibold">Time Remaining:</span>
+              <span
+                className={`${
+                  timeLeft === "Auction ended" ? "text-red-500" : ""
+                }`}
+              >
+                {timeLeft}
+              </span>
+            </div>
             <p>
               <span className="font-semibold">Threshold Met:</span>{" "}
               {isThresholdMet ? "Yes" : "No"}
@@ -385,7 +137,7 @@ const TENThresholdIntentAuction = () => {
           </div>
           <div className="mb-4">
             <p className="text-sm font-semibold mb-2">
-              Estimated Progress (TEN&apos;s Secure RNG)
+              Estimated Progress (TEN&apos;s Shared Private State)
             </p>
             <Progress value={progressEstimate} className="h-2" />
             <p className="text-xs text-gray-500 mt-1">
@@ -399,10 +151,11 @@ const TENThresholdIntentAuction = () => {
               value={contribution}
               onChange={(e) => setContribution(e.target.value)}
               className="flex-grow"
+              disabled={timeLeft === "Auction ended"}
             />
             <Button
               onClick={handleContribute}
-              disabled={loading}
+              disabled={loading || timeLeft === "Auction ended"}
               className="w-32"
             >
               {loading ? (
@@ -414,21 +167,26 @@ const TENThresholdIntentAuction = () => {
           </div>
         </CardContent>
         <CardFooter>
-          <Button
-            onClick={handleRefund}
-            disabled={isAuctionWon || loading}
-            className="w-full"
-          >
-            {loading ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              "Request Refund"
-            )}
-          </Button>
+          <div className="flex flex-col gap-2 w-full items-center">
+            <p className="text-sm text-gray-500 mb-2">
+              Request a refund if the auction is unsuccessful.
+            </p>
+            <Button
+              onClick={handleRefund}
+              disabled={isAuctionWon || loading || timeLeft !== "Auction ended"}
+              className="w-full"
+            >
+              {loading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                "Request Refund"
+              )}
+            </Button>
+          </div>
         </CardFooter>
       </Card>
     </div>
   );
 };
 
-export default TENThresholdIntentAuction;
+export default ThresholdIntentAuction;
